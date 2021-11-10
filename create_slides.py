@@ -1,90 +1,95 @@
-import os
 import io
+import os
 
-# settings for final titlepage folder
-path = input('Type the tutorial you want to compile: ')
-#filename = input('Type the final files name: ')
-filename = path
+TEX = '.tex'
+PDF = '.pdf'
+TMP_EXT = '_tmp'
+HANDOUT_EXT = '_handout'
 
-path = "./" + path + "/"
 
-# prepare filenames and files
-texExt = '.tex'
-pdfExt = '.pdf'
+def remove_tmp_files(filename, tmp):
+    vrbFile = open(filename + '.vrb', "w+")
+    vrbFile.close()
+    for end in ['.aux', '.log', '.nav', '.out', '.snm', '.toc', '.vrb']:
+        os.remove(filename + end)
+    os.remove(tmp + TEX)
 
-slidesFilename = filename
-handoutFilename = filename + "_handout"
 
-tempFilename = filename + "_temp"
+tutorial = input('Type the tutorial you want to compile: ')
+
+dir = "." + os.sep + tutorial + os.sep
+filename = tutorial
+filename_handout = tutorial + HANDOUT_EXT
+filename_tmp = tutorial + TMP_EXT
+
+os.chdir(dir)
 
 # =============================================================================
 # OPEN AND READ INPUT
-with io.open(path + filename + texExt, mode='r', encoding='UTF8') as file:
-    content = file.readlines()
-file.close()
+with io.open(filename + TEX, mode='r', encoding='UTF8') as f:
+    content = f.readlines()
+
 # =============================================================================
-
-# change working directory
-os.chdir(path)
-
-slidesOption  = "\\documentclass{beamer}\n"
-handoutOption = "\\documentclass[handout]{beamer}\n"
+# OPTIONS
+slides_option = "\\documentclass{beamer}\n"
+handout_option = "\\documentclass[handout]{beamer}\n"
+handout_colours = ['\\setbeamercolor{title}{fg=black}\n',
+                   '\\setbeamercolor{author}{fg=black}\n',
+                   '\\setbeamercolor{city}{fg=black}\n',
+                   '\\setbeamercolor{date}{fg=black}\n',
+                   '\\setbeamercolor{normal text}{fg=black}\n',
+                   '\\setbeamercolor{itemize item}{fg=black}\n',
+                   '\\setbeamercolor{background canvas}{bg=white}\n',
+                   '\\setbeamercolor{frametitle}{fg=black, bg=cdgray!30}\n',
+                   '\\setbeamercolor{block body}{fg=black, bg=cdgray!10}\n',
+                   '\\setbeamercolor{block title}{fg=white, bg=cdgray}\n',
+                   '\\setbeamercolor{section title}{fg=black}\n',
+                   '\n']
 
 # =============================================================================
 # HANDOUT
-with io.open(tempFilename + texExt, mode='a', encoding='UTF8') as tempFile:
-    tempFile.write(handoutOption)
-    tempFile.writelines(content[1:])
-tempFile.close()
+with io.open(filename_tmp + TEX, mode='a', encoding='UTF8') as tmp:
+    for line in content:
+        if '\\documentclass' in line:
+            tmp.write(handout_option)
+        elif '\\begin{document}' in line:
+            tmp.writelines(handout_colours)
+            tmp.write(line)
+        elif '\\titlegraphic' in line:
+            tmp.write(
+                '\t\\titlegraphic{\\includegraphics[width=2cm]{../TUD-black.pdf}}\n')
+        else:
+            tmp.write(line)
+
 
 # compile .tex file >> .pdf
-shellHandout = '> texfot pdflatex -jobname=' + handoutFilename + " " + tempFilename + texExt
-os.system(shellHandout)
-os.system(shellHandout)
+shell_command = '> texfot pdflatex -jobname=' + \
+    filename_handout + ' ' + \
+    filename_tmp + TEX
 
-# remove temporary files (especially .tex-file)
-vrbFile = open(handoutFilename + '.vrb',"w+")
-vrbFile.close()
-os.remove(handoutFilename + '.aux')
-os.remove(handoutFilename + '.log')
-os.remove(handoutFilename + '.nav')
-os.remove(handoutFilename + '.out')
-os.remove(handoutFilename + '.snm')
-os.remove(handoutFilename + '.toc')
-os.remove(handoutFilename + '.vrb')
-#os.remove(handoutFilename + '.listing')
-os.remove(tempFilename + texExt)
-# =============================================================================
+print('Handout compilation ... ')
+os.system(shell_command)
+os.system(shell_command)
+print('... finished.')
+
+remove_tmp_files(filename_handout, filename_tmp)
+
 
 # =============================================================================
 # SLIDES
-with io.open(tempFilename + texExt, mode='a', encoding='UTF8') as tempFile:
-    tempFile.write(slidesOption)
-    tempFile.writelines(content[1:])
-    
-tempFile.close()
+with io.open(filename_tmp + TEX, mode='a', encoding='UTF8') as tmp:
+    tmp.write(slides_option)
+    tmp.writelines(content[1:])
 
 # compile .tex file >> .pdf
-shellSlides = '> texfot pdflatex -jobname=' + slidesFilename + " " + tempFilename + texExt
-os.system(shellSlides)
-os.system(shellSlides)
+shell_command = '> texfot pdflatex -jobname=' + \
+    filename + ' ' + \
+    filename_tmp + TEX
+print('Slides compilation ... ')
+os.system(shell_command)
+os.system(shell_command)
+print('... finished.')
 
-# remove temporary files (especially .tex-file)
-vrbFile = open(slidesFilename + '.vrb',"w+")
-vrbFile.close()
-os.remove(slidesFilename + '.aux')
-os.remove(slidesFilename + '.log')
-os.remove(slidesFilename + '.nav')
-os.remove(slidesFilename + '.out')
-os.remove(slidesFilename + '.snm')
-os.remove(slidesFilename + '.toc')
-os.remove(slidesFilename + '.vrb')
-#os.remove(slidesFilename + '.listing')
-os.remove(tempFilename + texExt)
-# =============================================================================
+remove_tmp_files(filename, filename_tmp)
 
-os.remove("texfot")
-# =============================================================================
-# os.replace(handoutFilename, path + handoutFilename + pdfExt)
-# os.replace(slidesFilename, path + slidesFilename + pdfExt)
-# =============================================================================
+os.remove('texfot')
