@@ -1,0 +1,284 @@
+\documentclass[ngerman, a4paper, 11pt]{scrartcl}
+
+\usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
+\usepackage{parskip}
+\usepackage[onehalfspacing]{setspace} % increase row-space
+
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[scale=0.8]{opensans}
+\newcommand*{\osfamily}{\fontfamily{fos}\selectfont}
+\DeclareTextFontCommand{\textos}{\osfamily}
+\usepackage{bold-extra}
+
+\usepackage{amsmath, amsthm, amssymb}
+
+\usepackage[normalem]{ulem}
+\usepackage[autostyle=true,english=british]{csquotes}
+\usepackage{enumerate}
+\usepackage[inline]{enumitem} % customize label
+\usepackage{graphicx}
+\usepackage[table,dvipsnames]{tudscrcolor} % package xcolor loaded automatically
+\usepackage[font=small,labelfont=bf]{caption} % captions of non-floated figures
+
+\usepackage{tikz}
+\usetikzlibrary{automata, positioning, arrows, arrows.meta}
+
+\usepackage[
+	type={CC},
+	modifier={by-nc-sa},
+	version={4.0},
+]{doclicense}
+
+\usepackage[unicode,bookmarks=true]{hyperref}
+\hypersetup{
+	colorlinks,
+	urlcolor=cdblue,
+	pdfborder={0 0 0}			% no boxed around links
+	pdfborderstyle={/S/U/W 1},	% underlining insteas of boxes
+	linkbordercolor=cdblue,
+	urlbordercolor=cdblue
+}
+
+\newcommand*\ruleline[1]{\par\noindent\raisebox{.8ex}{\makebox[\linewidth]{\hrulefill\hspace{1ex}\raisebox{-.8ex}{#1}\hspace{1ex}\hrulefill}}}
+
+\newcommand{\defeq}{\mathrel{:=}}
+\newcommand{\tuple}[1]{\langle #1 \rangle}
+\newcommand{\menge}[1]{\left\{ #1 \right\}}
+\newcommand{\quer}[1]{\overline{#1}}
+
+\newtheoremstyle{bsp}
+{6pt}		% Space above
+{6pt}		% Space below
+{\itshape}	% Body font
+{}			% Indent amount
+{\bfseries}	% Theorem head font
+{.}			% Punctuation after theorem headi
+{.5em}		% Space after theorem heading
+{}			% Theorem head spec (can be left empty, meaning ‘normal’)
+\theoremstyle{bsp}
+\newtheorem*{beispiel}{Beispiel}
+\theoremstyle{definition}
+\newtheorem*{aufgabe}{Aufgabe}
+
+\begin{document}
+
+\begin{center}
+	{\bfseries \sffamily \huge Aufgabe 2} 
+	
+	\ruleline{\sffamily \Large Übungsblatt 3}
+	
+	{\scshape Eric Kunze --- \today}
+\end{center}
+\medskip
+
+{ \footnotesize \doclicenseThis }
+
+\begin{center}	
+	\slshape Keine Garantie auf Vollständigkeit und/oder Korrektheit!
+\end{center}
+
+\bigskip
+
+\begin{aufgabe}
+	Sei $L$ eine reguläre Sprache über einem mindestens zweielementigen Alphabet $\Sigma$.
+	Zeigen Sie, dass die folgenden Sprachen regulär sind.	
+\end{aufgabe} 
+
+\begin{enumerate}[label=(\alph*)]
+	\item $L_1 =  \{ x \in L : \text{es gibt kein } y \in \Sigma^+ \text{, so dass } xy \in L \}$
+	\item $L_2 = \{ x \in L : \text{kein echtes Präfix von $x$ liegt in $L$} \}$
+\end{enumerate}
+
+Ausgangspunkt ist also in beiden Fällen eine reguläre Sprache $L$, für die wir einen DFA $\mathcal{M} = \tuple{Q, \Sigma, \delta, q_0, F}$ finden können, sodass $L = L(\mathcal{M})$ (d.h. $\mathcal{M}$ erkennt genau die Sprache $L$). Diesen Automaten haben wir gegeben und können ihn nun so verändern, dass er die Sprachen $L_1$ bzw. $L_2$ erkennt.
+
+\section*{Teil (a): es gibt keine Verlängerung}
+
+In $L_1$ sollen nur noch die Wörter $x$ aus $L$ enthalten sein, die sich nicht in $L$ verlängern lassen. Es soll also kein echtes Wort $y \in \Sigma^+$ geben, sodass das verlängerte Wort $xy$ in $L$ läge.
+Wann kann eine solche Verlängerung auftreten? Wir müssten in $L$ sowohl das kurze Wort als auch das verlängerte Wort erkennen. Das können wir uns beispielhaft wie folgt vorstellen.
+
+\begin{beispiel}
+	Der Automat $\mathcal{M}$ für $L$ sei wie folgt gegeben:
+	\begin{center}
+		\begin{tikzpicture} [->, >=stealth', initial text=, auto, node
+			distance=17mm, bend angle=20, semithick]
+			\node[state,initial]   (q0)               {$q_0$};
+			\node[state]           (q1) [right of=q0] {$q_1$};
+			\node[state,accepting] (q2) [right of=q1] {$q_2$};
+			\node[state]           (q3) [right of=q2] {$q_3$};
+			\node[state,accepting] (q4) [right of=q3] {$q_4$};
+			
+			\path[->] (q0) edge node {$a$} (q1)
+			(q1) edge node {$a$} (q2)
+			(q2) edge node {$b$} (q3)
+			(q3) edge node {$b$} (q4);
+		\end{tikzpicture}
+	\end{center}
+	Damit ist $L = \menge{aa, aabb}$. Für das Wort $x = aa$ existiert folglich eine Verlängerung $y = bb \in \Sigma^+$, sodass $xy = aabb \in L$ gilt. Für $x = aabb$ existiert eine solche Verlängerung jedoch nicht. Somit gilt für dieses Beispiel $L_1 = \menge{aabb}$.
+\end{beispiel}
+
+Anhand des Beispiels erkennen wir relativ gut, dass wir die Akzeptanz von Wörtern \enquote{auf dem Weg} unterbinden müssen. Im Beispiel muss also die Akzeptanz in $q_2$ verboten werden, d.h. $q_2$ darf kein Finalzustand mehr sein, weil wir ausgehend von $q_2$ noch einmal in einen Finalzustand gelangen können.
+
+Deswegen definieren wir uns die Menge
+\begin{equation*}
+	F' \defeq \menge{q \in F : \text{ex. kein } y \in \Sigma^\ast: \delta(q, y) \in F} .
+\end{equation*}
+Diese Menge besteht aus allen Finalzuständen $q \in F$ des Automaten $\mathcal{M}$ für $L$, für die wir kein Wort $y \in \Sigma^+$ finden können, sodass der Wortübergang $\delta(q, y)$ wieder in einem Finalzustand landet.
+
+\begin{beispiel}
+	Wir wollen diese Definition anhand des obigen Beispiels nachvollziehen. Es gilt auf jeden Fall $F' \subseteq F$, d.h. wir müssen nur Finalzustände des Originalautomaten betrachten. Für $q_2$ existiert $y = bb \in \Sigma^\ast$, sodass $\delta(q_2, y) = \delta(q_2, bb) = q_4 \in F$. Damit ist also $q_2 \notin F'$. Für $q_4$ finden wir aber offensichtlich keinen Wortübergang, der noch einmal in einem Finalzustand landet (da es überhaupt gar keinen Übergang mehr gibt), d.h. $q_4 \in F'$. Zusammengefasst ist also $F' = \menge{q_4}$.
+\end{beispiel}
+
+Ersetzen wir nun die Menge der Finalzustände $F$ im Originalautomaten durch $F'$, dann fallen alle unterwegs akzeptierenden Finalzustände weg und wir erreichen genau unser Ziel. Setze also
+\begin{equation*}
+	M' \defeq \tuple{Q, \Sigma, \delta, q_0, F'}
+\end{equation*}
+und übernehmen dabei alle anderen Komponenten (Zustandsmenge, Alphabet, Übergangsfunktion, Startzustand) des Originalautomaten.
+
+\begin{beispiel}
+	Der Automat $\mathcal{M}'$ für obigen Beispiel sieht dann wie folgt aus:
+	\begin{center}
+		\begin{tikzpicture} [->, >=stealth', initial text=, auto, node
+			distance=17mm, bend angle=20, semithick]
+			\node[state,initial]   (q0)               {$q_0$};
+			\node[state]           (q1) [right of=q0] {$q_1$};
+			\node[state]           (q2) [right of=q1] {$q_2$};
+			\node[state]           (q3) [right of=q2] {$q_3$};
+			\node[state,accepting] (q4) [right of=q3] {$q_4$};
+			
+			\path[->] (q0) edge node {$a$} (q1)
+			(q1) edge node {$a$} (q2)
+			(q2) edge node {$b$} (q3)
+			(q3) edge node {$b$} (q4);
+		\end{tikzpicture}
+	\end{center}
+	Man beachte, dass sich wirklich nur die Menge der Finalzustände geändert hat. Die erkannte Sprache ist nun $L(\mathcal{M}') = \menge{aabb}$, was genau $L_1$ für das Beispiel entspricht.
+\end{beispiel}
+
+Nun haben wir also einen DFA $\mathcal{M}'$ konstruiert, von dem wir hoffen, dass er genau $L_1$ erkennt. Um das zu verifizieren, müssen wir noch $L(\mathcal{M}') = L_1$ zeigen. 
+\begin{align*}
+	x \in L(\mathcal{M}') \quad 
+	&\Leftrightarrow \quad \delta(q_0, x) \in F' \tag{Def. Akzeptanz}\\
+	&\Leftrightarrow \quad \delta(q_0, x) \in F \text{ und ex. kein } y \in \Sigma^+: \delta(q_0, xy) \in F  \tag{Def. $F'$} \\
+	&\Leftrightarrow \quad x \in L_1 \tag{Def. von $L_1$}\\
+\end{align*}
+
+Unsere Konstruktion ist folglich korrekt.
+
+\pagebreak
+
+\section*{Teil (b): keinen Präfix}
+
+Die Sprache $L_2$ soll genau die Wörter von $L$ enthalten, die keinen echten\footnote{im folgenden steht Präfix immer für ein \textit{echtes} Präfix} Präfix in $L$ haben. Es soll also das lange Wort $xy$ in $L$ liegen, nicht jedoch der Präfix $x$.
+
+\begin{beispiel}
+	Wir arbeiten wieder mit unserem Beispielautomaten $\mathcal{M}$.
+	\begin{center}
+		\begin{tikzpicture} [->, >=stealth', initial text=, auto, node
+			distance=17mm, bend angle=20, semithick]
+			\node[state,initial]   (q0)               {$q_0$};
+			\node[state]           (q1) [right of=q0] {$q_1$};
+			\node[state,accepting] (q2) [right of=q1] {$q_2$};
+			\node[state]           (q3) [right of=q2] {$q_3$};
+			\node[state,accepting] (q4) [right of=q3] {$q_4$};
+			
+			\path[->] (q0) edge node {$a$} (q1)
+			(q1) edge node {$a$} (q2)
+			(q2) edge node {$b$} (q3)
+			(q3) edge node {$b$} (q4);
+		\end{tikzpicture}
+	\end{center}	
+	Nach wie vor gilt $L = L(\mathcal{M}) = \menge{aa, aabb}$. Für $xy = aa$ finden wir keinen Präfix, der auch in $L$ liegt. Es gäbe nur die Möglichkeiten $x = \epsilon \notin L$ und $x = a \notin L$. Das ergibt $aa \in L_2$. Für $xy = aabb$ finden wir jedoch einen solchen Präfix, nämlich mit $x = aa \in L$. Somit ist $aabb \notin L_2$
+\end{beispiel}
+
+Am Beispiel machen wir uns wieder schnell klar, was wir verbieten müssen: erreichen wir einmal einen Finalzustand, dürfen wir nicht mehr weitergehen, da sonst ein längeres Wort enstehen kann, dessen Präfix wir mit Erreichen des ersten Finalzustands auch akzeptieren.
+Im Beispielautomaten darf vom Finalzustand $q_2$ kein Übergang mehr erfolgen, weil wir sonst noch in den Finalzustand $q_4$ gelangen können. Dort wird das Wort $aabb$ akzeptiert, bis $q_2$ haben wir aber schon dessen Präfix $aa$ akzeptiert und das soll in $L_2$ nicht möglich sein. 
+Wir definieren also für alle Symbole $a \in \Sigma$ die Übergänge 
+\begin{equation*}
+	\delta''(q, a) \defeq \begin{cases}
+		q_\bot &\text{falls } q \in F \\
+		\delta(q, a) &\text{sonst}
+	\end{cases}
+\end{equation*}
+Dabei soll $q_\bot \notin Q$ ein neu eingeführter Zustand sein, in dem wir anhalten ohne zu akzeptieren (es gibt keinen ausgehenden Übergang, aber $q_\bot$ ist auch kein Finalzustand).
+
+Damit können wir nun einen DFA
+\begin{equation*}
+	\mathcal{M}'' \defeq \tuple{Q \cup \menge{q_\bot}, \Sigma, \delta'', q_0, F}
+\end{equation*}
+definieren, der obige Übergangsfunktion $\delta''$ verwendet sowie den neu eingeführten Fangzustand $q_\bot$.
+
+\begin{beispiel}
+	Für unser Beispiel fügen wir den Zustand $q_\bot$ und Übergänge von den Finalzuständen $q_2$ und $q_4$ mit den Symbolen $a$ und $b$ aus $\Sigma$ zum Fangzustand. Der Übergang $q_2 \overset{b}{\to} q_3$ wird dabei überschrieben durch den Übergang $q_2 \overset{a,b}{\to} q_\bot$.
+	\begin{center}
+		\begin{tikzpicture} [->, >=stealth', initial text=, auto, node
+			distance=17mm, bend angle=20, semithick]
+			\node[state,initial]   (q0)               {$q_0$};
+			\node[state]           (q1) [right of=q0] {$q_1$};
+			\node[state,accepting] (q2) [right of=q1] {$q_2$};
+			\node[state]           (q3) [right of=q2] {$q_3$};
+			\node[state,accepting] (q4) [right of=q3] {$q_4$};
+			\node[state]           (qb) [below of=q3] {$q_\bot$};
+			
+			\path[->] (q0) edge node {$a$} (q1)
+			(q1) edge node {$a$}   (q2)
+			(q2) edge node[below left] {$a,b$} (qb)
+			(q3) edge node {$b$}   (q4)
+			(q4) edge node {$a,b$} (qb);
+		\end{tikzpicture}
+	\end{center}	
+\end{beispiel}
+
+Nun bleibt auch hier zu zeigen, dass unsere Konstruktion korrekt ist, d.h. dass $L(\mathcal{M}'') = L_2$ gilt.
+\begin{align*}
+	x \in L(\mathcal{M}'') \quad 
+	&\Leftrightarrow \quad \delta''(q_0, x) \in F \tag{Def. Akzeptanz}\\
+	&\Leftrightarrow \quad \delta(q_0, x) \in F \text{ und ex. kein echtes Präfix } \quer{x} \text{ von } x \text{ mit } \delta(q_0, \quer{x}) \in F \tag{Def. $\delta''$} \\
+	&\Leftrightarrow \quad x \in L_2 \tag{Def. von $L_2$}\\
+\end{align*}
+
+
+\section*{Erkennt $\mathcal{M}'$ auch $L_2$?}
+
+Wir verwenden wieder unser Beispiel und wollen $L_2 = \menge{aa}$ mit dem Automat $\mathcal{M}'$ erkennen.
+\begin{center}
+	\begin{tikzpicture} [->, >=stealth', initial text=, auto, node
+		distance=17mm, bend angle=20, semithick]
+		\node[state,initial]   (q0)               {$q_0$};
+		\node[state]           (q1) [right of=q0] {$q_1$};
+		\node[state]           (q2) [right of=q1] {$q_2$};
+		\node[state]           (q3) [right of=q2] {$q_3$};
+		\node[state,accepting] (q4) [right of=q3] {$q_4$};
+		
+		\path[->] (q0) edge node {$a$} (q1)
+		(q1) edge node {$a$} (q2)
+		(q2) edge node {$b$} (q3)
+		(q3) edge node {$b$} (q4);
+	\end{tikzpicture}
+\end{center}
+Wir können zwar die Übergänge $q_0 \overset{a}{\longrightarrow} q_1 \overset{a}{\longrightarrow} q_2$ durchführen und das Wort $aa$ zwischenzeitlich lesen, jedoch ist nach unserer Konstruktion $q_2$ kein Finalzustand mehr, sodass wir an dieser Stelle nicht akzeptieren und weitere Übergänge durchführen müssten. Dadurch verlängert sich das Wort $aa$ zwangsweise zu $aabb$. Es gilt also $aa \notin L(\mathcal{M}')$ und somit schon $L_2 \neq L(\mathcal{M}')$. $L_2$ wird folglich nicht von $\mathcal{M}'$ erkannt.
+
+\section*{Erkennt $\mathcal{M}''$ auch $L_1$?}
+
+Wieder versuchen wir anhand des Beispiels die Sprache $L_1 = \menge{aabb}$ mit dem Automaten $\mathcal{M}''$ zu erkennen.
+\begin{center}
+	\begin{tikzpicture} [->, >=stealth', initial text=, auto, node
+		distance=17mm, bend angle=20, semithick]
+		\node[state,initial]   (q0)               {$q_0$};
+		\node[state]           (q1) [right of=q0] {$q_1$};
+		\node[state,accepting] (q2) [right of=q1] {$q_2$};
+		\node[state]           (q3) [right of=q2] {$q_3$};
+		\node[state,accepting] (q4) [right of=q3] {$q_4$};
+		\node[state]           (qb) [below of=q3] {$q_\bot$};
+		
+		\path[->] (q0) edge node {$a$} (q1)
+		(q1) edge node {$a$}   (q2)
+		(q2) edge node[below left] {$a,b$} (qb)
+		(q3) edge node {$b$}   (q4)
+		(q4) edge node {$a,b$} (qb);
+	\end{tikzpicture}
+\end{center}	
+Wir starten und können zumindest den Teil $aa$ lesen und würden diesen auch schon akzeptieren. Es ist also $aa \in L(\mathcal{M}'')$ aber offensichtlich $aa \notin L_1$. Somit muss schon $L_1 \neq L(\mathcal{M}'')$ gelten, d.h. $L_1$ wird nicht von $\mathcal{M}''$ erkannt.
+
+\end{document}

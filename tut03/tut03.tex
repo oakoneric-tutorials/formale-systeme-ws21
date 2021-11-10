@@ -1,0 +1,1349 @@
+\documentclass{beamer}
+\usepackage{../tut-slides}
+\usepackage{../mathoperators}
+
+\usepackage{amsmath,amssymb}
+\usepackage{enumerate}
+\usepackage[inline]{enumitem} 		%customize label
+\usepackage[normalem]{ulem}
+\newcommand{\labelitemi}{\raisebox{1pt}{\scalebox{.9}{$\blacktriangleright$}}}
+\newcommand{\labelitemii}{$\vartriangleright$}
+\newcommand{\labelitemiii}{--}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{tabu}
+\newcommand*\head{\rowfont{\bfseries}}
+\newcommand*{\tw}{\rowfont{\ttfamily}}
+
+\renewcommand{\tabularxcolumn}[1]{>{\hspace{0pt}}m{#1}}
+
+\usepackage{csquotes}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Colours:
+\usepackage{xcolor,colortbl}
+\definecolor{redhighlights}{HTML}{FFAA66}
+\definecolor{lightblue}{HTML}{55AAFF}
+\definecolor{lightred}{HTML}{FF5522}
+\definecolor{lightpurple}{HTML}{DD77BB}
+\definecolor{lightgreen}{HTML}{55FF55}
+\definecolor{darkred}{HTML}{CC4411}
+\definecolor{darkblue}{HTML}{176FC0}%{1133AA}
+\definecolor{nightblue}{HTML}{2010A0}%{1133AA}
+\definecolor{alert}{HTML}{176FC0}
+\definecolor{darkgreen}{HTML}{36AB14}
+\definecolor{strongyellow}{HTML}{FFE219}
+\definecolor{devilscss}{HTML}{666666}
+
+\newcommand{\redalert}[1]{\textcolor{darkred}{#1}}
+\newcommand{\bluealert}[1]{\textcolor{darkblue}{#1}}
+
+%%% Style commands
+
+\newcommand{\quoted}[1]{\texttt{"}{#1}\texttt{"}}
+\newcommand{\squote}{\texttt{"}} % straight quote
+\newcommand{\Sterm}[1]{\ensuremath{\mathtt{\textcolor{purple}{#1}}}}    % letters in alphabets
+\newcommand{\Snterm}[1]{\textsf{\textcolor{darkblue}{#1}}} % nonterminal symbols
+\newcommand{\Sntermsub}[2]{\ensuremath{\Snterm{#1}_{\Snterm{#2}}}} % nonterminal symbols
+\newcommand{\Slang}[1]{\textbf{\textcolor{black}{#1}}}    % languages
+\newcommand{\Slangsub}[2]{\ensuremath{\Slang{#1}_{\Slang{#2}}}}    % languages
+% Code
+\newcommand{\Scode}[1]{\textbf{#1}}    % reserved words in program listings, e.g., "if"
+\newcommand{\Scodelit}[1]{\textcolor{purple}{#1}}    % literals in program listings, e.g., strings
+\newcommand{\Scomment}[1]{\textcolor{gray}{#1}}    % comment in program listings
+
+\newcommand{\epstrastar}{\mathrel{\mathord{\stackrel{\epsilon}{\to}}{}^\ast}} % transitive reflexive closure of epsilon transitions in an epslion-NFA
+
+\newcommand{\narrowcentering}[1]{\mbox{}\hfill#1\hfill\mbox{}}
+
+\newcommand{\Smach}[1]{\ensuremath{\mathcal{#1}}}    % machines
+
+\newcommand{\mytrue}{\Scodelit{1}}
+\newcommand{\myfalse}{\Scodelit{0}}
+% \newcommand{\emptyClause}{\bot}
+
+
+\newcommand{\mydualbox}[3]{%
+	\begin{minipage}[t]{#1}
+		\begin{beamerboxesrounded}[upper=block title,lower=block body,shadow=true]%
+			{\centering\usebeamerfont*{block title}#2}%
+			\raggedright%
+			\usebeamerfont{block body}
+			%     \small
+			#3%
+		\end{beamerboxesrounded}
+	\end{minipage}
+}
+% 
+\newcommand{\myheaderbox}[2]{%
+	\begin{minipage}[t]{#1}
+		\begin{beamerboxesrounded}[upper=block title,lower=block title,shadow=true]%
+			{\centering\usebeamerfont*{block title}\rule{0pt}{2.6ex} #2}%
+		\end{beamerboxesrounded}
+	\end{minipage}
+}
+
+\newcommand{\mycontentbox}[2]{%
+	\begin{minipage}[t]{#1}%
+		\begin{beamerboxesrounded}[upper=block body,lower=block body,shadow=true]%
+			{\centering\usebeamerfont*{block body}\rule{0pt}{2.6ex}#2}%
+		\end{beamerboxesrounded}
+	\end{minipage}
+}
+
+\newcommand{\mylcontentbox}[2]{%
+	\begin{minipage}[t]{#1}%
+		\begin{beamerboxesrounded}[upper=block body,lower=block body,shadow=true]%
+			{\flushleft\usebeamerfont*{block body}\rule{0pt}{2.6ex}#2}%
+		\end{beamerboxesrounded}
+	\end{minipage}
+}
+
+% label=180:{\rotatebox{90}{{\footnotesize\textcolor{darkgreen}{Beispiel}}}}
+% \hspace{-8mm}\ghost{\raisebox{-7mm}{\rotatebox{90}{{\footnotesize\textcolor{darkgreen}{Beispiel}}}}}\hspace{8mm}
+\newcommand{\examplebox}[1]{%
+	\begin{tikzpicture}
+		\node (n1) [draw=darkgreen, fill=darkgreen!10,thick,align=left,text width=\linewidth, inner ysep=2mm, inner xsep=2mm] at (0,0) {#1};
+		% 		\node (n2) [align=left,text width=\linewidth,inner sep=0mm] at (n1.92) {{\footnotesize\raisebox{3mm}{\textcolor{darkgreen}{Beispiel}}}};
+		% 		\node (n2) [decorate,draw=darkgreen, fill=darkgreen!10,thick, align=left,text width=\linewidth,inner sep=2mm] at (n1.90) {{\footnotesize\raisebox{0mm}{\textcolor{darkgreen}{Beispiel}}}};
+	\end{tikzpicture}%
+}%
+
+\newcommand{\codebox}[1]{%
+	\begin{tikzpicture}
+		\node (n1) [draw=strongyellow, fill=strongyellow!10,thick,align=left,text width=\linewidth, inner ysep=2mm, inner xsep=2mm] at (0,0) {#1};
+	\end{tikzpicture}%
+}%
+
+\newcommand{\defbox}[1]{%
+	\begin{tikzpicture}
+		\node (n1) [draw=darkred, fill=darkred!10,thick,align=left,text width=\linewidth, inner ysep=2mm, inner xsep=2mm] at (0,0) {#1};
+	\end{tikzpicture}%
+}%
+
+\newcommand{\theobox}[1]{%
+	\begin{tikzpicture}
+		\node (n1) [draw=darkblue, fill=darkblue!10,thick,align=left,text width=\linewidth, inner ysep=2mm, inner xsep=2mm] at (0,0) {#1};
+	\end{tikzpicture}%
+}%
+
+\newcommand{\anybox}[2]{%
+	\begin{tikzpicture}
+		\node (n1) [draw=#1, fill=#1!10,thick,align=left,text width=\linewidth, inner ysep=2mm, inner xsep=2mm] at (0,0) {#2};
+	\end{tikzpicture}%
+}%
+
+
+\newsavebox{\mybox}%
+\newcommand{\doodlebox}[2]{%
+	\sbox{\mybox}{#2}%
+	\begin{tikzpicture}
+		\node (n1) [draw=#1, fill=#1!10,thick,align=left,inner sep=1mm] at (0,0) {\usebox{\mybox}};
+	\end{tikzpicture}%
+}%
+\newcommand{\widedoodlebox}[2]{%
+	\sbox{\mybox}{#2}%
+	\begin{tikzpicture}
+		\node (n1) [draw=#1, fill=#1!10,thick,align=left,inner sep=1mm,text width=\linewidth] at (0,0) {\usebox{\mybox}};
+	\end{tikzpicture}%
+}%
+
+\tikzset{onslide/.code args={<#1>#2}{%
+		\only<#1| handout:0>{\pgfkeysalso{#2}} 
+}}
+
+\newcommand{\tuple}[1]{\langle{#1}\rangle}
+\usetikzlibrary{arrows,automata,positioning,shapes,calc,decorations.pathmorphing,matrix}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}	
+	\title{Formale Systeme}
+	\subtitle{Übung 3}
+	\author{Eric Kunze}
+	\email{eric.kunze@tu-dresden.de}
+	\city{TU Dresden}
+	\date{\today}
+%	\institute{Lehrstuhl für Grundlagen der Programmierung}
+	\titlegraphic{\includegraphics[width=2cm]{../TUD-white.pdf}}
+
+	\maketitle
+	
+	\begin{frame} \frametitle{Wer bin ich?}
+		\small
+		\begin{itemize}
+			\item \textbf{Eric} \textcolor{cdgray!50}{Kunze}
+			\item \url{eric.kunze@tu-dresden.de}
+			\item Telegram: \texttt{@oakoneric} bzw. \url{t.me/oakoneric}
+			\item Fragen, Wünsche, Vorschläge, \dots 
+			\item Website mit Material: \url{https://oakoneric.github.io/fs21} \\
+			keine Garantie für Vollständigkeit/Korrektheit, \\
+			Slides enthalten Lösungs\textit{ansätze} zu ausgewählten Aufgaben
+		\end{itemize}	
+	\end{frame}
+
+	\begin{frame} \frametitle{Was bisher geschah ...}
+		\small
+		\begin{itemize}
+			\item Basics Formale Sprachen
+			\item Grammatiken und die Chomsky-Hierarchie
+			\item Reguläre Sprachen
+		\end{itemize}
+	
+		\defbox{
+			Ein \textbf{deterministischer endlicher Automat} (DFA)
+			\Smach{M} ist ein Tupel $\Smach{M}=\tuple{Q,\Sigma,\delta,q_0,F}$ mit
+			den folgenden Bestandteilen:
+			\begin{itemize}
+				\item $Q$: endliche Menge von Zuständen
+				\item $\Sigma$: Alphabet
+				\item $\delta$: \redalert{Übergangsfunktion}, eine partielle Funktion $Q\times\Sigma \to Q$
+				\item $q_0$: Startzustand $q_0\in Q$
+				\item $F$: Menge von Endzuständen $F\subseteq Q$
+			\end{itemize}
+		}
+	
+		\textbf{Sprache eines DFA}: $L(\Smach{M}) = \menge{w \in \Sigma^\ast : \delta^\ast(q_0, w) \in F}$
+	\end{frame}
+
+	\begin{frame} \frametitle{Was bisher geschah ...}
+		\small
+		\begin{itemize}
+			\item \textbf{totale Übergangsfunktion}: \linebreak
+			Einführung eines Fangzustandes
+			\item Zusammenhang: reguläre Grammatik $\leftrightarrow$ endlicher Automat:
+		\end{itemize}
+	
+		\theobox{
+			\textbf{Satz:} Die Klasse der Sprachen, die durch einen DFA erkannt werden können, ist genau die Klasse
+			der regulären Sprachen.
+		}
+	
+		\codebox{ 
+			Konstruktion einer regulären Grammatik $G_{\Smach{M}}=\tuple{V,\Sigma,P,S}$ aus einem DFA $\Smach{M}=\tuple{Q,\Sigma,\delta,q_0,F}$:
+			\vspace{-0.5\baselineskip}
+			\begin{itemize}
+				\item $V\defeq Q$ \\[-\baselineskip]
+				\item $S\defeq q_0$
+				\item $P$ besteht aus den folgenden Produktionsregeln:\\[0.5ex]
+				\narrowcentering{%
+					$\begin{array}{l@{}ll}
+						q & {}\to \Sterm{a}q' & \text{falls $\delta(q,\Sterm{a}) = q'$} \\
+						q & {}\to \Sterm{a} & \text{falls $\delta(q,\Sterm{a}) \in F$} \\
+						q_0 & {}\to \epsilon & \text{falls $q_0 \in F$}
+					\end{array}
+					$}
+			\end{itemize}
+		}
+	\end{frame}
+
+	\begin{frame} \frametitle{Was bisher geschah ...}
+		\small
+		\defbox{
+			Ein \textbf{nichtdeterministischer endlicher Automat} (NFA) 
+			\Smach{M} ist ein Tupel $\Smach{M}=\tuple{Q,\Sigma,\delta,Q_0,F}$ mit
+			den folgenden Bestandteilen:
+			\begin{itemize}
+				\item $Q$: endliche Menge von Zuständen
+				\item $\Sigma$: Alphabet
+				\item $\delta$: \redalert{Übergangsfunktion}, eine totale Funktion $Q\times\Sigma \to \bluealert{2^Q}$
+				\item $Q_0$: \bluealert{Menge} möglicher Startzustände $Q_0\subseteq Q$
+				\item $F$: Menge von Endzuständen $F\subseteq Q$
+			\end{itemize}
+		}
+	
+		Alternative Definitionen: \vspace{-.5\baselineskip}
+		\begin{itemize}
+			\item Übergangsrelation $\Delta \subseteq Q\times\Sigma\times Q$ mit
+			\begin{equation*}
+			 	q'\in\delta(q,\sigma) \qquad\text{ genau dann wenn }\qquad \tuple{q,\sigma,q'}\in\Delta
+			\end{equation*}
+			\item einzelner Startzustand $q_0$
+			\item einzelner Endzustand $q_f$
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame} \frametitle{Was bisher geschah ...}
+		\small
+		
+		\textbf{Potenzmengenkonstruktion}: NFA $\to$ DFA
+		
+		\defbox{Für einen NFA $\Smach{M}=\tuple{Q,\Sigma,\delta,Q_0,F}$ definieren wir den \redalert{Potenzmengen-DFA} 
+			$\Smach{M}_{\textsf{DFA}}=\tuple{Q_{\textsf{DFA}},\Sigma,\delta_{\textsf{DFA}},q_0,F_{\textsf{DFA}}}$
+			wie folgt:%
+			\begin{itemize}
+				\item $Q_{\textsf{DFA}}=2^Q$
+				\item $\delta_{\textsf{DFA}}(R,\Sterm{a})=\bigcup_{q\in R}\delta(q,\Sterm{a})$
+				\item $q_0=Q_0$
+				\item $F_{\textsf{DFA}}=\{R\in 2^Q\mid R\cap F \neq \emptyset\}$
+			\end{itemize}
+		}
+		\smallskip
+		
+		\theobox{\textbf{Satz (Rabin/Scott):} $\Slang{L}(\Smach{M}) = \Slang{L}(\Smach{M}_{\textsf{DFA}})$}
+	\end{frame}
+
+	\begin{frame} \frametitle{Was bisher geschah ...}
+		\small 
+		\defbox{
+			\textbf{NFA mit Wortübergängen} $\Smach{M}=\tuple{Q,\Sigma,\Delta,Q_0,F}$ wobei
+			\begin{itemize}
+				\item $\Delta$: Übergangsrelation, eine endliche Relation $\Delta\subseteq Q\times \redalert{\Sigma^\ast} \times Q$
+			\end{itemize}
+		}
+	
+		\pause
+		
+		\textbf{Eliminieren von $\epsilon$-Übergängen}:
+		
+		Sei $\epstrastar$ der reflexive, transitive Abschluss von $\stackrel{\epsilon}{\to}$, d.h. die Menge aller Zustandspaare $\tuple{q,q'}\in Q^2$ für die es Übergänge $q=p_0\stackrel{\epsilon}{\to} p_1\stackrel{\epsilon}{\to}\ldots\stackrel{\epsilon}{\to}p_n=q'$ gibt ($n\geq 0$).
+		
+		\codebox{
+			Für einen $\epsilon$-NFA $\Smach{M}=\tuple{Q,\Sigma,\Delta,Q_0,F}$ definieren wir einen NFA
+			$\Smach{M}'=\tuple{Q,\Sigma,\delta,Q_0',F}$ wobei
+			\begin{itemize}
+				\item $\delta(q,\Sterm{a})=\{ q'\mid q\stackrel{\Sterm{a}}{\to}r\epstrastar q'\text{ für ein }r\in Q\}$
+				\item $Q_0'=\{q\mid q_0\epstrastar q\text{ für ein }q_0\in Q_0\}$
+			\end{itemize}
+		}
+	\end{frame}
+
+	\begin{frame} \frametitle{Was bisher geschah ...}
+		\small
+		\textbf{Eliminierung von $\epsilon$-Übergängen}:
+		\begin{itemize}
+			\item Verlängerung nach rechts (wie in Definition): \\
+			Achtung: Startzustände
+			
+			\narrowcentering{%
+				\scalebox{0.7}{%
+					\begin{tikzpicture}[baseline={(current bounding box.center)}]
+						% \draw[help lines] (0,0) grid (7,2);
+						\node (s1) [circle,draw=black,thick] at (0,0) {$q_0$};
+						\node (s2) [circle,draw=black,thick] at (2,0) {$q_1$};
+						\node (s3) [circle,draw=black,thick] at (4,0) {$q_2$};
+						\node (s4) [double,circle,draw=black,thick] at (6,0) {$q_3$};
+						%
+						\path[->,line width=0.5mm](0,-0.8) edge (s1);
+						\path[->,line width=0.5mm](s1) edge node[above] {$\epsilon$} (s2);
+						\path[->,line width=0.5mm](s2) edge node[above] {$\Sterm{a}$} (s3);
+						\path[->,line width=0.5mm](s3) edge node[above] {$\epsilon$} (s4);
+						%
+						\path[->,line width=0.5mm,darkred,dotted](2,-0.8) edge (s2);
+						\path[->,line width=0.5mm, bend right,darkred,dotted](s2) edge node[above,yshift=-2pt] {$\Sterm{a}$} (s4);
+						% \path[->,line width=0.5mm, bend right](s1) edge node[above,yshift=-2pt] {$\Sterm{a}$} (s3);
+						% \path[->,line width=0.5mm, bend right=40](s1) edge node[above,yshift=-2pt] {$\Sterm{a}$} (s4);
+			\end{tikzpicture}}}
+			%
+			\item Verlängerung nach links: \\
+			Achtung: Endzustände
+			
+			\narrowcentering{%
+				\scalebox{0.7}{%
+					\begin{tikzpicture}[baseline={(current bounding box.center)}]
+						% \draw[help lines] (0,0) grid (7,2);
+						\node (s1) [circle,draw=black,thick] at (0,0) {$q_0$};
+						\node (s2) [circle,draw=black,thick] at (2,0) {$q_1$};
+						\node (s3) [double,circle,draw=darkred,thick] at (4,0) {$q_2$};
+						\node (s4) [double,circle,draw=black,thick] at (6,0) {$q_3$};
+						%
+						\path[->,line width=0.5mm](0,-0.8) edge (s1);
+						\path[->,line width=0.5mm](s1) edge node[above] {$\epsilon$} (s2);
+						\path[->,line width=0.5mm](s2) edge node[above] {$\Sterm{a}$} (s3);
+						\path[->,line width=0.5mm](s3) edge node[above] {$\epsilon$} (s4);
+						%
+						% \path[->,line width=0.5mm, bend right](s2) edge node[above,yshift=-2pt] {$\Sterm{a}$} (s4);
+						\path[->,line width=0.5mm, bend right,darkred,dotted](s1) edge node[above,yshift=-2pt] {$\Sterm{a}$} (s3);
+						% \path[->,line width=0.5mm, bend right=40](s1) edge node[above,yshift=-2pt] {$\Sterm{a}$} (s4);
+			\end{tikzpicture}}}
+			%
+			\item Verlängerung in beide Richtungen:
+			
+			\narrowcentering{%
+				\scalebox{0.7}{%
+					\begin{tikzpicture}[baseline={(current bounding box.center)}]
+						% \draw[help lines] (0,0) grid (7,2);
+						\node (s1) [circle,draw=black,thick] at (0,0) {$q_0$};
+						\node (s2) [circle,draw=black,thick] at (2,0) {$q_1$};
+						\node (s3) [circle,draw=black,thick] at (4,0) {$q_2$};
+						\node (s4) [double,circle,draw=black,thick] at (6,0) {$q_3$};
+						%
+						\path[->,line width=0.5mm](0,-0.8) edge (s1);
+						\path[->,line width=0.5mm](s1) edge node[above] {$\epsilon$} (s2);
+						\path[->,line width=0.5mm](s2) edge node[above] {$\Sterm{a}$} (s3);
+						\path[->,line width=0.5mm](s3) edge node[above] {$\epsilon$} (s4);
+						%
+						\path[->,line width=0.5mm, bend right,darkred,dotted](s2) edge node[above,yshift=-2pt] {$\Sterm{a}$} (s4);
+						\path[->,line width=0.5mm, bend right,darkred,dotted](s1) edge node[above,yshift=-2pt] {$\Sterm{a}$} (s3);
+						\path[->,line width=0.5mm, bend right=35,darkred,dotted](s1) edge node[above,yshift=-2pt] {$\Sterm{a}$} (s4);
+			\end{tikzpicture}}}
+		\end{itemize}		
+	\end{frame}
+
+
+	\section{Übungsblatt 3}
+	
+	\begin{frame} \frametitle{Aufgabe 1}
+		Zeigen Sie konstruktiv, dass 
+		\begin{itemize}
+			\item für jeden NFA $\mathcal{M}$ mit mehreren Startzuständen ein äquivalenter NFA $\mathcal{M'}$ mit nur einem Startzustand existiert bzw. 
+			\item für jeden NFA $\mathcal{M}$ mit mehreren Finalzuständen ein äquivalenter NFA $\mathcal{M'}$ mit nur einem Finalzustand existiert. Gilt die letzte Aussage auch für DFAs?
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 1 --- Teil (a)}
+		\small
+		Sei $\mathcal{M} = \tuple{Q, \Sigma, \delta, Q_0, F}$ ein NFA mit mehreren Startzuständen (d.h. $\card{Q_0} \ge 2$). 
+		
+		\onslide<2->{
+		Wir konstruieren daraus einen NFA $\mathcal{M}'$, bei dem ein neuer, unbenutzter Startzustand vorgeschalten wird und mit $\epsilon$-Übergängen in die Startzustände von $\mathcal{M}$ übergeht. Es ist also $\mathcal{M}' \defeq \tuple{Q \cup \menge{q_\ast}, \Sigma, \Delta, \menge{q_\ast}, F}$ mit $q_\ast \notin Q$ und die Übergangsrelation ist gegeben durch
+		\begin{align*}
+			\Delta \defeq & \textcolor{cdgray}{\menge{\text{originale Übergänge}} \cup \{ \text{neue } \epsilon \text{-Übergänge} \} } \\
+			\defeq & \menge{\tuple{q, \Sterm{a}, q'} : q' \in \delta(q, \Sterm{a}) \text{ für } q,q' \in Q \text{ und } \Sterm{a} \in \Sigma } \\
+			&\cup \menge{\tuple{q_\ast, \epsilon, q_0} : q_0 \in Q_0}
+		\end{align*}
+		}
+		
+		\centering
+		\scalebox{0.7}{%
+			\begin{tikzpicture}[baseline={(current bounding box.center)}]
+				\node (s1) [state, thick] at (0,0) {$q_1$};
+				\node (s2) [state, thick] at (0,-1) {$q_2$};
+				
+				\node (s4) [thick] at (2,0) {$\dots$};
+				\node (s5) [thick] at (2,-1) {$\dots$};
+			
+				\path[->,line width=0.5mm](s1) edge (s4);
+				\path[->,line width=0.5mm](s2) edge (s5);
+				
+				\onslide<2>{\tikzset{every path/.style={color=cdgray!50}}}
+				\path[->,line width=0.5mm](-1,0) edge (s1);
+				\path[->,line width=0.5mm](-1,-1) edge (s2);
+				
+				\onslide<2>{
+				\tikzset{every node/.style={color=lightblue}}
+				\tikzset{every path/.style={color=lightblue}}
+				\node (s0) [state, thick] at (-3, -0.5) {$q_\ast$};
+				\path[->,line width=0.5mm] (-4,-0.5) edge (s0);
+				\path[->,line width=0.5mm] (s0) edge node[above] {$\epsilon$} (s1);
+				\path[->,line width=0.5mm] (s0) edge node[below] {$\epsilon$} (s2);
+				}
+			\end{tikzpicture}}
+	\end{frame}
+
+	\begin{frame}
+		\small
+		Dieser $\epsilon$-NFA kann nun in einen äquivalenten NFA umgewandelt werden (durch \enquote{Verlängerung nach links}).
+		
+		Es bleibt nun noch zu zeigen, dass der konstruierte Automat $\mathcal{M}'$ korrekt ist, d.h. $\Slang{L}(\mathcal{M}) = \Slang{L}(\mathcal{M}')$ gilt.
+		
+		\begin{align*}
+			&w \in \Slang{L}(\mathcal{M}) \\
+			&\equivalent \quad w = \Sterm{u_1} \dots \Sterm{u_n} \text{ mit } \Sterm{u_1}, \dots, \Sterm{u_n} \in \Sigma \\
+			&\equivalent \quad \text{ex. akzeptierender Lauf } q_1, \dots q_n \text{ in } \mathcal{M} \text{ (d.h. $q_n \in F$)}\\
+			&\equivalent \quad \text{ex. akzeptierender Lauf } q_0, q_1, \dots, q_n \text{ in } \mathcal{M}' \text{ (d.h. $q_n \in F$)} \\
+			&\equivalent \quad w \in \Slang{L}(\mathcal{M}')
+		\end{align*}
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 1 --- Teil (b)}
+		\small
+		Sei $\mathcal{M} = \tuple{Q, \Sigma, \delta, Q_0, F}$ ein NFA mit mehreren Finalzuständen (d.h. $\card{F} \ge 2$). 
+		
+		\onslide<2->{
+			Analog zu Teil (a) führen wir einen neuen Finalzustand ein und erreichen diesen über $\epsilon$-Übergänge von den originalen Finalzuständen.
+			Es ist also $\mathcal{M}' \defeq \tuple{Q \cup \menge{q_\ast}, \Sigma, \Delta, Q_0, \menge{q_\ast}}$ mit $q_\ast \notin Q$ und die Übergangsrelation ist gegeben durch
+			\begin{align*}
+				\Delta \defeq & \textcolor{cdgray}{\menge{\text{originale Übergänge}} \cup \{ \text{neue } \epsilon \text{-Übergänge} \} } \\
+				\defeq & \menge{\tuple{q, \Sterm{a}, q'} : q' \in \delta(q, \Sterm{a}) \text{ für } q,q' \in Q \text{ und } \Sterm{a} \in \Sigma } \\
+				&\cup \menge{\tuple{q_F, \epsilon, q_\ast} : q_F \in F}
+			\end{align*}%
+		}
+		\vspace{-\baselineskip}
+		
+		\begin{center}%
+			\scalebox{0.7}{%
+				\begin{tikzpicture}[baseline={(current bounding box.south)}]
+					\node (s1) [state, thick, onslide={<1>{accepting}}] at (0,0) {$q_1$};
+					\node (s2) [state, thick, onslide={<1>{accepting}}] at (0,-1) {$q_2$};
+					
+					\node (s4) [thick] at (-2,0) {$\dots$};
+					\node (s5) [thick] at (-2,-1) {$\dots$};
+					
+					\path[->,line width=0.5mm](s4) edge (s1);
+					\path[->,line width=0.5mm](s5) edge (s2);
+					
+					
+					\onslide<2->{
+						\tikzset{every node/.style={color=lightblue}}
+						\tikzset{every path/.style={color=lightblue}}
+						\node (s0) [state, accepting, thick] at (2, -0.5) {$q_\ast$};
+						\path[->,line width=0.5mm] (s1) edge node[above] {$\epsilon$} (s0);
+						\path[->,line width=0.5mm] (s2) edge node[below] {$\epsilon$} (s0);
+					}
+			\end{tikzpicture}}
+		\end{center}
+	
+		\onslide<3->{Verlängerung nach rechts eliminiert nun noch die $\epsilon$-Übergänge und wir erhalten einen NFA.}
+	\end{frame}
+	
+	\begin{frame} \frametitle{Aufgabe 2}
+		Sei $L$ eine reguläre Sprache über einem mindestens
+		zweielementigen Alphabet $\Sigma$.
+		Zeigen Sie, dass die folgenden Sprachen regulär sind.
+		
+		\begin{enumerate}
+			\item [(a)]
+			$L_1 =  \{ x \in L : \text{es gibt kein $y \in \Sigma^+$,
+				so dass $xy \in L$} \}$
+			\item [(b)]
+			$L_2 = \{ x \in L : \text{kein echtes Pr\"afix von $x$ liegt in $L$}
+			\}$
+		\end{enumerate}
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 2 --- Teil (a)}
+		\small
+		Gegeben sei eine reguläre Sprache $L$ --- dazu gehört ein DFA $\mathcal{M} = \tuple{Q, \Sigma, \delta, q_0, F}$ mit $L = L(\mathcal{M})$.
+		\pause
+		
+		\begin{exampleblock}{Beispiel: $L = \menge{aa, aabb}$}
+			\begin{center}
+				\begin{tikzpicture} [->, >=stealth', initial text=, auto, node
+					distance=17mm, bend angle=20, semithick]
+					\node                  (M)                {$\mathcal{M}:$};
+					\node[state,initial]   (q0) [right of=M ] {$q_0$};
+					\node[state]           (q1) [right of=q0] {$q_1$};
+					\node[state,accepting] (q2) [right of=q1] {$q_2$};
+					\node[state]           (q3) [right of=q2] {$q_3$};
+					\node[state,accepting] (q4) [right of=q3] {$q_4$};
+					
+					\path[->] (q0) edge node {$a$} (q1)
+					(q1) edge node {$a$} (q2)
+					(q2) edge node {$b$} (q3)
+					(q3) edge node {$b$} (q4);
+				\end{tikzpicture}
+			\end{center}
+			Es ist $L_1 = \menge{aabb}$, denn für $x = aa$ existiert Verlängerung $y = bb$, sodass $xy = aabb \in L$.
+		\end{exampleblock}
+		\pause
+		
+		\textbf{Idee}: Unterbinde zu frühe Akzeptanz (hier in $q_2$)
+		\begin{equation*}
+			F' \defeq \menge{q \in F : \nexists y \in \Sigma^+ \text{ mit } \delta(q,y) \in F}
+		\end{equation*}
+		$F'$ beschreibt die Finalzustände $q \in F$, die nicht mit einem Wortübergang in einen weiteren Finalzustand verlängert werden können.
+	\end{frame}
+
+	\begin{frame}
+		\small
+		Wir definieren den Automaten $\mathcal{M}' \defeq \tuple{Q, \Sigma, \delta, q_0, F'}$ mit dem bereits angegebenen $F' \defeq \menge{q \in F : \nexists y \in \Sigma^+ \text{ mit } \delta(q,y) \in F}$.
+		\pause
+		
+		\begin{exampleblock}{Beispiel: $F' = \menge{q_4}$}
+			\begin{center}
+				\begin{tikzpicture} [->, >=stealth', initial text=, auto, node
+					distance=17mm, bend angle=20, semithick]
+					\node                  (M)                {$\mathcal{M}':$};
+					\node[state,initial]   (q0) [right of=M ] {$q_0$};
+					\node[state]           (q1) [right of=q0] {$q_1$};
+					\node[state]           (q2) [right of=q1] {$q_2$};
+					\node[state]           (q3) [right of=q2] {$q_3$};
+					\node[state,accepting] (q4) [right of=q3] {$q_4$};
+					
+					\path[->] (q0) edge node {$a$} (q1)
+					(q1) edge node {$a$} (q2)
+					(q2) edge node {$b$} (q3)
+					(q3) edge node {$b$} (q4);
+				\end{tikzpicture}
+			\end{center}
+		\end{exampleblock}
+		\pause
+		
+		\textbf{Korrektheit}: zu zeigen ist $L(\mathcal{M}') = L_1$
+		\begin{align*}
+			&x \in L(\mathcal{M}') \\
+			\Leftrightarrow \quad &\delta(q_0, x) \in F' \tag{Def. Akzeptanz}\\
+			\Leftrightarrow \quad &\delta(q_0, x) \in F \text{ und ex. kein } y \in \Sigma^+: \delta(q_0, xy) \in F  \tag{Def. $F'$} \\
+			\Leftrightarrow \quad &x \in L_1 \tag{Def. von $L_1$}\\
+		\end{align*}
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 2 --- Teil (b)}
+		\small
+		Gegeben sei eine reguläre Sprache $L$ --- dazu gehört ein DFA $\mathcal{M} = \tuple{Q, \Sigma, \delta, q_0, F}$ mit $L = L(\mathcal{M})$.
+		\pause
+		
+		\begin{exampleblock}{Beispiel: $L = \menge{aa, aabb}$}
+			\begin{center}
+				\begin{tikzpicture} [->, >=stealth', initial text=, auto, node
+					distance=17mm, bend angle=20, semithick]
+					\node                  (M)                {$\mathcal{M}:$};
+					\node[state,initial]   (q0) [right of=M ] {$q_0$};
+					\node[state]           (q1) [right of=q0] {$q_1$};
+					\node[state,accepting] (q2) [right of=q1] {$q_2$};
+					\node[state]           (q3) [right of=q2] {$q_3$};
+					\node[state,accepting] (q4) [right of=q3] {$q_4$};
+					
+					\path[->] (q0) edge node {$a$} (q1)
+					(q1) edge node {$a$} (q2)
+					(q2) edge node {$b$} (q3)
+					(q3) edge node {$b$} (q4);
+				\end{tikzpicture}
+			\end{center}
+			Es ist $L_2 = \menge{aa}$, denn für $aabb$ existiert der Präfix $aa \in L$.
+		\end{exampleblock}
+		\pause
+		
+		\textbf{Idee}: Verhindere weitere Übergänge von Finalzuständen
+		
+		Sei $q_\bot \notin Q$ ein neuer, unbenutzter Fangzustand und $a \in \Sigma$ ein beliebiges Symbol.
+		\begin{equation*}
+			\delta''(q, a) \defeq \begin{cases}
+				q_\bot &\text{falls } q \in F \\
+				\delta(q, a) & \text{sonst}
+			\end{cases}
+		\end{equation*}
+		
+	\end{frame}
+	
+	\begin{frame}
+		\small
+		Wir definieren den Automaten $\mathcal{M}'' \defeq \tuple{Q \cup \menge{q_\bot}, \Sigma, \delta'', q_0, F}$ mit dem bereits angegebenen $\delta''$.
+		\pause
+		
+		\begin{exampleblock}{Beispiel: $q_2 \overset{a,b}{\longrightarrow} q_\bot$, $q_4 \overset{a, b}{\longrightarrow} q_\bot$}
+			\begin{center}
+				\begin{tikzpicture} [->, >=stealth', initial text=, auto, node
+					distance=17mm, bend angle=20, semithick]
+					\node                  (M)                {$\mathcal{M}'':$};
+					\node[state,initial]   (q0) [right of=M ] {$q_0$};
+					\node[state]           (q1) [right of=q0] {$q_1$};
+					\node[state,accepting] (q2) [right of=q1] {$q_2$};
+					\node[state]           (q3) [right of=q2] {$q_3$};
+					\node[state,accepting] (q4) [right of=q3] {$q_4$};
+					\node[state]           (qb) [below of=q3] {$q_\bot$};
+					
+					\path[->] (q0) edge node {$a$} (q1)
+					(q1) edge node {$a$}   (q2)
+					(q2) edge node[below left] {$a,b$} (qb)
+					(q3) edge node {$b$}   (q4)
+					(q4) edge node {$a,b$} (qb);
+				\end{tikzpicture}
+			\end{center}	
+		\end{exampleblock}
+		\pause
+		
+		\textbf{Korrektheit}: zu zeigen ist $L(\mathcal{M}'') = L_2$
+		\begin{align*}
+			x \in L(\mathcal{M}'') \quad 
+			&\Leftrightarrow \quad \delta''(q_0, x) \in F \tag{Def. Akzeptanz}\\
+			&\Leftrightarrow \quad \delta(q_0, x) \in F \text{ und ex. kein echtes Präfix } \\
+			&\hspace{4em} \quer{x} \text{ von } x \text{ mit } \delta(q_0, \quer{x}) \in F \tag{Def. $\delta''$} \\
+			&\Leftrightarrow \quad x \in L_2 \tag{Def. von $L_2$}\\
+		\end{align*}
+	\end{frame}
+	
+
+	\begin{frame} \frametitle{Aufgabe 3}
+		\small
+		Konstruieren Sie zu dem grafisch angegebenen $\varepsilon$-NFA  
+		$\mathcal{M} =(Q,\Sigma,\delta ,\{q_0\},F)$ einen äquivalenten NFA $\mathcal{M}'$. 
+		Beschreiben Sie die Komponenten beider Automaten.
+		
+		\onslide<2->{\textbf{Schritt 1}: Startzustände anpassen
+			\begin{equation*}
+				Q_0' = \menge{q \mid q_0 \epstrastar q \text{ für ein } q_0 \in Q_0}
+		\end{equation*}}
+		\onslide<3->{\textbf{Schritt 2}: Verlängerung nach rechts}
+		
+		\begin{center}
+			\begin{tikzpicture} [->, >=stealth', initial text=, auto, node
+				distance=17mm, bend angle=20, semithick]
+				\node[state,initial,initial text= ] (q0) {$q_0$};
+				\node[state] (q1) [above right of=q0] {$q_1$};
+				\node[state] (q2) [below right of=q1, onslide={<2->{initial}}] {$q_2$};
+				\node[state] (q3) [above right of=q2] {$q_3$};
+				\node[state,accepting] (q4) [below right of=q3, onslide={<2->{initial}}] {$q_4$};
+				
+				\onslide<1>{\path[->] (q0) edge node {$\varepsilon$} (q2);}
+				\onslide<1>{\path[->] (q2) edge node {$\varepsilon$} (q4);}
+				
+				\path[->] (q0) edge               node {$a$} (q1);
+				\path[->] (q1) edge  [loop above] node {$a$} (q1) 
+				edge               node {$c$} (q2) 
+				(q2) edge               node {$b$} (q3);
+				\path[->] (q3) edge  [loop above] node {$b$} (q3) 
+				edge               node {$d$} (q4) ;
+				
+				\onslide<3->{\draw[->, lightblue] (q1) to[out=60,in=135] node {$c$} (current bounding box.north east) to[out=-45, in=60] (q4);}
+			\end{tikzpicture}
+		\end{center}
+	\end{frame}
+
+	\begin{frame} \frametitle{Reguläre Ausdrücke}
+		\small
+		\textbf{Beobachtungen}:
+		\begin{itemize}
+			\item Jede endliche Sprache ist regulär.
+			\item Reguläre Sprachen sind unter $\cup$, $\cdot$, ${}^\ast$ abgeschlossen.
+			\item Jede reguläre Sprache lässt mittels $\cup$, $\cdot$, ${}^\ast$ aus endlichen Sprachen konstruieren.
+		\end{itemize}
+	
+		\defbox{Die Menge der \textbf{regulärer Ausdrücke} über einem Alphabet $\Sigma$ ist induktiv wie folgt definiert:
+			\begin{itemize}
+				\item $\emptyset$ ist ein regulärer Ausdruck
+				\item $\epsilon$ ist ein regulärer Ausdruck
+				\item $\Sterm{a}$ ist ein regulärer Ausdruck für jedes $\Sterm{a}\in\Sigma$
+				\item Wenn $\alpha$ und $\beta$ reguläre Ausdrücke sind,\\dann sind auch $(\alpha\beta)$, $(\alpha\mid\beta)$ und $(\alpha)^\ast$ reguläre Ausdrücke
+			\end{itemize}
+		}
+	\end{frame}
+
+	\begin{frame}
+		\small
+		\defbox{Die \textbf{Sprache eines regulären Ausdrucks} $\alpha$ wird mit $\Slang{L}(\alpha)$
+			bezeichnet und rekursiv definiert:
+			\begin{itemize}
+				\item $\Slang{L}(\emptyset)=\emptyset$
+				\item $\Slang{L}(\epsilon)=\{\epsilon\}$
+				\item $\Slang{L}(\Sterm{a})=\{\Sterm{a}\}$ für jedes $\Sterm{a}\in\Sigma$
+				\item $\Slang{L}((\alpha\beta))=\Slang{L}(\alpha)\circ\Slang{L}(\beta)$
+				\item $\Slang{L}((\alpha\mid\beta))=\Slang{L}(\alpha)\cup\Slang{L}(\beta)$
+				\item $\Slang{L}((\alpha)^\ast)=\Slang{L}(\alpha)^\ast$
+			\end{itemize}
+		}
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 4}
+		\small
+		Welche Sprachen $\Slang{L}(r_i)$ werden durch folgende reguläre
+		Ausdrücke $r_i$ beschrieben?
+		\begin{itemize}
+			\item[(a)] $r_1 = bb^\ast \mid (bb)^\ast a$
+			\only<2->{\begin{equation*}
+				\Slang{L}(r_1) = \menge{b^n : n \ge 1} \cup \menge{b^{2m} a : m \ge 0}
+			\end{equation*}}
+			\item[(b)] $r_2 = a^\ast b(aa^\ast b)^\ast b(a\mid b)^\ast $
+			\only<3->{\begin{align*}
+				L_0 &\defeq \menge{a^n b : n \ge 0} \\
+				L_1 &\defeq \menge{a^n b : n \ge 1} 
+				& \follows \Slang{L}(r_2) &= L_0 * L_1^\ast * \menge{b} * L_n \\
+				L_n &\defeq \menge{a,b}^\ast 
+			\end{align*} }
+			\item[(c)] $r_3 = a^\ast \mid a^\ast (b\mid bb)(aa^\ast (b\mid bb))^\ast a^\ast $
+			\only<4->{\begin{align*}
+				L_0 &\defeq \menge{a^n b^m : n \ge 0, m \in \menge{1,2}} \\
+				L_1 &\defeq \menge{a^n b : n \ge 1, m \in \menge{1,2}} \\ \follows \Slang{L}(r_3) &= \menge{a}^\ast \cup (L_0 * L_1^\ast * \menge{a}^\ast)				
+			\end{align*} }
+		\end{itemize}
+	\end{frame}
+
+
+	\newcommand{\myscale}{0.6}
+	\newcommand{\myhisymb}[1]{\boldsymbol{\textcolor{darkblue}{#1}}}
+	
+	\begin{frame}\frametitle{Operationen auf Automaten}
+		\begin{tabular}{@{\hspace{-.5cm}}cr@{~~~${}={}$~~~}l}
+			$\myhisymb{\cup}$ & 
+			\scalebox{\myscale}{%
+				\begin{tikzpicture}[baseline={(q1.base)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (q1) [circle,draw=black,thick,double] at (0,0) {$A$};
+					\node (q2) [circle,draw=black,thick] at (2,0) {$B$};
+					\node (q3) [circle,draw=black,thick,double] at (4,0) {$C$};
+					%
+					\path[->,line width=0.5mm](0,0.7) edge (q1);
+					\path[->,line width=0.5mm](q1) edge node[above] {\Sterm{1}} (q2);
+					\path[->,line width=0.5mm, bend left](q2) edge node[above] {\Sterm{0}} (q3);
+					\path[->,line width=0.5mm, bend left](q3) edge node[above] {\Sterm{1}} (q2);
+			\end{tikzpicture}}
+			${}\myhisymb{{}\oplus{}}{}$ 
+			\scalebox{\myscale}{%
+				\begin{tikzpicture}[baseline={(p1.base)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (p1) [circle,draw=black,thick] at (0,0) {$D$};
+					\node (p2) [circle,draw=black,thick,double] at (2,0) {$E$};
+					%
+					\path[->,line width=0.5mm](0,0.7) edge (p1);
+					\path[->,line width=0.5mm, bend left](p1) edge node[above] {\Sterm{0}} (p2);
+					\path[->,line width=0.5mm, bend left](p2) edge node[above] {\Sterm{1}} (p1);
+			\end{tikzpicture}}
+			&
+			\scalebox{\myscale}{%
+				\begin{tikzpicture}[baseline={(q1.base)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (q1) [circle,draw=black,thick,double] at (0,0) {$A$};
+					\node (q2) [circle,draw=black,thick] at (2,0) {$B$};
+					\node (q3) [circle,draw=black,thick,double] at (4,0) {$C$};
+					%
+					\path[->,line width=0.5mm](0,0.7) edge (q1);
+					\path[->,line width=0.5mm](q1) edge node[above] {\Sterm{1}} (q2);
+					\path[->,line width=0.5mm, bend left](q2) edge node[above] {\Sterm{0}} (q3);
+					\path[->,line width=0.5mm, bend left](q3) edge node[above] {\Sterm{1}} (q2);
+			\end{tikzpicture}}
+			~\scalebox{\myscale}{%
+				\begin{tikzpicture}[baseline={(p1.base)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (p1) [circle,draw=black,thick] at (0,0) {$D$};
+					\node (p2) [circle,draw=black,thick,double] at (2,0) {$E$};
+					%
+					\path[->,line width=0.5mm](0,0.7) edge (p1);
+					\path[->,line width=0.5mm, bend left](p1) edge node[above] {\Sterm{0}} (p2);
+					\path[->,line width=0.5mm, bend left](p2) edge node[above] {\Sterm{1}} (p1);
+			\end{tikzpicture}}
+			\\[3.5ex]
+			%
+			%
+			$\myhisymb{\cap}$ &
+			\scalebox{\myscale}{\begin{tikzpicture}[baseline={(a.base)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (a) [circle,draw=black,thick,double] at (0,0) {$A$};
+					\node (b) [circle,draw=black,thick] at (3,0) {$B$};
+					%
+					\path[->,line width=0.5mm](0,1) edge (a);
+					\path[->,line width=0.5mm, bend left](a) edge node[above] {\Sterm{0}} (b);
+					\path[->,line width=0.5mm, bend left](b) edge node[above] {\Sterm{0}} (a);
+					\path[->,line width=0.5mm](a) edge [loop below] node[below] {\Sterm{1}} (a);
+					\path[->,line width=0.5mm](b) edge [loop below] node[below] {\Sterm{1}} (b);
+					% ,onslide={<7>{dashed,darkred}}
+			\end{tikzpicture}}
+			%
+			${}\myhisymb{{}\otimes{}}{}$ 
+			%
+			\scalebox{\myscale}{\begin{tikzpicture}[baseline={(current bounding box.center)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (c) [circle,draw=black,thick] at (0,0) {$C$};
+					\node (d) [circle,draw=black,thick,double] at (0,-2) {$D$};
+					%
+					\path[->,line width=0.5mm](-1,0) edge (c);
+					\path[->,line width=0.5mm](-1,-2) edge (d);
+					\path[->,line width=0.5mm](c) edge node[right] {\Sterm{0}, \Sterm{1}} (d);
+					\path[->,line width=0.5mm](c) edge [loop right] node[right] {\Sterm{0}} (c);
+					\path[->,line width=0.5mm](d) edge [loop right] node[right] {\Sterm{1}} (d);
+					% ,onslide={<7>{dashed,darkred}}
+			\end{tikzpicture}}
+			&
+			\scalebox{\myscale}{\begin{tikzpicture}[baseline={(current bounding box.center)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (ac) [rectangle,rounded corners=1.5ex,draw=black,thick] at (0,0) {$\tuple{A,C}$};
+					\node (ad) [rectangle,rounded corners=1.5ex,draw=black,thick,double] at (0,-2) {$\tuple{A,D}$};
+					\node (bc) [rectangle,rounded corners=1.5ex,draw=black,thick] at (3,0) {$\tuple{B,C}$};
+					\node (bd) [rectangle,rounded corners=1.5ex,draw=black,thick] at (3,-2) {$\tuple{B,D}$};
+					%
+					{\path[->,line width=0.5mm](-0.5,0.7) edge (ac);}
+					{\path[->,line width=0.5mm](-0.5,-1.3) edge (ad);}
+					{\path[->,line width=0.5mm, bend left](ac) edge node[below] {\Sterm{0}} (bc);}
+					{\path[->,line width=0.5mm, bend left](bc) edge node[above] {\Sterm{0}} (ac);}
+					%
+					{\path[->,line width=0.5mm](bc.240) edge node[below,xshift=7mm,yshift=3mm] {\Sterm{0}} (ad.35);}
+					{\path[->,line width=0.5mm](bc) edge node[right] {\Sterm{1}} (bd);}
+					{
+						\path[-,line width=1.1mm,white,shorten >=3mm,shorten <=3mm](ac.300) edge (bd.135);
+						\path[->,line width=0.5mm](ac.300) edge node[below,xshift=-7mm,yshift=3mm] {\Sterm{0}} (bd.135);
+					}
+					{\path[->,line width=0.5mm](ac) edge node[right] {\Sterm{1}} (ad);}
+					%
+					{\path[->,line width=0.5mm](bd) edge [loop right] node[right] {\Sterm{1}} (bd);}
+					{\path[->,line width=0.5mm](ad) edge [loop right] node[right] {\Sterm{1}} (ad);}
+					% ,onslide={<7>{dashed,darkred}}
+			\end{tikzpicture}}
+			\\[13mm]
+			%
+			%
+			$\myhisymb{\overline{\phantom{L}}}$ & 
+			$\overline{%
+				\scalebox{\myscale}{\begin{tikzpicture}[baseline={(a.base)}]
+						% \draw[help lines] (0,0) grid (7,2);
+						\node (a) [circle,draw=black,thick,double] at (0,0) {$A$};
+						\node (b) [circle,draw=black,thick] at (3,0) {$B$};
+						%
+						\path[->,line width=0.5mm](0,0.7) edge (a);
+						\path[->,line width=0.5mm, bend left](a) edge node[below] {\Sterm{0}} (b);
+						\path[->,line width=0.5mm, bend left](b) edge node[above] {\Sterm{0}} (a);
+						\path[->,line width=0.5mm](a) edge [loop left] node[left] {\Sterm{1}} (a);
+						\path[->,line width=0.5mm](b) edge [loop right] node[right] {\Sterm{1}} (b);
+						% ,onslide={<7>{dashed,darkred}}
+			\end{tikzpicture}}}$
+			&
+			\scalebox{\myscale}{\begin{tikzpicture}[baseline={(a.base)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (a) [circle,draw=black,thick] at (0,0) {$A$};
+					\node (b) [circle,draw=black,thick,double] at (3,0) {$B$};
+					%
+					\path[->,line width=0.5mm](0,0.7) edge (a);
+					\path[->,line width=0.5mm, bend left](a) edge node[below] {\Sterm{0}} (b);
+					\path[->,line width=0.5mm, bend left](b) edge node[above] {\Sterm{0}} (a);
+					\path[->,line width=0.5mm](a) edge [loop left] node[left] {\Sterm{1}} (a);
+					\path[->,line width=0.5mm](b) edge [loop right] node[right] {\Sterm{1}} (b);
+					% ,onslide={<7>{dashed,darkred}}
+			\end{tikzpicture}}
+			\\[6mm]
+			%
+			%
+			$\myhisymb{\circ}$ & 
+			\scalebox{\myscale}{%
+				\begin{tikzpicture}[baseline={(q1.base)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (q1) [circle,draw=black,thick,double] at (0,0) {$A$};
+					\node (q2) [circle,draw=black,thick] at (2,0) {$B$};
+					\node (q3) [circle,draw=black,thick,double] at (4,0) {$C$};
+					%
+					\path[->,line width=0.5mm](0,1) edge (q1);
+					\path[->,line width=0.5mm](q1) edge node[above] {\Sterm{1}} (q2);
+					\path[->,line width=0.5mm, bend left](q2) edge node[above] {\Sterm{0}} (q3);
+					\path[->,line width=0.5mm, bend left](q3) edge node[above] {\Sterm{1}} (q2);
+			\end{tikzpicture}}
+			${}\myhisymb{{}\odot{}}{}$ 
+			\scalebox{\myscale}{%
+				\begin{tikzpicture}[baseline={(p1.base)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (p1) [circle,draw=black,thick] at (0,0) {$D$};
+					\node (p2) [circle,draw=black,thick,double] at (2,0) {$E$};
+					%
+					\path[->,line width=0.5mm](0,1) edge (p1);
+					\path[->,line width=0.5mm, bend left](p1) edge node[above] {\Sterm{0}} (p2);
+					\path[->,line width=0.5mm, bend left](p2) edge node[above] {\Sterm{1}} (p1);
+			\end{tikzpicture}}
+			&
+			\scalebox{\myscale}{%
+				\begin{tikzpicture}[baseline={(q1.base)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (q1) [circle,draw=black,thick] at (0,0) {$A$};
+					\node (q2) [circle,draw=black,thick] at (2,0) {$B$};
+					\node (q3) [circle,draw=black,thick] at (4,0) {$C$};
+					%
+					\path[->,line width=0.5mm](0,1) edge (q1);
+					\path[->,line width=0.5mm](q1) edge node[above] {\Sterm{1}} (q2);
+					\path[->,line width=0.5mm, bend left](q2) edge node[below,xshift=5pt] {\Sterm{0}} (q3);
+					\path[->,line width=0.5mm, bend left](q3) edge node[above,xshift=-5pt] {\Sterm{1}} (q2);
+					
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (p1) [circle,draw=black,thick] at (5,0) {$D$};
+					\node (p2) [circle,draw=black,thick,double] at (7,0) {$E$};
+					%
+					\path[->,line width=0.5mm, bend left](p1) edge node[above] {\Sterm{0}} (p2);
+					\path[->,line width=0.5mm, bend left](p2) edge node[above] {\Sterm{1}} (p1);
+					%
+					\path[->,line width=0.5mm, bend left](q1) edge node[above] {$\epsilon$} (p1);
+					\path[->,line width=0.5mm](q3) edge node[below] {$\epsilon$} (p1);
+			\end{tikzpicture}}
+			\\[3.5ex]
+			%
+			% 
+			${}^{\myhisymb{\ast}}$ & 
+			$\scalebox{\myscale}{%
+				\begin{tikzpicture}[baseline={(q1.base)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (q1) [circle,draw=black,thick] at (0,0) {$A$};
+					\node (q2) [circle,draw=black,thick] at (2,0) {$B$};
+					\node (q3) [circle,draw=black,thick,double] at (4,0) {$C$};
+					%
+					\path[->,line width=0.5mm](0,0.7) edge (q1);
+					\path[->,line width=0.5mm](q1) edge node[above] {\Sterm{1}} (q2);
+					\path[->,line width=0.5mm, bend left](q2) edge node[above] {\Sterm{0}} (q3);
+					\path[->,line width=0.5mm, bend left](q3) edge node[above] {\Sterm{1}} (q2);
+			\end{tikzpicture}}^{\myhisymb{\ast}}$
+			&
+			\scalebox{\myscale}{%
+				\begin{tikzpicture}[baseline={(q1.base)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (q1) [circle,draw=black,thick] at (0,0) {$A$};
+					\node (q2) [circle,draw=black,thick] at (2,0) {$B$};
+					\node (q3) [circle,draw=black,thick,double] at (4,0) {$C$};
+					\node (qf) [circle,draw=black,thick,double] at (6,0) {$q_f$};
+					%
+					\path[->,line width=0.5mm](0,0.7) edge (q1);
+					\path[->,line width=0.5mm](q1) edge node[above] {\Sterm{1}} (q2);
+					\path[->,line width=0.5mm, bend left](q2) edge node[above] {\Sterm{0}} (q3);
+					\path[->,line width=0.5mm, bend left](q3) edge node[above] {\Sterm{1}} (q2);
+					%
+					\path[->,line width=0.5mm, bend left](q3) edge node[below] {$\epsilon$} (q1);
+					% \path[->,line width=0.5mm](qf) edge [loop right] node[right] {$\epsilon$} (qf);
+					\path[->,line width=0.5mm](6,0.7) edge (qf);
+			\end{tikzpicture}}
+			\\
+		\end{tabular}
+	\end{frame}
+
+
+
+	\begin{frame} \frametitle{Aufgabe 5 --- Teil (a)}
+		\small
+		\begin{center}
+			\begin{tikzpicture}[%
+				->,
+				>=stealth',
+				semithick,
+				initial text=,
+				shorten <=2pt,
+				shorten >=2pt,
+				auto,
+				on grid,
+				node distance=7ex and 6em,
+				every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+				bend angle=30]
+				\node                  (delta_1)                          {$\delta_1$:};
+				\node[state,initial]   (q_0)     [below right=of delta_1] {$q_0$};
+				\node[state]           (q_1)     [right=of q_0]           {$q_1$};
+				\node[state,accepting] (q_2)     [right=of q_1]           {$q_2$};
+				\node[state,accepting] (q_3)     [right=of q_2]           {$q_3$};
+				\path[->] (q_0) edge              node {$a$}   (q_1)
+				(q_1) edge              node {$a$}   (q_2)
+				(q_2) edge [loop above] node {$a$}   (q_2)
+				edge              node {$b$}   (q_3)
+				(q_3) edge [loop above] node {$a$}   (q_3);
+				\node                  (delta_2) [below left=of q_0]      {$\delta_2$:};
+				\node[initial,state]   (p_0)     [below right=of delta_2] {$p_0$};
+				\node[state]           (p_1)     [right=of p_0]           {$p_1$};
+				\node[state]           (p_2)     [right=of p_1]           {$p_2$};
+				\node[state,accepting] (p_3)     [right=of p_2]           {$p_3$};
+				\path[->] (p_0) edge [loop above]  node {$a$} (p_0)
+				(p_0) edge               node {$b$} (p_1)
+				(p_1) edge               node {$b$} (p_2)
+				(p_1) edge [bend left]   node {$a$} (p_3)
+				(p_2) edge               node {$a$} (p_3)
+				(p_3) edge [loop above]  node {$a$} (p_3);
+			\end{tikzpicture}  
+		\end{center}
+
+		\vspace*{2ex}
+		
+		\begin{itemize}
+			\item[(a)] Konstruieren Sie einen $\varepsilon$-freien NFA~$\mathcal{M}_a$ mit
+			$L(\mathcal{M}_a)=L(\mathcal{M}_1)\cap L(\mathcal{M}_2)$.
+			Dabei dürfen Sie sich auf die vom Startzustand erreichbaren Zustände beschränken.
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame} 
+		\small
+		\begin{align*}
+			\mathcal{M}_a &\defeq \tuple{Q, \Sigma, \delta_a, \menge{(q_0, p_0)}, F} \\
+			\text{mit } \quad Q &\defeq \menge{(q_0, p_0), (q_1, p_0), (q_2, p_0), (q_3, p_1), (q_3, p_3)} \\
+			\Sigma &\defeq \menge{a, b} \\
+			F &\defeq \menge{(q_3, p_3)}
+		\end{align*}
+		\begin{center}
+			\begin{tikzpicture}[%
+				->,
+				>=stealth',
+				semithick,
+				initial text=,
+				shorten <=2pt,
+				shorten >=2pt,
+				auto,
+				on grid,
+				node distance=7ex and 6em,
+				every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+				bend angle=30]
+				\node                  (delta_1)                          {$\delta_a$:};
+				\node[state,initial]   (q_0)     [below=of delta_1]       {$(q_0, p_0)$};
+				\node[state]           (q_1)     [right=of q_0]           {$(q_1, p_0)$};
+				\node[state]           (q_2)     [right=of q_1]           {$(q_2, p_0)$};
+				\node[state]           (q_3)     [right=of q_2]           {$(q_3, p_1)$};
+				\node[state,accepting] (q_3-p_3) [right=of q_3]           {$(q_3, p_3)$};
+				
+				\path[->] (q_0) edge              node {$a$}   (q_1)
+				(q_1) edge              node {$a$}   (q_2)
+				(q_2) edge [loop above] node {$a$}   (q_2)
+				edge              node {$b$}   (q_3)
+				(q_3) edge node {$a$} (q_3-p_3)
+				(q_3-p_3) edge [loop above] node {$a$}   (q_3-p_3);
+			\end{tikzpicture}  
+		\end{center}
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 5 --- Teil (b)}
+		\small
+		\begin{center}
+			\begin{tikzpicture}[%
+				->,
+				>=stealth',
+				semithick,
+				initial text=,
+				shorten <=2pt,
+				shorten >=2pt,
+				auto,
+				on grid,
+				node distance=7ex and 6em,
+				every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+				bend angle=30]
+				\node                  (delta_1)                          {$\delta_1$:};
+				\node[state,initial]   (q_0)     [below right=of delta_1] {$q_0$};
+				\node[state]           (q_1)     [right=of q_0]           {$q_1$};
+				\node[state,accepting] (q_2)     [right=of q_1]           {$q_2$};
+				\node[state,accepting] (q_3)     [right=of q_2]           {$q_3$};
+				\path[->] (q_0) edge              node {$a$}   (q_1)
+				(q_1) edge              node {$a$}   (q_2)
+				(q_2) edge [loop above] node {$a$}   (q_2)
+				edge              node {$b$}   (q_3)
+				(q_3) edge [loop above] node {$a$}   (q_3);
+			\end{tikzpicture}  
+		\end{center}
+		
+		\vspace*{2ex}
+		
+		\begin{itemize}
+			\item[(b)] Konstruieren Sie einen $\varepsilon$-freien NFA~$\mathcal{M}_b$ mit $L(\mathcal{M}_b)=L(\mathcal{M}_1)^\ast $.
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}
+		\small
+		\begin{align*}
+			\mathcal{M}_b \defeq (\mathcal{M}_1)^\ast &= \tuple{Q_b, \Sigma, \delta_b, Q_0, F_b} \\
+			\text{mit } \quad Q_b &\defeq \menge{q_0, q_1, q_2, q_3, q_\epsilon} \\
+			\Sigma &\defeq \menge{a, b} \\
+			Q_0 &\defeq \menge{q_0, q_\epsilon} \\
+			F_b &\defeq \menge{q_3, q_\epsilon}
+		\end{align*}
+		
+		\onslide<2>{\textcolor{lightblue}{Eliminierung der $\epsilon$-Übergänge durch Verlängerung nach rechts}}
+		
+		\begin{center}
+			\begin{tikzpicture}[%
+				->,
+				>=stealth',
+				semithick,
+				initial text=,
+				shorten <=2pt,
+				shorten >=2pt,
+				auto,
+				on grid,
+				node distance=7ex and 6em,
+				every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+				bend angle=30]
+				
+				\node                  (delta_1)                          {$\delta_b\onslide<1>{'}$:};
+				\node[state,initial]   (q_0)     [below right=of delta_1] {$q_0$};
+				\node[state]           (q_1)     [right=of q_0]           {$q_1$};
+				\node[state,accepting] (q_2)     [right=of q_1]           {$q_2$};
+				\node[state,accepting] (q_3)     [right=of q_2]           {$q_3$};
+				\node[state,initial, accepting]   (q_eps)   [below= of q_0]          {$q_{\epsilon}$};
+				
+				\path[->] (q_0) edge              node {$a$}   (q_1)
+				          (q_1) edge              node {$a$}   (q_2)
+				          (q_2) edge [loop above] node {$a$}   (q_2)
+				                edge              node {$b$}   (q_3)
+				          (q_3) edge [loop above] node {$a$}   (q_3);
+				
+				\onslide<1>{%
+					\path[->] (q_2) edge [bend left] node[above right] {$\epsilon$} (q_0);
+					\path[->] (q_3) edge [bend left] node        {$\epsilon$} (q_0);
+				}
+				
+				\onslide<2>{%
+					\path[->, lightblue]                (q_1) edge [bend left] node[below right] {$a$} (q_0);
+					\path[->, lightblue, bend angle=45] (q_2) edge [bend left] node[below right] {$a, b$} (q_0);
+					\path[->, lightblue, bend angle=60] (q_3) edge [bend left] node {$a$} (q_0);
+				}
+			\end{tikzpicture}  
+		\end{center}
+	\end{frame}
+	\begin{frame} \frametitle{Aufgabe 5 --- Teil (c)}
+		\small
+		\begin{center}
+			\scalebox{0.8}{\begin{tikzpicture}[%
+				->,
+				>=stealth',
+				semithick,
+				initial text=,
+				shorten <=2pt,
+				shorten >=2pt,
+				auto,
+				on grid,
+				node distance=7ex and 6em,
+				every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+				bend angle=30]
+		
+				\node                  (delta_3) [below left=of p_0]      {$\delta_3$:};
+				\node[state,initial]   (s_0)     [below right=of delta_3] {$s_0$};
+				\node[state]           (s_1)     [right=of s_0]           {$s_1$};
+				\node[state]           (s_2)     [above right=of s_1]     {$s_2$};
+				\node[state,accepting] (s_3)     [below right=of s_1]     {$s_3$};
+				\path[->] (s_0) edge [loop above] node {$a$}   (s_0)
+				(s_0) edge              node {$b$}   (s_1)
+				(s_1) edge              node {$a$}   (s_2)
+				(s_2) edge              node {$a$}   (s_3)
+				(s_3) edge              node {$b$}   (s_1);
+				\node                  (delta_4) [below left=of s_0]      {$\delta_4$:};
+				\node[initial,state]   (t_0)     [below right=of delta_4] {$t_0$};
+				\node[initial,state]   (t_0)     [below right=of delta_4] {$t_0$};
+				\node[state]           (t_1)     [right=of t_0]           {$t_1$};
+				\node[state]           (t_2)     [below=of t_1]           {$t_2$};
+				\node[state,accepting] (t_3)     [right=of t_1]           {$t_3$};
+				\node[state]           (t_4)     [right=of t_3]           {$t_4$};
+				\node[state,accepting] (t_5)     [below=of t_4]           {$t_5$};
+				\path[->] (t_0) edge              node {$a,b$} (t_1)
+				(t_1) edge [bend left]  node {$a$}   (t_2)
+				(t_1) edge              node {$b$}   (t_3)
+				(t_2) edge [bend left]  node {$a$}   (t_1)
+				(t_3) edge              node {$b$}   (t_4)
+				(t_4) edge              node {$b$}   (t_5)
+				(t_5) edge [loop left]  node {$a$}   (t_5);
+			\end{tikzpicture}  }
+		\end{center}
+		
+		\vspace*{2ex}
+		
+		\begin{itemize}
+			\item[(c)] Konstruieren Sie einen $\varepsilon$-freien NFA~$\mathcal{M}_c$ mit
+			$L(\mathcal{M}_c)=L(\mathcal{M}_3)\cup L(\mathcal{M}_4)$.
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}
+		\small
+		$\mathcal{M}_c = \mathcal{M}_3 \oplus \mathcal{M}_4$, d.h. beide Automaten \enquote{nebeneinander schreiben}
+		
+		\begin{center}
+			\scalebox{0.8}{\begin{tikzpicture}[%
+					->,
+					>=stealth',
+					semithick,
+					initial text=,
+					shorten <=2pt,
+					shorten >=2pt,
+					auto,
+					on grid,
+					node distance=7ex and 6em,
+					every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+					bend angle=30]
+					
+					\node                  (delta_3) [below left=of p_0]      {$\delta_c$:};
+					\node[state,initial]   (s_0)     [below right=of delta_3] {$s_0$};
+					\node[state]           (s_1)     [right=of s_0]           {$s_1$};
+					\node[state]           (s_2)     [above right=of s_1]     {$s_2$};
+					\node[state,accepting] (s_3)     [below right=of s_1]     {$s_3$};
+					\path[->] (s_0) edge [loop above] node {$a$}   (s_0)
+					(s_0) edge              node {$b$}   (s_1)
+					(s_1) edge              node {$a$}   (s_2)
+					(s_2) edge              node {$a$}   (s_3)
+					(s_3) edge              node {$b$}   (s_1);
+					\node                  (delta_4) [below left=of s_0]      {};
+					\node[initial,state]   (t_0)     [below right=of delta_4] {$t_0$};
+					\node[initial,state]   (t_0)     [below right=of delta_4] {$t_0$};
+					\node[state]           (t_1)     [right=of t_0]           {$t_1$};
+					\node[state]           (t_2)     [below=of t_1]           {$t_2$};
+					\node[state,accepting] (t_3)     [right=of t_1]           {$t_3$};
+					\node[state]           (t_4)     [right=of t_3]           {$t_4$};
+					\node[state,accepting] (t_5)     [below=of t_4]           {$t_5$};
+					\path[->] (t_0) edge              node {$a,b$} (t_1)
+					(t_1) edge [bend left]  node {$a$}   (t_2)
+					(t_1) edge              node {$b$}   (t_3)
+					(t_2) edge [bend left]  node {$a$}   (t_1)
+					(t_3) edge              node {$b$}   (t_4)
+					(t_4) edge              node {$b$}   (t_5)
+					(t_5) edge [loop left]  node {$a$}   (t_5);
+			\end{tikzpicture}  }
+		\end{center}
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 5 --- Teil (d)}
+		\small
+		\begin{center}
+			\scalebox{0.8}{\begin{tikzpicture}[%
+				->,
+				>=stealth',
+				semithick,
+				initial text=,
+				shorten <=2pt,
+				shorten >=2pt,
+				auto,
+				on grid,
+				node distance=7ex and 6em,
+				every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+				bend angle=30]
+				
+				\node                  (delta_3) [below left=of p_0]      {$\delta_3$:};
+				\node[state,initial]   (s_0)     [below right=of delta_3] {$s_0$};
+				\node[state]           (s_1)     [right=of s_0]           {$s_1$};
+				\node[state]           (s_2)     [above right=of s_1]     {$s_2$};
+				\node[state,accepting] (s_3)     [below right=of s_1]     {$s_3$};
+				\path[->] (s_0) edge [loop above] node {$a$}   (s_0)
+				(s_0) edge              node {$b$}   (s_1)
+				(s_1) edge              node {$a$}   (s_2)
+				(s_2) edge              node {$a$}   (s_3)
+				(s_3) edge              node {$b$}   (s_1);
+				\node                  (delta_4) [below left=of s_0]      {$\delta_4$:};
+				\node[initial,state]   (t_0)     [below right=of delta_4] {$t_0$};
+				\node[initial,state]   (t_0)     [below right=of delta_4] {$t_0$};
+				\node[state]           (t_1)     [right=of t_0]           {$t_1$};
+				\node[state]           (t_2)     [below=of t_1]           {$t_2$};
+				\node[state,accepting] (t_3)     [right=of t_1]           {$t_3$};
+				\node[state]           (t_4)     [right=of t_3]           {$t_4$};
+				\node[state,accepting] (t_5)     [below=of t_4]           {$t_5$};
+				\path[->] (t_0) edge              node {$a,b$} (t_1)
+				(t_1) edge [bend left]  node {$a$}   (t_2)
+				(t_1) edge              node {$b$}   (t_3)
+				(t_2) edge [bend left]  node {$a$}   (t_1)
+				(t_3) edge              node {$b$}   (t_4)
+				(t_4) edge              node {$b$}   (t_5)
+				(t_5) edge [loop left]  node {$a$}   (t_5);
+			\end{tikzpicture}  }
+		\end{center}
+		
+		\vspace*{2ex}
+		
+		\begin{itemize}
+			\item[(d)] Konstruieren Sie einen $\varepsilon$-freien NFA~$\mathcal{M}_d$ mit
+			$L(\mathcal{M}_d)=L(\mathcal{M}_3)\circ L(\mathcal{M}_4)$.
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}
+		\small
+		\begin{equation*}
+			\mathcal{M}_d \defeq \mathcal{M}_3 \odot \mathcal{M}_4
+		\end{equation*}
+		
+		\onslide<2>{\textcolor{lightblue}{Eliminierung der $\epsilon$-Übergänge durch Verlängerung nach rechts}}
+		
+		\begin{center}
+			\scalebox{0.8}{%
+				\begin{tikzpicture}[%
+					->,
+					>=stealth',
+					semithick,
+					initial text=,
+					shorten <=2pt,
+					shorten >=2pt,
+					auto,
+					on grid,
+					node distance=7ex and 6em,
+					every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+					bend angle=30]
+					
+					\node                  (delta_3) [below left=of p_0]      {$\delta_d\onslide<1>{'}$:};
+					\node[state,initial]   (s_0)     [below=of delta_3] {$s_0$};
+					\node[state]           (s_1)     [right=of s_0]           {$s_1$};
+					\node[state]           (s_2)     [above right=of s_1]     {$s_2$};
+					\node[state]           (s_3)     [below right=of s_1]     {$s_3$};
+					\path[->] (s_0) edge [loop below] node {$a$}   (s_0)
+					(s_0) edge              node {$b$}   (s_1)
+					(s_1) edge              node {$a$}   (s_2)
+					(s_2) edge              node {$a$}   (s_3)
+					(s_3) edge              node {$b$}   (s_1);
+					\node[state]           (t_0)     [right=of s_3]           {$t_0$};
+					\node[state]           (t_1)     [right=of t_0]           {$t_1$};
+					\node[state]           (t_2)     [below=of t_1]           {$t_2$};
+					\node[state,accepting] (t_3)     [right=of t_1]           {$t_3$};
+					\node[state]           (t_4)     [right=of t_3]           {$t_4$};
+					\node[state,accepting] (t_5)     [below=of t_4]           {$t_5$};
+					\path[->] (t_0) edge              node {$a,b$} (t_1)
+					(t_1) edge [bend left]  node {$a$}   (t_2)
+					(t_1) edge              node {$b$}   (t_3)
+					(t_2) edge [bend left]  node {$a$}   (t_1)
+					(t_3) edge              node {$b$}   (t_4)
+					(t_4) edge              node {$b$}   (t_5)
+					(t_5) edge [loop left]  node {$a$}   (t_5);
+					
+					\onslide<1>{\path[->] (s_3) edge node {$\epsilon$} (t_0);}
+					\onslide<2>{\path[->, lightblue] (s_2) edge node {$a$} (t_0);}
+			\end{tikzpicture}  }
+		\end{center}
+	\end{frame}
+\end{document}
