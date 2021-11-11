@@ -1,0 +1,329 @@
+\documentclass{beamer}
+\usepackage{../tut-slides}
+\usepackage{../mathoperators}
+\usepackage{../fs}
+
+\usepackage{csquotes}
+
+\usepackage{amsmath,amssymb}
+%\usepackage{enumerate}
+\usepackage[normalem]{ulem}
+\newcommand{\labelitemi}{\raisebox{1pt}{\scalebox{.9}{$\blacktriangleright$}}}
+\newcommand{\labelitemii}{$\vartriangleright$}
+\newcommand{\labelitemiii}{--}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+\newcommand{\tuple}[1]{\langle{#1}\rangle}
+\newcommand{\simquot}[1]{#1/_{\!\!{\sim}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}	
+	\title{Formale Systeme}
+	\subtitle{Übung 4}
+	\author{Eric Kunze}
+	\email{eric.kunze@tu-dresden.de}
+	\city{TU Dresden}
+	\date{\today}
+%	\institute{Lehrstuhl für Grundlagen der Programmierung}
+	\titlegraphic{\includegraphics[width=2cm]{../TUD-white.pdf}}
+
+	\maketitle
+
+	\begin{frame} \frametitle{Reguläre Ausdrücke}
+		\small		
+		\defbox{Die Menge der \textbf{regulärer Ausdrücke} über einem Alphabet $\Sigma$ ist induktiv wie folgt definiert:
+			\begin{itemize}
+				\item $\emptyset$ ist ein regulärer Ausdruck
+				\item $\epsilon$ ist ein regulärer Ausdruck
+				\item $\Sterm{a}$ ist ein regulärer Ausdruck für jedes $\Sterm{a}\in\Sigma$
+				\item Wenn $\alpha$ und $\beta$ reguläre Ausdrücke sind,\\dann sind auch $(\alpha\beta)$, $(\alpha\mid\beta)$ und $(\alpha)^\ast$ reguläre Ausdrücke
+			\end{itemize}
+		}
+	
+		\defbox{Die \textbf{Sprache eines regulären Ausdrucks} $\alpha$ wird mit $\Slang{L}(\alpha)$
+			bezeichnet und rekursiv definiert:
+			
+			\begin{minipage}{\dimexpr0.5\linewidth-\fboxrule-\fboxsep}
+				\begin{itemize}
+					\item $\Slang{L}(\emptyset)=\emptyset$
+					\item $\Slang{L}(\epsilon)=\{\epsilon\}$
+					\item $\Slang{L}(\Sterm{a})=\{\Sterm{a}\} \quad \forall \Sterm{a}\in\Sigma$
+				\end{itemize}
+			\end{minipage}
+			\begin{minipage}{\dimexpr0.5\linewidth-\fboxrule-\fboxsep}
+				\begin{itemize}
+					\item $\Slang{L}((\alpha\beta))=\Slang{L}(\alpha)\circ\Slang{L}(\beta)$
+					\item $\Slang{L}((\alpha\mid\beta))=\Slang{L}(\alpha)\cup\Slang{L}(\beta)$
+					\item $\Slang{L}((\alpha)^\ast)=\Slang{L}(\alpha)^\ast$
+				\end{itemize}
+			\end{minipage}
+		}
+	\end{frame}
+
+
+	\begin{frame} \frametitle{Aufgabe 1}
+		\small
+		Gegeben sind das Alphabet $\Sigma=\{a,b,c\}$ und die Sprache
+		\begin{equation*}
+			L= \{w\in \Sigma^\ast \mid
+			\begin{array}[t]{@{\,}l}
+				\mbox{es gibt } u,v\in \Sigma^\ast \mbox{
+					mit } w = u babc v \mbox{ und }\\
+				\mbox{es gibt } u,v\in \Sigma^\ast \mbox{
+					mit } w = u ccc v \mbox{ und }\\
+				\mbox{es gibt kein } u \in \Sigma^\ast
+				\mbox{ mit } w = au\} .
+			\end{array}
+		\end{equation*}	
+		Geben Sie für $L$ einen regulären Ausdruck $r$ mit $L=L(r)$ an.
+	\end{frame}
+	
+	\begin{frame} \frametitle{Aufgabe 2}
+		\small
+		Beweisen Sie die folgenden Gleichungen für reguläre Ausdrücke $r$,
+		$s$ und $t$.
+		
+		\textbf{Erinnerung}: $r\equiv s$ bedeutet $L(r) = L(s)$
+		
+		\begin{enumerate}[a)]
+			\item $r\mid s\equiv s\mid r$
+			\item $(r\mid s)\mid t\equiv r\mid (s\mid t)$
+			\item $(rs)t\equiv r(st)$
+			\item $r(s\mid t)\equiv rs\mid rt$
+			\item $\emptyset^\ast\equiv \varepsilon$
+			\item $(r^\ast)^\ast\equiv r^\ast$
+			\item $r^\ast\equiv rr^\ast\mid \varepsilon$
+			\item $(\varepsilon \mid r)^\ast\equiv r^\ast$
+		\end{enumerate}
+	\end{frame}
+
+
+	\begin{frame}\frametitle{Die Ersetzungsmethode}
+		\small
+		\textbf{Gegeben}: NFA  $\Smach{M}=\tuple{Q,\Sigma,\delta,Q_0,F}$
+		
+		\textbf{Gesucht}: regulärer Ausdruck $\alpha$ mit $\Slang{L}(\alpha)=\Slang{L}(\Smach{M})$
+		
+		\textbf{Idee}:
+		
+		\codebox{Für jeden Zustand $q\in Q$, berechne einen regulären Ausdruck $\alpha_q$ für die Sprache $\Slang{L}(\alpha_q) = \Slang{L}(\Smach{M}_q)$ mit $\Smach{M}_q=\tuple{Q,\Sigma,\delta,\{q\},F}$}
+		
+		Für $Q_0 = \menge{q_1,q_2,\dots, q_n}$ gilt dann
+		\begin{equation*}
+			\Slang{L}(\Smach{M})
+			=\bigcup_{q\in Q_0} \Slang{L}(\alpha_q)
+			=  \Slang{L}(\alpha_{q_1}\mid\alpha_{q_2}\mid\dots\mid \alpha_{q_n})
+		\end{equation*}
+	\end{frame}
+
+	\begin{frame}		
+		\small
+		\begin{enumerate}[(1)]
+			\item \textbf{Vereinfache den Automaten} (entferne offensichtlich unnötige Zustände)	
+			
+			\item \textbf{Bestimme das Gleichungssystem} 
+			
+			\textit{Intuition}: Beschreibe $\alpha_q$ in Abhängigkeit von Folgezuständen
+			
+			\defbox{ \\[-0.9\baselineskip]
+				\begin{itemize}
+					\item Für jeden Zustand $q\in Q \setminus F$:
+					$\alpha_q \equiv \sum_{\Sterm{a}\in\Sigma}\; \sum_{p\in\delta(q,\Sterm{a})} \Sterm{a}\alpha_p$
+					\item Für jeden Zustand $q\in F$:
+					$\alpha_q \equiv \bluealert{\epsilon} \mid \sum_{\Sterm{a}\in\Sigma}\; \sum_{p\in\delta(q,\Sterm{a})} \Sterm{a}\alpha_p$
+				\end{itemize}
+			}
+			%
+			\item \textbf{Löse das Gleichungssystem} durch Einsetzen und
+			
+			\theobox{Regel von Arden: Aus $\alpha\equiv \beta\alpha\mid\gamma$ mit $\epsilon\notin\Slang{L}(\beta)$ folgt $\alpha\equiv\beta^\ast\gamma$.}
+			%
+			\item \textbf{Gib den Ausdruck für die Sprache des NFA an}
+			
+			Für $Q_0 = \menge{q_1,q_2,\dots, q_n}$ gilt dann
+			\begin{equation*}
+				\Slang{L}(\Smach{M})
+				=\bigcup_{q\in Q_0} \Slang{L}(\alpha_q)
+				=  \Slang{L}(\alpha_{q_1}\mid\alpha_{q_2}\mid\dots\mid \alpha_{q_n})
+			\end{equation*}
+		\end{enumerate}
+	\end{frame}
+
+	\newcommand{\Lijk}[3]{\ensuremath{\Slang{L}^{#3}[#1,#2]}}
+	\newcommand{\alphaijk}[3]{\ensuremath{\alpha^{#3}[#1,#2]}}
+	
+	\begin{frame} \frametitle{Dynamische Ermittlung}
+		\small
+		\textbf{Gegeben}: NFA  $\Smach{M}=\tuple{Q,\Sigma,\delta,Q_0,F}$
+		
+		\textbf{Gesucht}: regulärer Ausdruck $\alpha$ mit $\Slang{L}(\alpha)=\Slang{L}(\Smach{M})$
+		
+		\textbf{Ansatz}:
+		
+		\codebox{Für jedes Paar von Zuständen $q,p\in Q$, berechne einen regulären Ausdruck $\alpha_{q,p}$ für die Sprache
+		$\Slang{L}(\alpha_{q,p}) = \Slang{L}(\Smach{M}_{q,p})$ mit $\Smach{M}_{q,p}=\tuple{Q,\Sigma,\delta,\{q\},\{p\}}$}
+		
+		Dann gilt:
+		\begin{align*}
+			\Slang{L}(\Smach{M}) &=\bigcup_{q\in Q_0} \bigcup_{p\in F} \Slang{L}(\alpha_{q,p})
+			=  \Slang{L}\left(\sum_{q\in Q_0} \sum_{p\in F} \alpha_{q,p}\right)
+		\end{align*}
+	
+		\begin{itemize}
+			\item $\Lijk{i}{j}{k} \dots$ Sprache mit Start in $q_i$, Ende in $q_j$ und nutzt nur Zwischenzustände $q_1, \dots, q_k$
+			\item $\alphaijk{i}{j}{k}$ zugehöriger regulärer Ausdruck
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}
+		\small
+		\textbf{Idee}: lasse immer mehr Zwischenzustände von $q$ nach $p$ zu \\
+		\begin{itemize}
+			\item $k = n$: nutze alle Zustände --- Ergebnis ablesbar
+			\item $k = 0$: nutze keine Zwischenzustände --- $\alpha^0[i,j]$ direkt ablesbar:
+			\codebox{
+				Sei $\{\Sterm{a_1},\ldots,\Sterm{a_m}\}=\{\Sterm{a}\in\Sigma\mid q_i\stackrel{\Sterm{a}}{\to}q_j\}$ die Menge der Beschriftungen von direkten Übergängen von $q_i$ zu $q_j$.
+				\begin{itemize}
+					\item Falls $i\neq j$, dann ist
+					$\alphaijk{i}{j}{0} = \Sterm{a_1}\mid\ldots\mid\Sterm{a_m}$
+					\item Falls $i=j$, dann ist
+					$\alphaijk{i}{j}{0} = \Sterm{a_1}\mid\ldots\mid\Sterm{a_m}\mid\epsilon$
+				\end{itemize}
+			}
+		\end{itemize}
+	
+		\textbf{Update-Formel}:
+		\codebox{\vspace{-1ex}
+			\begin{equation*}
+				\alphaijk{i}{j}{k+1} = \alphaijk{i}{j}{k} \mid \big( \textcolor{darkred}{\alphaijk{i}{k+1}{k}} (\textcolor{darkblue}{\alphaijk{k+1}{k+1}{k}})^\ast \textcolor{darkgreen}{\alphaijk{k+1}{j}{k}} \big)
+			\end{equation*}
+		}
+	
+		\begin{itshape}
+			\scriptsize
+			vgl. VL \enquote{Algorithmen \& Datenstrukturen}, Prozess-Problem im Aho-Hopcroft-Ullman-Algorithmus
+		\end{itshape}
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 3}
+		\small
+		Geben Sie zu jedem der regulären Ausdrücke $r_i$ einen 
+		NFA $\mathcal M_i$ mit $L(\mathcal M_i) = L(r_i)$ an.
+		
+		\begin{enumerate}[a)]
+			\item $r_1 = (ab)^\ast$
+			\item $r_2 = a(b \mid c)a^\ast \mid a^\ast$
+			% \item $r_3 = (bb\mid cc^\ast)^\ast$
+		\end{enumerate}
+		
+		Wenden Sie dabei jeweils den \textit{kompositionellen Ansatz} sowie den \textit{expliziten Ansatz} zur Konstruktion von NFAs aus der Vorlesung an.
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 4}
+		\small
+		Entwickeln Sie für die Sprache $L$ über dem Alphabet $\Sigma = \menge{a, b, c}$ einen regulären Ausdruck $r$ mit $L = L(r)$. Für alle Wörter $w \in L$ gilt:
+		\begin{itemize}
+			\item $w$ enthält $aaa$.
+			\item $w$ endet mit $c$.
+			\item Die Anzahl der $b$ in $w$ ist gerade.
+		\end{itemize}
+	\end{frame}
+
+
+	\begin{frame}\frametitle{Äquivalenz von Zuständen \& Quotientenautomat}
+		\small
+		DFA $\Smach{M}=\tuple{Q,\Sigma,\delta,q_0,F} \leadsto$ DFA $\Smach{M}_q=\tuple{Q,\Sigma,\delta,q,F}$
+		
+		\defbox{			
+			Zwei Zustände $p,q\in Q$ sind \textbf{$\Smach{M}$-äquivalent} ($p\sim_{\Smach{M}}q$), falls
+			\begin{equation*}
+				\Slang{L}(\Smach{M}_{p}) = \Slang{L}(\Smach{M}_{q})
+			\end{equation*}
+			Die Äquivalenzklasse eines Zustands $q \in Q$ ist
+			\begin{equation*}
+				[q]_{\sim}=\{p\in Q\mid q\sim p\}
+			\end{equation*}
+			Für eine Menge $P \subseteq Q$ schreiben wir $\simquot{P\!}$ für den Quotienten von $P$ und $\sim$:
+			\begin{equation*}
+				\simquot{P\!} = \menge{[p]_{\sim}\mid p \in P}
+			\end{equation*}
+		}
+	
+		\begin{itemize}
+			\item $\sim$ ist eine Äquivalenzrelation (reflexiv, symmetrisch, transitiv)
+			\item Äquivalenzklassen sind disjunkt und partitionieren $Q$
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}
+		\small
+		\textbf{Quotientenautomat} 
+		
+		Idee: Verschmelzen von äquivalenten Zuständen
+		
+			\defbox{Für einen DFA $\Smach{M} = \tuple{Q,\Sigma,\delta,q_0,F}$ mit totaler Übergangsfunktion ist der Quotientenautomat $\simquot{\Smach{M}}$ gegeben durch
+			\begin{equation*}
+				\simquot{\Smach{M}} =\tuple{\simquot{Q},\Sigma,\delta_{\sim},[q_0]_{\sim_{\Smach{M}}},\simquot{F\!}}
+			\end{equation*}
+			wobei gilt:%
+			\begin{itemize}
+				\item $\simquot{Q} = \{[q]_{\sim}\mid q\in Q\}$
+				\item $\delta_{\sim}([q]_{\sim},\Sterm{a}) = [\delta(q,\Sterm{a})]_{\sim}$
+				\item $\simquot{F\!} = \{[q]_{\sim}\mid q\in F\}$
+			\end{itemize}
+			}
+	\end{frame}
+	
+	\begin{frame} \frametitle{Aufgabe 5}
+		\small
+		Berechnen Sie für folgenden DFA $\mathcal{M}=(\{q_0,q_1,q_2,q_3,q_4,q_5\},\{a,b\},\delta,q_0,\{q_1,q_2,q_4\})$ mit $\delta$:
+		
+		\begin{center}
+			\begin{tikzpicture}[%
+				->,
+				>=stealth',
+				semithick,
+				initial text=,
+				shorten <=2pt,   
+				shorten >=2pt,
+				auto, 
+				on grid,
+				node distance=14ex and 8em,
+				every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+				bend angle=20]
+				\path {
+					node[state,initial] (q_0) {$q_0$}
+					node[state,accepting] (q_1) [right=of q_0] {$q_1$}
+					node[state,accepting] (q_2) [right=of q_1] {$q_2$}
+					node[state] (q_3) [below=of q_0] {$q_3$}
+					node[state,accepting] (q_4) [right=of q_3] {$q_4$}
+					node[state] (q_5) [right=of q_4] {$q_5$}
+				};
+				
+				\path[->,draw] {
+					(q_0) edge node {$b$} (q_1)
+					(q_1) edge node {$a$} (q_2)
+					(q_0) edge[bend left] node {$a$} (q_3)
+					(q_3) edge[bend left] node {$a$} (q_0)
+					(q_3) edge node {$b$} (q_4)
+					(q_4) edge node {$b$} (q_5)
+					(q_4) edge node[pos=0.3] {$a$} (q_2)
+					(q_1) edge node[pos=0.7] {$b$} (q_5)
+					(q_2) edge node {$b$} (q_5)
+					(q_2) edge[loop right] node {$a$} (q_2)
+					(q_5) edge[loop right] node {$a,b$} (q_5)
+				};
+				
+			\end{tikzpicture}
+		\end{center}
+		die Äquivalenzrelation
+		$\sim_{\mathcal{M}}$, und geben Sie den Quotientenautomaten ${\mathcal{M}}/_\sim$ an.
+	\end{frame}
+	
+
+	
+\end{document}
