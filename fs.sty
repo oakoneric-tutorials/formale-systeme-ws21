@@ -1,0 +1,137 @@
+\ProvidesPackage{fs}
+
+\RequirePackage{tikz}
+\usetikzlibrary{arrows,automata,positioning,shapes,calc,decorations.pathmorphing,matrix}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Colours:
+\RequirePackage{xcolor,colortbl}
+\definecolor{redhighlights}{HTML}{FFAA66}
+\definecolor{lightblue}{HTML}{55AAFF}
+\definecolor{lightred}{HTML}{FF5522}
+\definecolor{lightpurple}{HTML}{DD77BB}
+\definecolor{lightgreen}{HTML}{55FF55}
+\definecolor{darkred}{HTML}{CC4411}
+\definecolor{darkblue}{HTML}{176FC0}%{1133AA}
+\definecolor{nightblue}{HTML}{2010A0}%{1133AA}
+\definecolor{alert}{HTML}{176FC0}
+\definecolor{darkgreen}{HTML}{36AB14}
+\definecolor{strongyellow}{HTML}{FFE219}
+\definecolor{devilscss}{HTML}{666666}
+
+\newcommand{\redalert}[1]{\textcolor{darkred}{#1}}
+\newcommand{\bluealert}[1]{\textcolor{darkblue}{#1}}
+
+%%% Style commands
+
+\newcommand{\quoted}[1]{\texttt{"}{#1}\texttt{"}}
+\newcommand{\squote}{\texttt{"}} % straight quote
+\newcommand{\Sterm}[1]{\ensuremath{\mathtt{\textcolor{purple}{#1}}}}    % letters in alphabets
+\newcommand{\Snterm}[1]{\textsf{\textcolor{darkblue}{#1}}} % nonterminal symbols
+\newcommand{\Sntermsub}[2]{\ensuremath{\Snterm{#1}_{\Snterm{#2}}}} % nonterminal symbols
+\newcommand{\Slang}[1]{\textbf{\textcolor{black}{#1}}}    % languages
+\newcommand{\Slangsub}[2]{\ensuremath{\Slang{#1}_{\Slang{#2}}}}    % languages
+% Code
+\newcommand{\Scode}[1]{\textbf{#1}}    % reserved words in program listings, e.g., "if"
+\newcommand{\Scodelit}[1]{\textcolor{purple}{#1}}    % literals in program listings, e.g., strings
+\newcommand{\Scomment}[1]{\textcolor{gray}{#1}}    % comment in program listings
+
+\newcommand{\epstrastar}{\mathrel{\mathord{\stackrel{\epsilon}{\to}}{}^\ast}} % transitive reflexive closure of epsilon transitions in an epslion-NFA
+
+\newcommand{\narrowcentering}[1]{\mbox{}\hfill#1\hfill\mbox{}}
+
+\newcommand{\Smach}[1]{\ensuremath{\mathcal{#1}}}    % machines
+
+\newcommand{\mytrue}{\Scodelit{1}}
+\newcommand{\myfalse}{\Scodelit{0}}
+% \newcommand{\emptyClause}{\bot}
+
+
+\newcommand{\mydualbox}[3]{%
+	\begin{minipage}[t]{#1}
+		\begin{beamerboxesrounded}[upper=block title,lower=block body,shadow=true]%
+			{\centering\usebeamerfont*{block title}#2}%
+			\raggedright%
+			\usebeamerfont{block body}
+			%     \small
+			#3%
+		\end{beamerboxesrounded}
+	\end{minipage}
+}
+% 
+\newcommand{\myheaderbox}[2]{%
+	\begin{minipage}[t]{#1}
+		\begin{beamerboxesrounded}[upper=block title,lower=block title,shadow=true]%
+			{\centering\usebeamerfont*{block title}\rule{0pt}{2.6ex} #2}%
+		\end{beamerboxesrounded}
+	\end{minipage}
+}
+
+\newcommand{\mycontentbox}[2]{%
+	\begin{minipage}[t]{#1}%
+		\begin{beamerboxesrounded}[upper=block body,lower=block body,shadow=true]%
+			{\centering\usebeamerfont*{block body}\rule{0pt}{2.6ex}#2}%
+		\end{beamerboxesrounded}
+	\end{minipage}
+}
+
+\newcommand{\mylcontentbox}[2]{%
+	\begin{minipage}[t]{#1}%
+		\begin{beamerboxesrounded}[upper=block body,lower=block body,shadow=true]%
+			{\flushleft\usebeamerfont*{block body}\rule{0pt}{2.6ex}#2}%
+		\end{beamerboxesrounded}
+	\end{minipage}
+}
+
+% label=180:{\rotatebox{90}{{\footnotesize\textcolor{darkgreen}{Beispiel}}}}
+% \hspace{-8mm}\ghost{\raisebox{-7mm}{\rotatebox{90}{{\footnotesize\textcolor{darkgreen}{Beispiel}}}}}\hspace{8mm}
+\newcommand{\examplebox}[1]{%
+	\begin{tikzpicture}
+		\node (n1) [draw=darkgreen, fill=darkgreen!10,thick,align=left,text width=\linewidth, inner ysep=2mm, inner xsep=2mm] at (0,0) {#1};
+		% 		\node (n2) [align=left,text width=\linewidth,inner sep=0mm] at (n1.92) {{\footnotesize\raisebox{3mm}{\textcolor{darkgreen}{Beispiel}}}};
+		% 		\node (n2) [decorate,draw=darkgreen, fill=darkgreen!10,thick, align=left,text width=\linewidth,inner sep=2mm] at (n1.90) {{\footnotesize\raisebox{0mm}{\textcolor{darkgreen}{Beispiel}}}};
+	\end{tikzpicture}%
+}%
+
+\newcommand{\codebox}[1]{%
+	\begin{tikzpicture}
+		\node (n1) [draw=strongyellow, fill=strongyellow!10,thick,align=left,text width=\linewidth, inner ysep=2mm, inner xsep=2mm] at (0,0) {#1};
+	\end{tikzpicture}%
+}%
+
+\newcommand{\defbox}[1]{%
+	\begin{tikzpicture}
+		\node (n1) [draw=darkred, fill=darkred!10,thick,align=left,text width=\linewidth, inner ysep=2mm, inner xsep=2mm] at (0,0) {#1};
+	\end{tikzpicture}%
+}%
+
+\newcommand{\theobox}[1]{%
+	\begin{tikzpicture}
+		\node (n1) [draw=darkblue, fill=darkblue!10,thick,align=left,text width=\linewidth, inner ysep=2mm, inner xsep=2mm] at (0,0) {#1};
+	\end{tikzpicture}%
+}%
+
+\newcommand{\anybox}[2]{%
+	\begin{tikzpicture}
+		\node (n1) [draw=#1, fill=#1!10,thick,align=left,text width=\linewidth, inner ysep=2mm, inner xsep=2mm] at (0,0) {#2};
+	\end{tikzpicture}%
+}%
+
+
+\newsavebox{\mybox}%
+\newcommand{\doodlebox}[2]{%
+	\sbox{\mybox}{#2}%
+	\begin{tikzpicture}
+		\node (n1) [draw=#1, fill=#1!10,thick,align=left,inner sep=1mm] at (0,0) {\usebox{\mybox}};
+	\end{tikzpicture}%
+}%
+\newcommand{\widedoodlebox}[2]{%
+	\sbox{\mybox}{#2}%
+	\begin{tikzpicture}
+		\node (n1) [draw=#1, fill=#1!10,thick,align=left,inner sep=1mm,text width=\linewidth] at (0,0) {\usebox{\mybox}};
+	\end{tikzpicture}%
+}%
+
+\tikzset{onslide/.code args={<#1>#2}{%
+		\only<#1| handout:0>{\pgfkeysalso{#2}} 
+}}
