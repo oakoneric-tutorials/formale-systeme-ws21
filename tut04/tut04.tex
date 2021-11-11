@@ -33,6 +33,8 @@
 
 	\maketitle
 
+	\section{Aufgabe 1 \& 2: \\ \itshape Reguläre Ausdrücke}
+	
 	\begin{frame} \frametitle{Reguläre Ausdrücke}
 		\small		
 		\defbox{Die Menge der \textbf{regulärer Ausdrücke} über einem Alphabet $\Sigma$ ist induktiv wie folgt definiert:
@@ -101,8 +103,147 @@
 		\end{enumerate}
 	\end{frame}
 
+	\section{Aufgabe 3: \\ \itshape RegExp $\to$ NFA}
 
-	\begin{frame}\frametitle{Die Ersetzungsmethode}
+	\begin{frame}\frametitle{RegExp $\to$ NFA: kompositionelle Methode}
+		\small
+		Für einen Ausdruck $\alpha$ definieren wir rekursiv den $\epsilon$-NFA $\Smach{M}(\alpha)$:
+		
+		\textbf{Grundfälle:}
+		\begin{itemize}
+			\item Wenn $\alpha=\emptyset$ dann $\Smach{M}(\alpha)={}$ \scalebox{1}{%
+				\begin{tikzpicture}[baseline={(q1.base)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (q1) [circle,draw=black,thick] at (0,0) {$A$};
+					%
+					\path[->,line width=0.5mm](-0.7,0) edge (q1);
+			\end{tikzpicture}}
+			%
+			\item Wenn $\alpha=\epsilon$ dann $\Smach{M}(\alpha)={}$ \scalebox{1}{%
+				\begin{tikzpicture}[baseline={(q1.base)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (q1) [circle,draw=black,thick, double] at (0,0) {$A$};
+					%
+					\path[->,line width=0.5mm](-0.7,0) edge (q1);
+			\end{tikzpicture}}
+			\item Wenn $\alpha=\Sterm{a}$ dann $\Smach{M}(\alpha)={}$ \scalebox{1}{%
+				\begin{tikzpicture}[baseline={(q1.base)}]
+					% \draw[help lines] (0,0) grid (7,2);
+					\node (q1) [circle,draw=black,thick] at (0,0) {$A$};
+					\node (q2) [circle,draw=black,thick,double] at (2,0) {$B$};
+					%
+					\path[->,line width=0.5mm](-0.7,0) edge (q1);
+					\path[->,line width=0.5mm](q1) edge node[above] {\Sterm{a}} (q2);
+			\end{tikzpicture}}
+		\end{itemize}
+		
+		\textbf{Rekursive Fälle:}
+		Wir bezeichnen mit \bluealert{$\textsf{elim}_\epsilon(\Smach{M})$} den NFA, der aus einem $\epsilon$-NFA $\Smach{M}$ durch Eliminierung der $\epsilon$-Übergänge entsteht.
+		\begin{itemize}
+			\item Wenn $\alpha=(\beta\gamma)$ dann $\Smach{M}(\alpha)=\textsf{elim}_\epsilon(\Smach{M}(\beta)\odot\Smach{M}(\gamma))$
+			\item Wenn $\alpha=(\beta\mid\gamma)$ dann $\Smach{M}(\alpha)=\Smach{M}(\beta)\oplus\Smach{M}(\gamma)$
+			\item Wenn $\alpha=(\beta)^\ast$ dann $\Smach{M}(\alpha)=\textsf{elim}_\epsilon(\Smach{M}(\beta)^\ast)$
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame}\frametitle{RegExp $\to$ NFA: Explizite Konstruktion}
+		\small
+		\textbf{Gegeben}: regulärer Ausdruck $\alpha$ ohne $\emptyset$
+		
+		\textbf{Initialisierung}: $\Smach{M}_{\alpha}={}$ \scalebox{1}{%
+			\begin{tikzpicture}[baseline={(q1.base)}]
+				% \draw[help lines] (0,0) grid (7,2);
+				\node (q1) [circle,draw=black,thick] at (0,0) {$A$};
+				\node (q2) [circle,draw=black,thick,double] at (2,0) {$B$};
+				%
+				\path[->,line width=0.5mm](-0.7,0) edge (q1);
+				\path[->,line width=0.5mm](q1) edge node[above] {$\alpha$} (q2);
+		\end{tikzpicture}}
+		
+		Solange es in $\Smach{M}_{\alpha}$ Übergänge $q\stackrel{\beta}{\to}p$ gibt, die mit einem Ausdruck $\beta\notin \{\epsilon\}\cup\Sigma$ beschriftet sind, wende eine der 
+		folgenden Regeln an:
+		%
+		\begin{itemize}
+			\item  Ersetze \begin{tikzpicture}[baseline={(q1.base)}]
+				% \draw[help lines] (0,0) grid (7,2);
+				\node (q1) [circle,draw=black,thick] at (0,0) {$q$};
+				\node (q2) [circle,draw=black,thick] at (1.5,0) {$p$};
+				%
+				% \path[->,line width=0.5mm](-0.7,0) edge (q1);
+				\path[->,line width=0.5mm](q1) edge node[above] {$\enskip (\gamma_1\gamma_2) \enskip $} (q2);
+			\end{tikzpicture}
+			durch 
+			\begin{tikzpicture}[baseline={(q1.base)}]
+				% \draw[help lines] (0,0) grid (7,2);
+				\node (q1) [circle,draw=black,thick] at (0,0) {$q$};
+				\node (r) [circle,draw=black,thick] at (1.5,0) {$r$};
+				\node (q2) [circle,draw=black,thick] at (3,0) {$p$};
+				%
+				% \path[->,line width=0.5mm](-0.7,0) edge (q1);
+				\path[->,line width=0.5mm](q1) edge node[above] {$\gamma_1$} (r);
+				\path[->,line width=0.5mm](r) edge node[above] {$\gamma_2$} (q2);
+			\end{tikzpicture}
+			%
+			\item Ersetze \begin{tikzpicture}[baseline={(q1.base)}]
+				% \draw[help lines] (0,0) grid (7,2);
+				\node (q1) [circle,draw=black,thick] at (0,0) {$q$};
+				\node (q2) [circle,draw=black,thick] at (2,0) {$p$};
+				%
+				% \path[->,line width=0.5mm](-0.7,0) edge (q1);
+				\path[->,line width=0.5mm](q1) edge node[above,xshift=-3pt] {$(\gamma_1\mid\gamma_2)$} (q2);
+			\end{tikzpicture}
+			durch 
+			\begin{tikzpicture}[baseline={(q1.base)}]
+				% \draw[help lines] (0,0) grid (7,2);
+				\node (q1) [circle,draw=black,thick] at (0,0) {$q$};
+				\node (q2) [circle,draw=black,thick] at (2,0) {$p$};
+				%
+				% \path[->,line width=0.5mm](-0.7,0) edge (q1);
+				\path[->,line width=0.5mm,bend left=20](q1) edge node[above] {$\gamma_1$} (q2);
+				\path[->,line width=0.5mm, bend right=20](q1) edge node[above] {$\gamma_2$} (q2);
+			\end{tikzpicture}
+			%
+			\item  Ersetze \begin{tikzpicture}[baseline={(q1.base)}]
+				% \draw[help lines] (0,0) grid (7,2);
+				\node (q1) [circle,draw=black,thick] at (0,0) {$q$};
+				\node (q2) [circle,draw=black,thick] at (1.5,0) {$p$};
+				%
+				% \path[->,line width=0.5mm](-0.7,0) edge (q1);
+				\path[->,line width=0.5mm](q1) edge node[above] {$(\gamma)^\ast$} (q2);
+			\end{tikzpicture}
+			durch 
+			\begin{tikzpicture}[baseline={(q1.base)}]
+				% \draw[help lines] (0,0) grid (7,2);
+				\node (q1) [circle,draw=black,thick] at (0,0) {$q$};
+				\node (r) [circle,draw=black,thick] at (1.5,0) {$r$};
+				\node (q2) [circle,draw=black,thick] at (3,0) {$p$};
+				%
+				\path[->,line width=0.5mm](-0.7,0) edge (q1);
+				\path[->,line width=0.5mm](q1) edge node[above] {$\epsilon$} (r);
+				\path[->,line width=0.5mm](r) edge node[above] {$\epsilon$} (q2);
+				\path[->,line width=0.5mm](r) edge [loop above] node[left] {$\gamma$} (r);
+			\end{tikzpicture}
+		\end{itemize}
+	\end{frame}
+	
+	\begin{frame} \frametitle{Aufgabe 3}
+		\small
+		Geben Sie zu jedem der regulären Ausdrücke $r_i$ einen 
+		NFA $\mathcal M_i$ mit $L(\mathcal M_i) = L(r_i)$ an.
+		
+		\begin{enumerate}[a)]
+			\item $r_1 = (ab)^\ast$
+			\item $r_2 = a(b \mid c)a^\ast \mid a^\ast$
+			% \item $r_3 = (bb\mid cc^\ast)^\ast$
+		\end{enumerate}
+		
+		Wenden Sie dabei jeweils den \textit{kompositionellen Ansatz} sowie den \textit{expliziten Ansatz} zur Konstruktion von NFAs aus der Vorlesung an.
+	\end{frame}
+
+	\section{Aufgabe 4: \\ \itshape NFA $\to$ RegExp}
+
+
+	\begin{frame}\frametitle{NFA $\to$ RegExp: Ersetzungsmethode}
 		\small
 		\textbf{Gegeben}: NFA  $\Smach{M}=\tuple{Q,\Sigma,\delta,Q_0,F}$
 		
@@ -156,7 +297,7 @@
 	\newcommand{\Lijk}[3]{\ensuremath{\Slang{L}^{#3}[#1,#2]}}
 	\newcommand{\alphaijk}[3]{\ensuremath{\alpha^{#3}[#1,#2]}}
 	
-	\begin{frame} \frametitle{Dynamische Ermittlung}
+	\begin{frame} \frametitle{NFA $\to$ RegExp: Dynamische Ermittlung}
 		\small
 		\textbf{Gegeben}: NFA  $\Smach{M}=\tuple{Q,\Sigma,\delta,Q_0,F}$
 		
@@ -209,20 +350,6 @@
 		\end{itshape}
 	\end{frame}
 
-	\begin{frame} \frametitle{Aufgabe 3}
-		\small
-		Geben Sie zu jedem der regulären Ausdrücke $r_i$ einen 
-		NFA $\mathcal M_i$ mit $L(\mathcal M_i) = L(r_i)$ an.
-		
-		\begin{enumerate}[a)]
-			\item $r_1 = (ab)^\ast$
-			\item $r_2 = a(b \mid c)a^\ast \mid a^\ast$
-			% \item $r_3 = (bb\mid cc^\ast)^\ast$
-		\end{enumerate}
-		
-		Wenden Sie dabei jeweils den \textit{kompositionellen Ansatz} sowie den \textit{expliziten Ansatz} zur Konstruktion von NFAs aus der Vorlesung an.
-	\end{frame}
-
 	\begin{frame} \frametitle{Aufgabe 4}
 		\small
 		Entwickeln Sie für die Sprache $L$ über dem Alphabet $\Sigma = \menge{a, b, c}$ einen regulären Ausdruck $r$ mit $L = L(r)$. Für alle Wörter $w \in L$ gilt:
@@ -233,49 +360,66 @@
 		\end{itemize}
 	\end{frame}
 
+	\section{Aufgabe 5: \\ \itshape Minimierung von Automaten}
 
 	\begin{frame}\frametitle{Äquivalenz von Zuständen \& Quotientenautomat}
 		\small
 		DFA $\Smach{M}=\tuple{Q,\Sigma,\delta,q_0,F} \leadsto$ DFA $\Smach{M}_q=\tuple{Q,\Sigma,\delta,q,F}$
 		
-		\defbox{			
-			Zwei Zustände $p,q\in Q$ sind \textbf{$\Smach{M}$-äquivalent} ($p\sim_{\Smach{M}}q$), falls
-			\begin{equation*}
-				\Slang{L}(\Smach{M}_{p}) = \Slang{L}(\Smach{M}_{q})
-			\end{equation*}
-			Die Äquivalenzklasse eines Zustands $q \in Q$ ist
-			\begin{equation*}
-				[q]_{\sim}=\{p\in Q\mid q\sim p\}
-			\end{equation*}
-			Für eine Menge $P \subseteq Q$ schreiben wir $\simquot{P\!}$ für den Quotienten von $P$ und $\sim$:
-			\begin{equation*}
-				\simquot{P\!} = \menge{[p]_{\sim}\mid p \in P}
-			\end{equation*}
+		\defbox{
+			\makebox[5.5cm][l]{\textbf{Äquivalenz von Zuständen}:} $p\sim_{\Smach{M}}q 
+			\quad \Leftrightarrow \quad
+			\Slang{L}(\Smach{M}_{p}) = \Slang{L}(\Smach{M}_{q})$ \\
+			\makebox[5.5cm][l]{\textbf{Äquivalenzklasse}:} $[q]_{\sim}=\{p\in Q\mid q\sim p\}$ \\
+			\makebox[5.5cm][l]{\textbf{Quotient} von $P \subseteq Q$:} $\simquot{P\!} = \menge{[p]_{\sim}\mid p \in P}$
 		}
 	
+	
+		\textbf{Quotientenautomat}:  Verschmelzen von äquivalenten Zuständen
+		
+		\defbox{Für einen DFA $\Smach{M} = \tuple{Q,\Sigma,\delta,q_0,F}$ mit totaler Übergangsfunktion ist der Quotientenautomat $\simquot{\Smach{M}} =\tuple{\simquot{Q},\Sigma,\delta_{\sim},[q_0]_{\sim_{\Smach{M}}},\simquot{F\!}}$ gegeben durch
 		\begin{itemize}
-			\item $\sim$ ist eine Äquivalenzrelation (reflexiv, symmetrisch, transitiv)
-			\item Äquivalenzklassen sind disjunkt und partitionieren $Q$
+			\item $\simquot{Q} = \{[q]_{\sim}\mid q\in Q\}$
+			\item $\delta_{\sim}([q]_{\sim},\Sterm{a}) = [\delta(q,\Sterm{a})]_{\sim}$
+			\item $\simquot{F\!} = \{[q]_{\sim}\mid q\in F\}$
 		\end{itemize}
+		}
 	\end{frame}
 
 	\begin{frame}
 		\small
-		\textbf{Quotientenautomat} 
 		
-		Idee: Verschmelzen von äquivalenten Zuständen
+		\textbf{Bestimmung von $\sim$}:
+		\vspace{-.7\baselineskip}
+		\begin{itemize}
+			\item Initialisiere ${\not\sim}\defeq\emptyset$
+			\item \textbf{Regel 1}: Für jedes Paar von Zuständen $\tuple{q,p}\in Q\times Q$:\\
+			falls $q\in F$ und $p\notin F$, dann "`speichere $q\not\sim p$"'
+			% ${\not\sim}\defeq{\not\sim}\cup\{\tuple{q,p},\tuple{p,q}\}$
+			\item \textbf{Regel 2}: Für jedes Paar $\tuple{q,p}\in Q\times Q\setminus {\not\sim}$ und jedes $\Sterm{a}\in\Sigma$:\\
+			falls $\delta(q,\Sterm{a})\not\sim\delta(p,\Sterm{a})$ dann "`speichere $q\not\sim p$"'
+			% 	${\not\sim}\defeq{\not\sim}\cup\{\tuple{q,p},\tuple{p,q}\}$
+			\item Wiederhole Regel 2 bis keine Änderungen mehr auftreten
+			\item Das Ergebnis ist $(Q\times Q)\setminus {\not\sim}$
+		\end{itemize}
 		
-			\defbox{Für einen DFA $\Smach{M} = \tuple{Q,\Sigma,\delta,q_0,F}$ mit totaler Übergangsfunktion ist der Quotientenautomat $\simquot{\Smach{M}}$ gegeben durch
-			\begin{equation*}
-				\simquot{\Smach{M}} =\tuple{\simquot{Q},\Sigma,\delta_{\sim},[q_0]_{\sim_{\Smach{M}}},\simquot{F\!}}
-			\end{equation*}
-			wobei gilt:%
-			\begin{itemize}
-				\item $\simquot{Q} = \{[q]_{\sim}\mid q\in Q\}$
-				\item $\delta_{\sim}([q]_{\sim},\Sterm{a}) = [\delta(q,\Sterm{a})]_{\sim}$
-				\item $\simquot{F\!} = \{[q]_{\sim}\mid q\in F\}$
-			\end{itemize}
-			}
+		\examplebox{
+			\begin{minipage}{6cm}
+				\begin{flushleft}
+					\textbf{Beispiel}: Für einen DFA mit Zuständen $Q=\{A,B,C,D,E\}$ genügt eine Tabelle mit zehn Feldern (statt $5^2=25$).\\[1ex]
+					
+					{\tiny (dazu reihen wir Zustände vertikal in umgekehrter Reihenfolge)}
+				\end{flushleft}
+			\end{minipage}
+			\narrowcentering{\scalebox{0.8}{%
+					\begin{tabular}{c|c|c|c|c|}
+						\multicolumn{1}{c}{}  & \multicolumn{1}{c}{A} & \multicolumn{1}{c}{B} & \multicolumn{1}{c}{C} & \multicolumn{1}{c}{D}  \\\cline{2-5}
+						E &   &   &   &    \\\cline{2-5}
+						D &   &   &        \\\cline{2-4} 
+						C &   &            \\\cline{2-3}
+						B &                \\\cline{2-2}
+			\end{tabular}}}
+		}
 	\end{frame}
 	
 	\begin{frame} \frametitle{Aufgabe 5}
