@@ -17,6 +17,7 @@
 
 \newcommand{\tuple}[1]{\langle{#1}\rangle}
 \newcommand{\simquot}[1]{#1/_{\!\!{\sim}}}
+\newcommand{\bigmid}{\,\Big|\,}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -82,6 +83,27 @@
 			\end{array}
 		\end{equation*}	
 		Geben Sie für $L$ einen regulären Ausdruck $r$ mit $L=L(r)$ an.
+	\end{frame}
+
+	\begin{frame}
+		\small
+		\textbf{Idee}: 
+		\begin{itemize}
+			\item die ersten beiden Bedingungen beschreiben zusammen die \enquote{Wortmitte}
+			\item die Teile $ccc$ und $babc$ können in drei verschiedenen Kombinationen auftreten
+			\item die dritte Bedingung schließt ein $a$ am Anfang aus
+		\end{itemize} 
+		\pause
+	
+		\textbf{Lösung}:
+		\begin{align*}
+			r \, = \enskip
+				&\Big((b \mid c) (a \mid b \mid c)^\ast \Big)^\ast \\
+				&\Big( (babc \, (a \mid b \mid c)^\ast \, ccc) 
+				\bigmid ccc \, (a \mid b \mid c)^\ast \, babc 
+				\bigmid babccc \Big) \\
+				&\Big(a \mid b \mid c \Big)^\ast
+		\end{align*}
 	\end{frame}
 	
 	\begin{frame} \frametitle{Aufgabe 2}
@@ -359,7 +381,81 @@
 			\item Die Anzahl der $b$ in $w$ ist gerade.
 		\end{itemize}
 	\end{frame}
+	
+	\begin{frame}
+		\small
+		\textbf{Idee}:
+		$L = 
+		\underbrace{\brackets{\menge{w \in \Sigma^\ast : w \text{ enthält } aaa} \cap \menge{w \in \Sigma^\ast : \abs{w}_b \text{ gerade} }}}_{\defeq L(\mathcal{M})} \cdot \menge{c}$
+	
+		\begin{itemize}
+			\item Konstruiere Automaten für die erste und dritte Bedingung
+			\item Produktautomat $\mathcal{M}$ erkennt die Sprache ohne $c$ am Ende
+		\end{itemize}
+	
+		\begin{center}
+			\scalebox{0.6}{
+			\begin{tikzpicture}[%
+				->,
+				>=stealth',
+				semithick,
+				initial text=,
+				shorten <=2pt,   
+				shorten >=2pt,
+				auto, 
+				on grid,
+				node distance=14ex and 7em,
+				every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+				bend angle=20]
+				\node                  (init)                 {$\mathcal{M}:$};
+				\node[state,initial]   (q0p0) [right=of init] {$\tuple{q_0, p_0}$};
+				\node[state]           (q1p0) [right=of q0p0] {$\tuple{q_1, p_0}$};
+				\node[state]           (q2p0) [right=of q1p0] {$\tuple{q_2, p_0}$};
+				\node[state,accepting] (q3p0) [right=of q2p0] {$\tuple{q_3, p_0}$};
+				\node[state]           (q0p1) [below=of q0p0] {$\tuple{q_0, p_1}$};
+				\node[state]           (q1p1) [right=of q0p1] {$\tuple{q_1, p_1}$};
+				\node[state]           (q2p1) [right=of q1p1] {$\tuple{q_2, p_1}$};
+				\node[state]           (q3p1) [right=of q2p1] {$\tuple{q_3, p_1}$};
+				
+				\path[->,draw] {
+					(q0p0) edge[loop above] node {$a,c$} (q0p0)
+					       edge node {$a$}   (q1p0)
+					       edge[bend left] node {$b$}   (q0p1)
+					(q1p0) edge node {$a$}   (q2p0)
+					(q2p0) edge node {$a$}   (q3p0)
+					(q3p0) edge[loop above] node {$a,c$} (q3p0)
+					(q3p0) edge[bend left] node {$b$}   (q3p1)
+					(q0p1) edge[loop below] node {$a,c$} (q0p1)
+					       edge[bend left] node {$b$} (q0p0)
+					(q0p1) edge node {$a$}   (q1p1)
+					(q1p1) edge node {$a$}   (q2p1)
+					(q2p1) edge node {$a$}   (q3p1)
+					(q3p1) edge[loop below] node {$a,c$} (q3p1)
+					       edge[bend left] node {$b$}   (q3p0)
+				};
+			\end{tikzpicture}}
+		\end{center}
+		\vspace{-\baselineskip}
+	\end{frame}
 
+	\begin{frame}
+		\small
+		\begin{itemize}
+			\item Umwandlung in regulären Ausdruck $\alpha_{\mathcal{M}}$ (z.B. via Lemma von Arden)		
+		\end{itemize}
+		\begin{align*}
+			\alpha_{\mathcal{M}} = \
+			&\Big( a \mid c \mid  b \, (a | c)^\ast \, b \Big)^\ast \\
+			&\Big( aaa ( a \mid c \mid  b \, (a | c)^\ast \, b )^\ast
+			\bigmid
+			b (a|c)^\ast aaa(a|c)^\ast b \, \big(a \mid c \mid b(a|c)^\ast b \big)^\ast
+			\Big)
+		\end{align*}
+		\begin{itemize}
+			\item Mit $r = \alpha_{\mathcal{M}} c$ gilt dann $L(r) = L$.
+		\end{itemize}		
+	\end{frame}
+	
 	\section{Aufgabe 5: \\ \itshape Minimierung von Automaten}
 
 	\begin{frame}\frametitle{Äquivalenz von Zuständen \& Quotientenautomat}
@@ -466,6 +562,49 @@
 		\end{center}
 		die Äquivalenzrelation
 		$\sim_{\mathcal{M}}$, und geben Sie den Quotientenautomaten ${\mathcal{M}}/_\sim$ an.
+	\end{frame}
+
+	\begin{frame}
+		\small
+		\begin{alignat*}{2}
+			\sim &=& &\left\{
+				\tuple{q_1, q_2}, \tuple{q_2, q_4}, \tuple{q_1, q_4}, \tuple{q_0, q_3}  \right\} \\
+				&\cup & &\left\{ \tuple{q_2, q_1}, \tuple{q_4, q_2}, \tuple{q_4, q_1}, \tuple{q_3, q_0} \right\} \\
+				&\cup& &\menge{\tuple{q,q} : q \in Q} \\
+			Q/_\sim &=& &\Big\{
+			\underbrace{\menge{q_0, q_3}}_{ = [q_0]_\sim},
+			\underbrace{\menge{q_1, q_2, q_4}}_{ = [q_1]_\sim},
+			\underbrace{\menge{q_5}}_{= [q_5]_\sim}%
+			\Big\}
+		\end{alignat*}
+	
+		\begin{center}
+			\scalebox{1}{
+				\begin{tikzpicture}[%
+					->,
+					>=stealth',
+					semithick,
+					initial text=,
+					shorten <=2pt,   
+					shorten >=2pt,
+					auto, 
+					on grid,
+					node distance=14ex and 8em,
+					every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+					bend angle=20]
+					\node[state,initial]   (q03)                  {$\menge{q_0, q_3}$};
+					\node[state,accepting] (q124) [right=of q03]  {$\menge{q_1, q_2, q_4}$};
+					\node[state]           (q5)   [right=of q124] {$\menge{q_5}$};
+					
+					\path[->,draw] {
+						(q03)  edge[loop above] node {$a$}   (q03)
+						       edge             node {$b$}   (q124)
+						(q124) edge[loop above] node {$a$}   (q124)
+						       edge             node {$b$}   (q5)
+						(q5)   edge[loop above] node {$a,b$} (q5)
+					};
+			\end{tikzpicture}}
+		\end{center}
 	\end{frame}
 	
 
