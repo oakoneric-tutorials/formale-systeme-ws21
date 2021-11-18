@@ -48,7 +48,7 @@
 		
 		\codebox{Für jeden Zustand $q\in Q$, berechne einen regulären Ausdruck $\alpha_q$ für die Sprache $\Slang{L}(\alpha_q) = \Slang{L}(\Smach{M}_q)$ mit $\Smach{M}_q=\tuple{Q,\Sigma,\delta,\{q\},F}$}
 		
-		Für $Q_0 = \menge{q_1,q_2,\dots, q_n}$ gilt dann
+		Für Startzustände $Q_0 = \menge{q_1,q_2,\dots, q_n}$ gilt dann
 		\begin{equation*}
 			\Slang{L}(\Smach{M})
 			=\bigcup_{q\in Q_0} \Slang{L}(\alpha_q)
@@ -90,7 +90,37 @@
 	\end{frame}
 
 	\begin{frame} \frametitle{Aufgabe 1}
-	
+		\small
+		Gegeben ist der DFA $\mathcal{M} = \tuple{\menge{q_0, q_1, q_2}, \menge{a,b}, \delta, q_0, \menge{q_0}}$ mit $\delta$:
+		\begin{center}
+			\begin{tikzpicture}[%
+				->,
+				>=stealth',
+				semithick,
+				initial text=,
+				shorten <=2pt,   
+				shorten >=2pt,
+				auto, 
+				on grid,
+				node distance=7ex and 8em,
+				every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+				bend angle=20]
+				\node[state,initial,accepting] (q_0) {$q_0$};
+				\node[state] (q_1) [above right=of q_0] {$q_1$};
+				\node[state] (q_2) [below right=of q_0] {$q_2$};
+				\path[->]
+					(q_0) edge[loop above] node {$a$} (q_0)
+					(q_0) edge[bend left] node {$b$} (q_1)
+					(q_1) edge[bend left] node {$a$} (q_0)
+					(q_1) edge[bend left] node {$b$} (q_2)
+					(q_2) edge[loop right] node {$a$} (q_2)
+					(q_2) edge[bend left] node {$b$} (q_0);
+			\end{tikzpicture}
+		\end{center}
+		Geben Sie einen regulären Ausdruck $\alpha$ an, der die von $\mathcal{M}$ akzeptierte Sprache repräsentiert, d.h. es gilt $L(\alpha) = L(\mathcal{M})$.
+		
+		\scriptsize
+		Hinweis: Zur Lösung können Sie die Ersetzungsmethode verwenden: geben Sie hierzu für jeden Zustand $q_i$ des Automaten eine Gleichung $\alpha_i = \dots$ an. Lösen Sie anschließend das Gleichungssystem mithilfe des \textit{Arden-Lemmas}.
 	\end{frame}
 
 	\section{Aufgabe 2: \\ \itshape Minimierung von Automaten}
@@ -196,6 +226,65 @@
 		\end{enumerate}
 	\end{frame}
 	
-
+	\section{Aufgabe 3: \\ \itshape Nerode-Rechtskongruenz}
 	
+	\begin{frame} \frametitle{Nerode-Rechtskongruenz}
+		\small		
+		\defbox{%
+			\textbf{Nerode-Rechtskongruenz} ${\simeq_{\Slang{L}}}\subseteq \Sigma^\ast\times \Sigma^\ast$:\\ 
+			$u\simeq_{\Slang{L}}v$ $\qquad$ falls$\qquad$
+			$uw\in\Slang{L} \enskip \Leftrightarrow \enskip vw\in\Slang{L} \qquad \forall w\in\Sigma^\ast$
+		}%
+		
+		\theobox{\textbf{Satz (Myhill \& Nerode):} Eine Sprache $\Slang{L}$ ist genau dann regulär, wenn $\simeq_{\Slang{L}}$ endlich viele Äquivalenzklassen hat.}
+		
+		\codebox{\textbf{Myhill-Nerode-Minimalautomat} $\Smach{M}_{\Slang{L}}=\tuple{Q,\Sigma,\delta,q_0,F}$ mit:
+			\begin{itemize}
+				\item $Q=\{[w]_\simeq\mid w\in\Sigma^\ast\}$
+				\item $q_0=[\epsilon]_\simeq$
+				\item $F=\{[w]_\simeq\mid w\in\Slang{L}\}$
+				\item $\delta([w]_\simeq,\Sterm{a})=[w\Sterm{a}]_\simeq$
+			\end{itemize}
+		}
+	\end{frame}
+	
+	\begin{frame} \frametitle{Aufgabe 3}
+		Gegeben ist der regul\"are Ausdruck $\alpha = (bb)^\ast a$.
+		\begin{enumerate}
+			\item Geben Sie f\"ur $\alpha$ die \textit{Nerode}-Rechtskongruenz $\;\simeq_{L(\alpha)}\;$ an.
+			\item Geben Sie einen minimalen DFA ${\mathcal M}$ an mit $L({\mathcal M})= L(\alpha)$.
+		\end{enumerate} 
+	\end{frame}
+
+	\section{Aufgabe 4 \\ \itshape Beweis von Nichtregularität}
+	
+	\begin{frame} \frametitle{Beweis von Nichtregularität}
+		\small
+		\theobox{\textbf{Satz (Myhill \& Nerode):} Eine Sprache $\Slang{L}$ ist genau dann regulär, wenn $\simeq_{\Slang{L}}$ endlich viele Äquivalenzklassen hat.}
+		\pause
+		
+		\theobox{\textbf{Satz:} Wenn $\Slang{L}_1$ und $\Slang{L}_2$ regulär sind, dann auch $\Slang{L}_1\cap \Slang{L}_2$,
+		$\Slang{L}_1\cup \Slang{L}_2$, $\Slang{L}_1^\ast$ und $\overline{\Slang{L}}_1$.}
+		\pause
+		
+		\theobox{\textbf{Satz (Pumping-Lemma):}
+			Für jede reguläre Sprache $\Slang{L}$\\
+			gibt es eine Zahl $n\geq 0$, so dass gilt:\\
+			~~für jedes Wort $x\in\Slang{L}$ mit $|x|\geq n$\\
+			~~gibt es eine Zerlegung $x=uvw$ mit $|v|\geq 1$ und $|uv|\leq n$, so dass:\\
+			~~~~für jede Zahl $k\geq 0$ gilt: $u v^k w\in\Slang{L}$
+		}
+	\end{frame}
+	
+	\begin{frame} \frametitle{Aufgabe 4}
+		Welche der folgenden Sprachen sind regulär? Begründen Sie Ihre Antwort.
+		\begin{enumerate}[a)]
+			\item $L_a = \menge{ww^R : w \in \menge{\Sterm{0},\Sterm{1}}^\ast}$
+			\item $L_b = \menge{\Sterm{a}^n \Sterm{c}^m \Sterm{b}^n : n,m \ge 0}$
+			\item $L_c = \menge{w \in \menge{\Sterm{0},1}^\ast : \abs{w}_{\Sterm{0}} \text{ gerade}, \abs{w}_{\Sterm{1}} \text{ durch 3 teilbar}}$
+			\item $L_d = \menge{w \in \menge{\Sterm{0},\Sterm{1}}^\ast : \text{ auf jede \Sterm{0} folgt eine \Sterm{1}}}$
+			\item $L_e = \menge{\Sterm{0}^{n^2} : n \ge 0}$
+			\item $L_f = \menge{\Sterm{0}^m \Sterm{1}^n \Sterm{0}^{n+m} : n,m \ge 1}$
+		\end{enumerate}
+	\end{frame}	
 \end{document}
