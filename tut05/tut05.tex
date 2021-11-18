@@ -1,0 +1,201 @@
+\documentclass{beamer}
+\usepackage{../tut-slides}
+\usepackage{../mathoperators}
+\usepackage{../fs}
+
+\usepackage{csquotes}
+
+\usepackage{amsmath,amssymb}
+%\usepackage{enumerate}
+\usepackage[normalem]{ulem}
+\newcommand{\labelitemi}{\raisebox{1pt}{\scalebox{.9}{$\blacktriangleright$}}}
+\newcommand{\labelitemii}{$\vartriangleright$}
+\newcommand{\labelitemiii}{--}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+\newcommand{\tuple}[1]{\langle{#1}\rangle}
+\newcommand{\simquot}[1]{#1/_{\!\!{\sim}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}	
+	\title{Formale Systeme}
+	\subtitle{Übung 5}
+	\author{Eric Kunze}
+	\email{eric.kunze@tu-dresden.de}
+	\city{TU Dresden}
+	\date{\today}
+%	\institute{Lehrstuhl für Grundlagen der Programmierung}
+	\titlegraphic{\includegraphics[width=2cm]{../TUD-white.pdf}}
+
+	\maketitle
+
+	
+
+	\section{Aufgabe 1: \\ \itshape NFA $\to$ RegExp}
+
+
+	\begin{frame}\frametitle{NFA $\to$ RegExp: Ersetzungsmethode}
+		\small
+		\textbf{Gegeben}: NFA  $\Smach{M}=\tuple{Q,\Sigma,\delta,Q_0,F}$
+		
+		\textbf{Gesucht}: regulärer Ausdruck $\alpha$ mit $\Slang{L}(\alpha)=\Slang{L}(\Smach{M})$
+		
+		\textbf{Idee}:
+		
+		\codebox{Für jeden Zustand $q\in Q$, berechne einen regulären Ausdruck $\alpha_q$ für die Sprache $\Slang{L}(\alpha_q) = \Slang{L}(\Smach{M}_q)$ mit $\Smach{M}_q=\tuple{Q,\Sigma,\delta,\{q\},F}$}
+		
+		Für $Q_0 = \menge{q_1,q_2,\dots, q_n}$ gilt dann
+		\begin{equation*}
+			\Slang{L}(\Smach{M})
+			=\bigcup_{q\in Q_0} \Slang{L}(\alpha_q)
+			=  \Slang{L}(\alpha_{q_1}\mid\alpha_{q_2}\mid\dots\mid \alpha_{q_n})
+		\end{equation*}
+	\end{frame}
+
+	\begin{frame}		
+		\small
+		\begin{enumerate}[(1)]
+			\item \textbf{Vereinfache den Automaten} (entferne offensichtlich unnötige Zustände)	
+			
+			\item \textbf{Bestimme das Gleichungssystem} 
+			
+			\textit{Intuition}: Beschreibe $\alpha_q$ in Abhängigkeit von Folgezuständen
+			
+			\defbox{ \\[-0.9\baselineskip]
+				\begin{itemize}
+					\item Für jeden Zustand $q\in Q \setminus F$:
+					$\alpha_q \equiv \sum_{\Sterm{a}\in\Sigma}\; \sum_{p\in\delta(q,\Sterm{a})} \Sterm{a}\alpha_p$
+					\item Für jeden Zustand $q\in F$:
+					$\alpha_q \equiv \bluealert{\epsilon} \mid \sum_{\Sterm{a}\in\Sigma}\; \sum_{p\in\delta(q,\Sterm{a})} \Sterm{a}\alpha_p$
+				\end{itemize}
+			}
+			%
+			\item \textbf{Löse das Gleichungssystem} durch Einsetzen und
+			
+			\theobox{Regel von Arden: Aus $\alpha\equiv \beta\alpha\mid\gamma$ mit $\epsilon\notin\Slang{L}(\beta)$ folgt $\alpha\equiv\beta^\ast\gamma$.}
+			%
+			\item \textbf{Gib den Ausdruck für die Sprache des NFA an}
+			
+			Für $Q_0 = \menge{q_1,q_2,\dots, q_n}$ gilt dann
+			\begin{equation*}
+				\Slang{L}(\Smach{M})
+				=\bigcup_{q\in Q_0} \Slang{L}(\alpha_q)
+				=  \Slang{L}(\alpha_{q_1}\mid\alpha_{q_2}\mid\dots\mid \alpha_{q_n})
+			\end{equation*}
+		\end{enumerate}
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 1}
+	
+	\end{frame}
+
+	\section{Aufgabe 2: \\ \itshape Minimierung von Automaten}
+
+	\begin{frame}\frametitle{Äquivalenz von Zuständen \& Quotientenautomat}
+		\small
+		DFA $\Smach{M}=\tuple{Q,\Sigma,\delta,q_0,F} \leadsto$ DFA $\Smach{M}_q=\tuple{Q,\Sigma,\delta,q,F}$
+		
+		\defbox{
+			\makebox[5.5cm][l]{\textbf{Äquivalenz von Zuständen}:} $p\sim_{\Smach{M}}q 
+			\quad \Leftrightarrow \quad
+			\Slang{L}(\Smach{M}_{p}) = \Slang{L}(\Smach{M}_{q})$ \\
+			\makebox[5.5cm][l]{\textbf{Äquivalenzklasse}:} $[q]_{\sim}=\{p\in Q\mid q\sim p\}$ \\
+			\makebox[5.5cm][l]{\textbf{Quotient} von $P \subseteq Q$:} $\simquot{P\!} = \menge{[p]_{\sim}\mid p \in P}$
+		}
+	
+	
+		\textbf{Quotientenautomat}:  Verschmelzen von äquivalenten Zuständen
+		
+		\defbox{Für einen DFA $\Smach{M} = \tuple{Q,\Sigma,\delta,q_0,F}$ mit totaler Übergangsfunktion ist der Quotientenautomat $\simquot{\Smach{M}} =\tuple{\simquot{Q},\Sigma,\delta_{\sim},[q_0]_{\sim_{\Smach{M}}},\simquot{F\!}}$ gegeben durch
+		\begin{itemize}
+			\item $\simquot{Q} = \{[q]_{\sim}\mid q\in Q\}$
+			\item $\delta_{\sim}([q]_{\sim},\Sterm{a}) = [\delta(q,\Sterm{a})]_{\sim}$
+			\item $\simquot{F\!} = \{[q]_{\sim}\mid q\in F\}$
+		\end{itemize}
+		}
+	\end{frame}
+
+	\begin{frame}
+		\small
+		
+		\textbf{Bestimmung von $\sim$}:
+		\vspace{-.7\baselineskip}
+		\begin{itemize}
+			\item Initialisiere ${\not\sim}\defeq\emptyset$
+			\item \textbf{Regel 1}: Für jedes Paar von Zuständen $\tuple{q,p}\in Q\times Q$:\\
+			falls $q\in F$ und $p\notin F$, dann "`speichere $q\not\sim p$"'
+			% ${\not\sim}\defeq{\not\sim}\cup\{\tuple{q,p},\tuple{p,q}\}$
+			\item \textbf{Regel 2}: Für jedes Paar $\tuple{q,p}\in Q\times Q\setminus {\not\sim}$ und jedes $\Sterm{a}\in\Sigma$:\\
+			falls $\delta(q,\Sterm{a})\not\sim\delta(p,\Sterm{a})$ dann "`speichere $q\not\sim p$"'
+			% 	${\not\sim}\defeq{\not\sim}\cup\{\tuple{q,p},\tuple{p,q}\}$
+			\item Wiederhole Regel 2 bis keine Änderungen mehr auftreten
+			\item Das Ergebnis ist $(Q\times Q)\setminus {\not\sim}$
+		\end{itemize}
+		
+		\examplebox{
+			\begin{minipage}{6cm}
+				\begin{flushleft}
+					\textbf{Beispiel}: Für einen DFA mit Zuständen $Q=\{A,B,C,D,E\}$ genügt eine Tabelle mit zehn Feldern (statt $5^2=25$).\\[1ex]
+					
+					{\tiny (dazu reihen wir Zustände vertikal in umgekehrter Reihenfolge)}
+				\end{flushleft}
+			\end{minipage}
+			\narrowcentering{\scalebox{0.8}{%
+					\begin{tabular}{c|c|c|c|c|}
+						\multicolumn{1}{c}{}  & \multicolumn{1}{c}{A} & \multicolumn{1}{c}{B} & \multicolumn{1}{c}{C} & \multicolumn{1}{c}{D}  \\\cline{2-5}
+						E &   &   &   &    \\\cline{2-5}
+						D &   &   &        \\\cline{2-4} 
+						C &   &            \\\cline{2-3}
+						B &                \\\cline{2-2}
+			\end{tabular}}}
+		}
+	\end{frame}
+	
+	\begin{frame} \frametitle{Aufgabe 2}
+		\small
+		Gegeben ist der $\varepsilon$-NFA $\mathcal{M} = (\{q_0,q_1,q_2,q_3,q_4\}, \{a, b\},
+		\Delta, \{q_{0}\}, \{q_{2}\})$ mit $\Delta$:
+		\begin{center}
+			\begin{tikzpicture}[%
+				->,
+				>=stealth',
+				semithick,
+				initial text=,
+				shorten <=2pt,   
+				shorten >=2pt,
+				auto, 
+				on grid,
+				node distance=7ex and 8em,
+				every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+				bend angle=20]
+				\node[state,initial] (q_0) {$q_0$};
+				\node[state] (q_1) [above right=of q_0] {$q_1$};
+				\node[state,accepting] (q_2) [right=of q_1] {$q_2$};
+				\node[state] (q_3) [below right=of q_0] {$q_3$};
+				\node[state] (q_4) [right=of q_3] {$q_4$};
+				\path[->]
+				(q_0) edge node {$\varepsilon$} (q_1)
+				(q_0) edge node {$b$} (q_3)
+				(q_3) edge node {$a, b$} (q_1)
+				(q_1) edge node {$\varepsilon$} (q_2)
+				(q_2) edge node[above left] {$a$} (q_3)
+				(q_2) edge[bend left] node {$a$} (q_4)
+				(q_3) edge node {$b$} (q_4)
+				(q_4) edge [bend left] node {$a$} (q_2) 
+				(q_4) edge [loop right, white] node [white] {$a,b$} (q_4) ;
+			\end{tikzpicture}
+		\end{center}
+		
+		\begin{enumerate}[a)]
+			\item Konstruieren Sie einen zu $\mathcal M$ äquivalenten DFA $\mathcal M'$.
+			\item Geben Sie den zu $\mathcal M'$ reduzierten DFA $\mathcal M'_r$ an.
+		\end{enumerate}
+	\end{frame}
+	
+
+	
+\end{document}
