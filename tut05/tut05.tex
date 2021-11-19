@@ -1,0 +1,443 @@
+\documentclass{beamer}
+\usepackage{../tut-slides}
+\usepackage{../mathoperators}
+\usepackage{../fs}
+
+\usepackage{csquotes}
+
+\usepackage{amsmath,amssymb}
+%\usepackage{enumerate}
+\usepackage[normalem]{ulem}
+\newcommand{\labelitemi}{\raisebox{1pt}{\scalebox{.9}{$\blacktriangleright$}}}
+\newcommand{\labelitemii}{$\vartriangleright$}
+\newcommand{\labelitemiii}{--}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+\newcommand{\tuple}[1]{\langle{#1}\rangle}
+\newcommand{\simquot}[1]{#1/_{\!\!{\sim}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}	
+	\title{Formale Systeme}
+	\subtitle{Übung 5}
+	\author{Eric Kunze}
+	\email{eric.kunze@tu-dresden.de}
+	\city{TU Dresden}
+	\date{\today}
+%	\institute{Lehrstuhl für Grundlagen der Programmierung}
+	\titlegraphic{\includegraphics[width=2cm]{../TUD-white.pdf}}
+
+	\maketitle
+
+	
+
+	\section{Aufgabe 1: \\ \itshape NFA $\to$ RegExp}
+
+
+	\begin{frame}\frametitle{NFA $\to$ RegExp: Ersetzungsmethode}
+		\small
+		\textbf{Gegeben}: NFA  $\Smach{M}=\tuple{Q,\Sigma,\delta,Q_0,F}$
+		
+		\textbf{Gesucht}: regulärer Ausdruck $\alpha$ mit $\Slang{L}(\alpha)=\Slang{L}(\Smach{M})$
+		
+		\textbf{Idee}:
+		
+		\codebox{Für jeden Zustand $q\in Q$, berechne einen regulären Ausdruck $\alpha_q$ für die Sprache $\Slang{L}(\alpha_q) = \Slang{L}(\Smach{M}_q)$ mit $\Smach{M}_q=\tuple{Q,\Sigma,\delta,\{q\},F}$}
+		
+		Für Startzustände $Q_0 = \menge{q_1,q_2,\dots, q_n}$ gilt dann
+		\begin{equation*}
+			\Slang{L}(\Smach{M})
+			=\bigcup_{q\in Q_0} \Slang{L}(\alpha_q)
+			=  \Slang{L}(\alpha_{q_1}\mid\alpha_{q_2}\mid\dots\mid \alpha_{q_n})
+		\end{equation*}
+	\end{frame}
+
+	\begin{frame}		
+		\small
+		\begin{enumerate}[(1)]
+			\item \textbf{Vereinfache den Automaten} (entferne offensichtlich unnötige Zustände)	
+			
+			\item \textbf{Bestimme das Gleichungssystem} 
+			
+			\textit{Intuition}: Beschreibe $\alpha_q$ in Abhängigkeit von Folgezuständen
+			
+			\defbox{ \\[-0.9\baselineskip]
+				\begin{itemize}
+					\item Für jeden Zustand $q\in Q \setminus F$:
+					$\alpha_q \equiv \sum_{\Sterm{a}\in\Sigma}\; \sum_{p\in\delta(q,\Sterm{a})} \Sterm{a}\alpha_p$
+					\item Für jeden Zustand $q\in F$:
+					$\alpha_q \equiv \bluealert{\epsilon} \mid \sum_{\Sterm{a}\in\Sigma}\; \sum_{p\in\delta(q,\Sterm{a})} \Sterm{a}\alpha_p$
+				\end{itemize}
+			}
+			%
+			\item \textbf{Löse das Gleichungssystem} durch Einsetzen und
+			
+			\theobox{Regel von Arden: Aus $\alpha\equiv \beta\alpha\mid\gamma$ mit $\epsilon\notin\Slang{L}(\beta)$ folgt $\alpha\equiv\beta^\ast\gamma$.}
+			%
+			\item \textbf{Gib den Ausdruck für die Sprache des NFA an}
+			
+			Für $Q_0 = \menge{q_1,q_2,\dots, q_n}$ gilt dann
+			\begin{equation*}
+				\Slang{L}(\Smach{M})
+				=\bigcup_{q\in Q_0} \Slang{L}(\alpha_q)
+				=  \Slang{L}(\alpha_{q_1}\mid\alpha_{q_2}\mid\dots\mid \alpha_{q_n})
+			\end{equation*}
+		\end{enumerate}
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 1}
+		\small
+		Gegeben ist der DFA $\mathcal{M} = \tuple{\menge{q_0, q_1, q_2}, \menge{a,b}, \delta, q_0, \menge{q_0}}$ mit $\delta$:
+		\begin{center}
+			\begin{tikzpicture}[%
+				->,
+				>=stealth',
+				semithick,
+				initial text=,
+				shorten <=2pt,   
+				shorten >=2pt,
+				auto, 
+				on grid,
+				node distance=7ex and 8em,
+				every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+				bend angle=20]
+				\node[state,initial,accepting] (q_0) {$q_0$};
+				\node[state] (q_1) [above right=of q_0] {$q_1$};
+				\node[state] (q_2) [below right=of q_0] {$q_2$};
+				\path[->]
+					(q_0) edge[loop above] node {$a$} (q_0)
+					(q_0) edge[bend left] node {$b$} (q_1)
+					(q_1) edge[bend left] node {$a$} (q_0)
+					(q_1) edge[bend left] node {$b$} (q_2)
+					(q_2) edge[loop right] node {$a$} (q_2)
+					(q_2) edge[bend left] node {$b$} (q_0);
+			\end{tikzpicture}
+		\end{center}
+		Geben Sie einen regulären Ausdruck $\alpha$ an, der die von $\mathcal{M}$ akzeptierte Sprache repräsentiert, d.h. es gilt $L(\alpha) = L(\mathcal{M})$.
+		
+		\scriptsize
+		Hinweis: Zur Lösung können Sie die Ersetzungsmethode verwenden: geben Sie hierzu für jeden Zustand $q_i$ des Automaten eine Gleichung $\alpha_i = \dots$ an. Lösen Sie anschließend das Gleichungssystem mithilfe des \textit{Arden-Lemmas}.
+	\end{frame}
+
+	\begin{frame}
+		\small
+	
+		Wir beschreiben die Sprache eines jeden Zustands in Abhängigkeit der Folgezustände:
+		\begin{align*}
+			\alpha_0 &\equiv a \alpha_0 \mid b \alpha_1 \mid \epsilon \\
+			\alpha_1 &\equiv a \alpha_0 \mid b \alpha_2 \\
+			\alpha_2 &\equiv b \alpha_0 \mid a \alpha_2
+		\end{align*}
+		Lösen wir dieses Gleichungssystem:
+		\begin{align*}
+			\text{Löse $\alpha_2$:} && \alpha_2 &\equiv a^\ast b \alpha_0 \\
+			\text{in $\alpha_1$:}   && \alpha_1 &\equiv a \alpha_0 \mid b a^\ast b \alpha_0 \\
+			                        &&          &\equiv (a \mid b a^\ast b) \alpha_0 \\
+			\text{in $\alpha_0$:}   && \alpha_0 &\equiv a \alpha_0 \mid b(a | b a^\ast b) \alpha_0 \mid \epsilon \\
+			                        &&          &\equiv \Big(a \mid b (a | b a^\ast b) \Big) \alpha_0 \mid \epsilon \\
+			\text{Löse $\alpha_0$:} && \alpha_0 &\equiv \Big(a \mid b (a | b a^\ast b) \Big)^\ast
+		\end{align*}
+		Der gesuchte reguläre Ausdruck ist die Veroderung \enquote{$|$} aller zu Startzuständen gehörenden $\alpha_i$, d.h. hier ist $\alpha \defeq \alpha_0$. Per Konstruktion gilt dann $L(\alpha) = L(\mathcal{M})$.
+		
+		\begin{tikzpicture}[remember picture, overlay]
+			\node [
+			fill=none,  % Farbe des Randstreifens
+			text=cdorange,  % Textfarbe
+			font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+			inner xsep=0,       % Abstand des Textes von unten
+			% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+			%			text width={\dimexpr\paperheight-2\footskip\relax},
+			align=center,
+			%			minimum height=8mm,% Breite des Randstreifens
+			anchor=south west,
+			rotate=90
+			] at ($(current page.north west)+(+8mm,-20mm)$)
+			{Lösung};
+			\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+		\end{tikzpicture}%
+	\end{frame}
+
+	\section{Aufgabe 2: \\ \itshape Minimierung von Automaten}
+
+	\begin{frame}\frametitle{Äquivalenz von Zuständen \& Quotientenautomat}
+		\small
+		DFA $\Smach{M}=\tuple{Q,\Sigma,\delta,q_0,F} \leadsto$ DFA $\Smach{M}_q=\tuple{Q,\Sigma,\delta,q,F}$
+		
+		\defbox{
+			\makebox[5.5cm][l]{\textbf{Äquivalenz von Zuständen}:} $p\sim_{\Smach{M}}q 
+			\quad \Leftrightarrow \quad
+			\Slang{L}(\Smach{M}_{p}) = \Slang{L}(\Smach{M}_{q})$ \\
+			\makebox[5.5cm][l]{\textbf{Äquivalenzklasse}:} $[q]_{\sim}=\{p\in Q\mid q\sim p\}$ \\
+			\makebox[5.5cm][l]{\textbf{Quotient} von $P \subseteq Q$:} $\simquot{P\!} = \menge{[p]_{\sim}\mid p \in P}$
+		}
+	
+	
+		\textbf{Quotientenautomat}:  Verschmelzen von äquivalenten Zuständen
+		
+		\defbox{Für einen DFA $\Smach{M} = \tuple{Q,\Sigma,\delta,q_0,F}$ mit totaler Übergangsfunktion ist der Quotientenautomat $\simquot{\Smach{M}} =\tuple{\simquot{Q},\Sigma,\delta_{\sim},[q_0]_{\sim_{\Smach{M}}},\simquot{F\!}}$ gegeben durch
+		\begin{itemize}
+			\item $\simquot{Q} = \{[q]_{\sim}\mid q\in Q\}$
+			\item $\delta_{\sim}([q]_{\sim},\Sterm{a}) = [\delta(q,\Sterm{a})]_{\sim}$
+			\item $\simquot{F\!} = \{[q]_{\sim}\mid q\in F\}$
+		\end{itemize}
+		}
+	\end{frame}
+
+	\begin{frame}
+		\small
+		
+		\textbf{Bestimmung von $\sim$}:
+		\vspace{-.7\baselineskip}
+		\begin{itemize}
+			\item Initialisiere ${\not\sim}\defeq\emptyset$
+			\item \textbf{Regel 1}: Für jedes Paar von Zuständen $\tuple{q,p}\in Q\times Q$:\\
+			falls $q\in F$ und $p\notin F$, dann "`speichere $q\not\sim p$"'
+			% ${\not\sim}\defeq{\not\sim}\cup\{\tuple{q,p},\tuple{p,q}\}$
+			\item \textbf{Regel 2}: Für jedes Paar $\tuple{q,p}\in Q\times Q\setminus {\not\sim}$ und jedes $\Sterm{a}\in\Sigma$:\\
+			falls $\delta(q,\Sterm{a})\not\sim\delta(p,\Sterm{a})$ dann "`speichere $q\not\sim p$"'
+			% 	${\not\sim}\defeq{\not\sim}\cup\{\tuple{q,p},\tuple{p,q}\}$
+			\item Wiederhole Regel 2 bis keine Änderungen mehr auftreten
+			\item Das Ergebnis ist $(Q\times Q)\setminus {\not\sim}$
+		\end{itemize}
+		
+		\examplebox{
+			\begin{minipage}{6cm}
+				\begin{flushleft}
+					\textbf{Beispiel}: Für einen DFA mit Zuständen $Q=\{A,B,C,D,E\}$ genügt eine Tabelle mit zehn Feldern (statt $5^2=25$).\\[1ex]
+					
+					{\tiny (dazu reihen wir Zustände vertikal in umgekehrter Reihenfolge)}
+				\end{flushleft}
+			\end{minipage}
+			\narrowcentering{\scalebox{0.8}{%
+					\begin{tabular}{c|c|c|c|c|}
+						\multicolumn{1}{c}{}  & \multicolumn{1}{c}{A} & \multicolumn{1}{c}{B} & \multicolumn{1}{c}{C} & \multicolumn{1}{c}{D}  \\\cline{2-5}
+						E &   &   &   &    \\\cline{2-5}
+						D &   &   &        \\\cline{2-4} 
+						C &   &            \\\cline{2-3}
+						B &                \\\cline{2-2}
+			\end{tabular}}}
+		}
+	\end{frame}
+	
+	\begin{frame} \frametitle{Aufgabe 2}
+		\small
+		Gegeben ist der $\varepsilon$-NFA $\mathcal{M} = (\{q_0,q_1,q_2,q_3,q_4\}, \{a, b\},
+		\Delta, \{q_{0}\}, \{q_{2}\})$ mit $\Delta$:
+		\begin{center}
+			\begin{tikzpicture}[%
+				->,
+				>=stealth',
+				semithick,
+				initial text=,
+				shorten <=2pt,   
+				shorten >=2pt,
+				auto, 
+				on grid,
+				node distance=7ex and 8em,
+				every state/.style={minimum size=0pt,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+				bend angle=20]
+				\node[state,initial] (q_0) {$q_0$};
+				\node[state] (q_1) [above right=of q_0] {$q_1$};
+				\node[state,accepting] (q_2) [right=of q_1] {$q_2$};
+				\node[state] (q_3) [below right=of q_0] {$q_3$};
+				\node[state] (q_4) [right=of q_3] {$q_4$};
+				\path[->]
+				(q_0) edge node {$\varepsilon$} (q_1)
+				(q_0) edge node {$b$} (q_3)
+				(q_3) edge node {$a, b$} (q_1)
+				(q_1) edge node {$\varepsilon$} (q_2)
+				(q_2) edge node[above left] {$a$} (q_3)
+				(q_2) edge[bend left] node {$a$} (q_4)
+				(q_3) edge node {$b$} (q_4)
+				(q_4) edge [bend left] node {$a$} (q_2) 
+				(q_4) edge [loop right, white] node [white] {$a,b$} (q_4) ;
+			\end{tikzpicture}
+		\end{center}
+		
+		\begin{enumerate}[a)]
+			\item Konstruieren Sie einen zu $\mathcal M$ äquivalenten DFA $\mathcal M'$.
+			\item Geben Sie den zu $\mathcal M'$ reduzierten DFA $\mathcal M'_r$ an.
+		\end{enumerate}
+	\end{frame}
+	
+	\section{Aufgabe 3: \\ \itshape Nerode-Rechtskongruenz}
+	
+	\begin{frame} \frametitle{Nerode-Rechtskongruenz}
+		\small		
+		\defbox{%
+			\textbf{Nerode-Rechtskongruenz} ${\simeq_{\Slang{L}}}\subseteq \Sigma^\ast\times \Sigma^\ast$:\\ 
+			$u\simeq_{\Slang{L}}v$ $\qquad$ falls$\qquad$
+			$uw\in\Slang{L} \enskip \Leftrightarrow \enskip vw\in\Slang{L} \qquad \forall w\in\Sigma^\ast$
+		}%
+		
+		\theobox{\textbf{Satz (Myhill \& Nerode):} Eine Sprache $\Slang{L}$ ist genau dann regulär, wenn $\simeq_{\Slang{L}}$ endlich viele Äquivalenzklassen hat.}
+		
+		\codebox{\textbf{Myhill-Nerode-Minimalautomat} $\Smach{M}_{\Slang{L}}=\tuple{Q,\Sigma,\delta,q_0,F}$ mit:
+			\begin{itemize}
+				\item $Q=\{[w]_\simeq\mid w\in\Sigma^\ast\}$
+				\item $q_0=[\epsilon]_\simeq$
+				\item $F=\{[w]_\simeq\mid w\in\Slang{L}\}$
+				\item $\delta([w]_\simeq,\Sterm{a})=[w\Sterm{a}]_\simeq$
+			\end{itemize}
+		}
+	\end{frame}
+	
+	\begin{frame} \frametitle{Aufgabe 3}
+		Gegeben ist der regul\"are Ausdruck $\alpha = (bb)^\ast a$.
+		\begin{enumerate}
+			\item Geben Sie f\"ur $\alpha$ die \textit{Nerode}-Rechtskongruenz $\;\simeq_{L(\alpha)}\;$ an.
+			\item Geben Sie einen minimalen DFA ${\mathcal M}$ an mit $L({\mathcal M})= L(\alpha)$.
+		\end{enumerate} 
+	\end{frame}
+
+	\begin{frame}
+		\small
+		Für $\alpha = (bb)^\ast a$ gilt offensichtlich $L \defeq L(\alpha) = \menge{b^{2n}a : n \ge 0}$.
+		\begin{itemize}
+			\item $\epsilon \simeq v \quad \text{gdw.} \quad \epsilon w \in L \Leftrightarrow vw \in L$\\
+			\hfill $\Rightarrow \enskip [\epsilon]_{\simeq} = \menge{b^{2n} : n \ge 0}$
+			\item $a \simeq v \quad \text{gdw.} \quad \underbrace{a w \in L}_{w = \epsilon} \Leftrightarrow \underbrace{vw \in L}_{v \in L}$ \\
+			\hfill $\Rightarrow \enskip [a]_{\simeq} = L = \menge{b^{2n} a : n \ge 0}$
+			\item $b \simeq v \quad \text{gdw.} \quad \underbrace{b w \in L}_{w = b^{2n+1}a} \Leftrightarrow \underbrace{vw \in L}_{v = b^{2n+1}}$ \\
+			\hfill $\Rightarrow \enskip [v]_{\simeq} = L = \menge{b^{2n+1} : n \ge 0}$
+			\item $ab \simeq v \quad \text{gdw.} \quad \underbrace{a w \in L}_{\text{nie erfüllt}} \Leftrightarrow \underbrace{vw \in L}_{\begin{subarray}{rcl} 
+					v \in L * \menge{a,b}^+ \\ 
+					v \in \menge{b} * L \menge{a,b}^\ast \end{subarray}}$ \\
+			\hfill $\Rightarrow \enskip [ab]_{\simeq} = L * \menge{a,b}^+ \cup \menge{b} * L \menge{a,b}^\ast$
+		\end{itemize}
+		Man kann nun leicht prüfen, dass diese Klassen tatsächlich disjunkt sind und ihre Vereinigung ganz $\Sigma^\ast$ ergibt. Damit haben wir alle Klassen gefunden.
+		
+		\begin{tikzpicture}[remember picture, overlay]
+			\node [
+			fill=none,  % Farbe des Randstreifens
+			text=cdorange,  % Textfarbe
+			font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+			inner xsep=0,       % Abstand des Textes von unten
+			% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+			%			text width={\dimexpr\paperheight-2\footskip\relax},
+			align=center,
+			%			minimum height=8mm,% Breite des Randstreifens
+			anchor=south west,
+			rotate=90
+			] at ($(current page.north west)+(+8mm,-20mm)$)
+			{Lösung};
+			\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+		\end{tikzpicture}%
+	\end{frame}
+
+	\begin{frame}
+		\textbf{Äquivalenzklassen}: $[\epsilon]_{\simeq}, [a]_{\simeq}, [b]_{\simeq}, [ab]_{\simeq}$
+		
+		\textbf{Myhill-Nerode-Minimalautomat} $\mathcal{M} = \tuple{Q, \Sigma, \delta, q_0, F}$ mit
+		\begin{itemize}
+			\item $Q \defeq \menge{[\epsilon]_{\simeq}, [a]_{\simeq}, [b]_{\simeq}, [ab]_{\simeq}}$
+			\item $q_0 \defeq [\epsilon]_{\simeq}$
+			\item $F \defeq \menge{[a]_{\simeq}}$
+			\item $\delta$:
+		\end{itemize}
+	
+		\begin{center}
+			\begin{tikzpicture}[%
+				->,
+				>=stealth',
+				semithick,
+				initial text=,
+				shorten <=2pt,   
+				shorten >=2pt,
+				auto, 
+				on grid,
+				node distance=6em and 8em,
+				every state/.style={minimum size=3em,inner sep=2pt,text height=1.5ex,text depth=.25ex},
+				bend angle=20]
+				
+				\node[state,initial] (eps) {$[\epsilon]_{\simeq}$};
+				\node[state] (b) [right=of eps] {$[b]_{\simeq}$};
+				\node[state,accepting] (a) [below=of eps] {$[a]_{\simeq}$};
+				\node[state] (ab) [right=of a] {$[ab]_{\simeq}$};
+				
+				\path[->]
+				(eps) edge[bend left] node {$b$} (b)
+				(eps) edge node {$a$} (a)
+				(b) edge[bend left] node {$b$} (eps)
+				(b) edge node {$a$} (ab)
+				(a) edge node {$a,b$} (ab)
+				(ab) edge[loop right] node {$a,b$} (ab);
+			\end{tikzpicture}
+		\end{center}
+		\begin{tikzpicture}[remember picture, overlay]
+			\node [
+			fill=none,  % Farbe des Randstreifens
+			text=cdorange,  % Textfarbe
+			font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+			inner xsep=0,       % Abstand des Textes von unten
+			% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+			%			text width={\dimexpr\paperheight-2\footskip\relax},
+			align=center,
+			%			minimum height=8mm,% Breite des Randstreifens
+			anchor=south west,
+			rotate=90
+			] at ($(current page.north west)+(+8mm,-20mm)$)
+			{Lösung};
+			\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+		\end{tikzpicture}%
+	\end{frame}
+
+	\section{Aufgabe 4 \\ \itshape Beweis von Nichtregularität}
+	
+	\begin{frame} \frametitle{Beweis von Nichtregularität}
+		\small
+		\theobox{\textbf{Satz (Myhill \& Nerode):} Eine Sprache $\Slang{L}$ ist genau dann regulär, wenn $\simeq_{\Slang{L}}$ endlich viele Äquivalenzklassen hat.}
+		\pause
+		
+		\theobox{\textbf{Satz:} Wenn $\Slang{L}_1$ und $\Slang{L}_2$ regulär sind, dann auch $\Slang{L}_1\cap \Slang{L}_2$,
+		$\Slang{L}_1\cup \Slang{L}_2$, $\Slang{L}_1^\ast$ und $\overline{\Slang{L}}_1$.}
+		\pause
+		
+		\theobox{\textbf{Satz (Pumping-Lemma):}
+			Für jede reguläre Sprache $\Slang{L}$\\
+			gibt es eine Zahl $n\geq 0$, so dass gilt:\\
+			~~für jedes Wort $x\in\Slang{L}$ mit $|x|\geq n$\\
+			~~gibt es eine Zerlegung $x=uvw$ mit $|v|\geq 1$ und $|uv|\leq n$, so dass:\\
+			~~~~für jede Zahl $k\geq 0$ gilt: $u v^k w\in\Slang{L}$
+		}
+	\end{frame}
+	
+	\begin{frame} \frametitle{Aufgabe 4}
+		Welche der folgenden Sprachen sind regulär? Begründen Sie Ihre Antwort.
+		\begin{enumerate}[a)]
+			\item $L_a = \menge{ww^R : w \in \menge{\Sterm{0},\Sterm{1}}^\ast}$ 
+			\only<2->{\\ irregulär (z.B. mit Myhill-Nerode oder Pumping-Lemma)}
+			\item $L_b = \menge{\Sterm{a}^n \Sterm{c}^m \Sterm{b}^n : n,m \ge 0}$
+			\only<3->{\\ irregulär (z.B. Schnitt mit $\menge{a}^\ast \menge{b}^\ast$)}
+			\item $L_c = \menge{w \in \menge{\Sterm{0},1}^\ast : \abs{w}_{\Sterm{0}} \text{ gerade}, \abs{w}_{\Sterm{1}} \text{ durch 3 teilbar}}$
+			\only<4->{\\ regulär (konstruiere endlichen Automaten)}
+			\item $L_d = \menge{w \in \menge{\Sterm{0},\Sterm{1}}^\ast : \text{ auf jede \Sterm{0} folgt eine \Sterm{1}}}$
+			\only<5->{\\ regulär (konstruiere endlichen Automaten)}
+			\item $L_e = \menge{\Sterm{0}^{n^2} : n \ge 0}$
+			\only<6->{\\ irregulär (z.B. via Pumping-Lemma)}
+			\item $L_f = \menge{\Sterm{0}^m \Sterm{1}^n \Sterm{0}^{n+m} : n,m \ge 1}$
+			\only<7->{\\ irregulär (z.B. via Pumping-Lemma)}
+		\end{enumerate}
+	
+		\only<2->{\begin{tikzpicture}[remember picture, overlay]
+				\node [
+				fill=none,  % Farbe des Randstreifens
+				text=cdorange,  % Textfarbe
+				font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+				inner xsep=0,       % Abstand des Textes von unten
+				% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+				%			text width={\dimexpr\paperheight-2\footskip\relax},
+				align=center,
+				%			minimum height=8mm,% Breite des Randstreifens
+				anchor=south west,
+				rotate=90
+				] at ($(current page.north west)+(+8mm,-30mm)$)
+				{Lösung};
+				\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+			\end{tikzpicture}}
+	\end{frame}	
+\end{document}
