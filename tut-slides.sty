@@ -10,6 +10,8 @@
 \usepackage[utf8]{inputenc}
 %\useoutertheme{frankfurt}
 
+\RequirePackage{tikz}
+\usetikzlibrary{calc}
 \usepackage{tudscrcolor}
 
 %\renewcommand{\metropolis@colors@dark}{
@@ -85,6 +87,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                    NEW TITLEPAGE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RequirePackage{datetime}
+\renewcommand{\dateseparator}{.}
+
 %%%%%% Neugestaltung des Titelblattes ---- ANFANG
 \setbeamertemplate{title page}{
 	\begin{minipage}[t][0.1\paperheight]{\dimexpr0.5\linewidth-\fboxrule-\fboxsep}
@@ -101,6 +106,21 @@
 		\vfill
 		\vspace*{1mm}
 	\end{minipage}
+	\begin{tikzpicture}[remember picture, overlay]
+		\node [
+		fill=none,  % Farbe des Randstreifens
+		text=bg,  % Textfarbe
+		font=\fosfamily\tiny,  % Einstellungen für die Schrift
+%		inner xsep=0,       % Abstand des Textes von unten
+		% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+		%			text width={\dimexpr\paperheight-2\footskip\relax},
+%		align=center,
+		%			minimum height=8mm,% Breite des Randstreifens
+		anchor=south east,
+		] at ($(current page.south east)+(-3mm,+3mm)$)
+		{\parbox{2cm}{\raggedleft letzte Änderung: \\ \ddmmyyyydate\today , \currenttime}};
+%		\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+	\end{tikzpicture}
 }
 
 \setbeamertemplate{title graphic}{
