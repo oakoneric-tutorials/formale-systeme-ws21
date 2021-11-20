@@ -1,0 +1,319 @@
+\documentclass{beamer}
+\usepackage{../tut-slides}
+\usepackage{../mathoperators}
+\usepackage{../fs}
+
+\usepackage{csquotes}
+
+\usepackage{amsmath,amssymb}
+%\usepackage{enumerate}
+\usepackage[normalem]{ulem}
+\newcommand{\labelitemi}{\raisebox{1pt}{\scalebox{.9}{$\blacktriangleright$}}}
+\newcommand{\labelitemii}{$\vartriangleright$}
+\newcommand{\labelitemiii}{--}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+\newcommand{\tuple}[1]{\langle{#1}\rangle}
+\newcommand{\simquot}[1]{#1/_{\!\!{\sim}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}	
+	\title{Formale Systeme}
+	\subtitle{Übung 6}
+	\author{Eric Kunze}
+	\email{eric.kunze@tu-dresden.de}
+	\city{TU Dresden}
+	\date{\formatdate{26}{11}{2021}}
+%	\institute{Lehrstuhl für Grundlagen der Programmierung}
+	\titlegraphic{\includegraphics[width=2cm]{../TUD-white.pdf}}
+
+	\maketitle
+
+	
+
+	\section{Aufgabe 1: \\ \itshape Pumping-Lemma}
+
+	\newcommand{\colstackrel}[3]{\,{\stackrel{\textcolor{#3}{#1}}{\textcolor{#3}{#2}}}\,}
+	\newcommand{\gstackrel}[2]{\colstackrel{#1}{#2}{darkgreen}}
+	\newcommand{\bstackrel}[2]{\colstackrel{#1}{#2}{darkblue}}
+	\newcommand{\rstackrel}[2]{\colstackrel{#1}{#2}{darkred}}
+	
+	\begin{frame}\frametitle{Nichtregularität durch Pumpen}	
+		\small	
+		\textbf{Idee:}
+		\begin{itemize}
+			\item Jeder DFA hat nur endlich viele Zustände $n$
+			\item Aber manche reguläre Sprachen enthalten beliebig lange Wörter
+		\end{itemize}
+		
+		\textbf{Wie kann ein DFA Wörter mit mehr als $n$ Zeichen akzeptieren?}
+		
+		\begin{itemize}
+			\item Dann muss der DFA beim Einlesen einen Zustand mehr als einmal besuchen
+			\item Dafür muss es in den Zustandsübergangen eine Schleife geben
+			\item Diese Schleife kann man aber auch mehr als einmal durchlaufen
+		\end{itemize}
+		
+		\begin{center}
+			\itshape
+			Jedes akzeptierte Wort mit $\geq n$ Zeichen hat einen Teil, den man beliebig oft wiederholen -- "`aufpumpen"' -- kann.
+		\end{center}
+		
+	\end{frame}
+	
+	\begin{frame} \frametitle{Das Pumping-Lemma}
+		\small
+		\theobox{\textbf{Satz (Pumping-Lemma):}
+			Für jede reguläre Sprache $\Slang{L}$\\
+			gibt es eine Zahl $n\geq 0$, so dass gilt:\\
+			~~für jedes Wort $z\in\Slang{L}$ mit $|z|\geq n$\\
+			~~gibt es eine Zerlegung $z=uvw$ mit $|v|\geq 1$ und $|uv|\leq n$, so dass:\\
+			~~~~für jede Zahl $k\geq 0$ gilt: $u v^k w\in\Slang{L}$
+		}
+		
+		\emph{Beweis:} Sei $\Smach{M}$ ein DFA für $\Slang{L}$ mit $|Q|$ Zuständen. 
+		Wir wählen $n=|Q|+1$.\\
+		Ein akzeptierender Lauf für ein beliebiges Wort $z$ mit $|z|=\ell\geq n$
+		muss in den ersten $n$ Schritten einen Zustand $p$ zweimal besuchen (sagen wir: nach $i$ und $j$ Schritten),
+		hat also die Form:
+		% Es gibt also Zahlen mit $0\leq i<j\leq n$ für die der Lauf folgende Form hat:
+		% Der Lauf hat also folgende Form:
+		%
+		\[ q_0 \gstackrel{z_1}{\to}q_1\gstackrel{z_2}{\to}\!\ldots\!\gstackrel{z_{i-1}}{\to}q_{i-1}\gstackrel{z_i}{\to} p\bstackrel{z_{i+1}}{\to} q_{i+1}\bstackrel{z_{i+2}}{\to}\!\ldots\!\bstackrel{z_{j-1}}{\to}q_{j-1}\bstackrel{z_j}{\to} p \rstackrel{z_{j+1}}{\to}q_{j+1}\rstackrel{z_{j+2}}{\to}\!\ldots\!\rstackrel{z_\ell}{\to}q_\ell\]
+		%
+		Die gesuchte Zerlegung ist $u\,{=}\,\textcolor{darkgreen}{z_1\cdots z_i}$, $v\,{=}\,\textcolor{darkblue}{z_{i+1}\cdots z_{j}}$, $w\,{=}\,\textcolor{darkred}{z_{j+1}\cdots z_\ell}$.\\ 
+		Der Lauf $(q_0\ldots q_{i-1} p) (q_{i+1}\ldots q_{j-1}p)^k (q_{j+1}\ldots q_\ell)$ akzeptiert $uv^k w$.
+		% 
+		\qed
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 1}
+		\small
+%		Gegeben ist der NFA $\mathcal M=(\{q_0,q_1,q_2,q_3,q_4\},\{a,b,c,d\}, \delta ,\{q_0\},\{q_2\})$ mit $\delta$:
+		\begin{center}
+			\scalebox{0.7}{%
+			\begin{tikzpicture} [->, >=stealth', initial text=, auto, node
+				distance=25mm, bend angle=20, semithick]%[node distance=2cm,auto]
+				
+				\node[state,initial] (q_0) {$q_0$}; 
+				\node[state] (q_1) [above right of=q_0] {$q_1$}; 
+				\node[state,accepting] (q_2) [right of=q_1] {$q_2$}; 
+				\node[state] (q_3) [below right of=q_0] {$q_3$};
+				\node[state] (q_4) [right of=q_3] {$q_4$};
+				
+				\path[->]
+				(q_0) edge [bend left]  node {$a, b$} (q_1) 
+				(q_0) edge  [bend right] node {$b, c$} (q_3) 
+				(q_1) edge [loop above] node {$c$} (q_1) 
+				(q_1) edge node {$a$} (q_2) 
+				(q_1) edge node {$d$} (q_3) 
+				(q_3) edge node {$c$} (q_2) 
+				(q_3) edge [bend left] node {$c$} (q_4) 
+				(q_4) edge  node {$a$} (q_2)
+				(q_4) edge [bend left] node {$d$} (q_3);
+			\end{tikzpicture}}
+		\end{center}
+		
+		\begin{enumerate}[a)]
+			\item Geben Sie für jedes $z\in \{bc,adc,cda,bcdc,acdc\}$ alle Zerlegungen $z=uvw$ mit
+			$u,w\in \Sigma^*$, $v\in \Sigma^{+}$ an, sodass für alle $k\ge 0$ gilt:
+			$uv^kw\in L(\mathcal M)$. Begründen Sie Ihre Antworten.
+			\item Ermitteln Sie eine Zahl $n \in \mathbb{N}$, sodass für alle $z \in L(\mathcal{M})$ mit $\abs{z} \ge n$ gilt, dass eine Zerlegung $z = uvw$ mit $u, w \in \Sigma^\ast$, $v \in \Sigma^+$ und $\abs{uv} \le n$ existiert, sodass für alle $k \ge 0$ gilt: $uv^kw \in L(\mathcal{M})$.
+		\end{enumerate}
+	\end{frame}
+
+
+	\section{Aufgabe 2: \\ \itshape Regularität von Sprachen}
+	
+	\begin{frame} \frametitle{Beweis von Nichtregularität}
+		\small
+		\theobox{\textbf{Satz (Myhill \& Nerode):} Eine Sprache $\Slang{L}$ ist genau dann regulär, wenn $\simeq_{\Slang{L}}$ endlich viele Äquivalenzklassen hat.}
+		
+		\theobox{\textbf{Satz:} Wenn $\Slang{L}_1$ und $\Slang{L}_2$ regulär sind, dann auch $\Slang{L}_1\cap \Slang{L}_2$,
+			$\Slang{L}_1\cup \Slang{L}_2$, $\Slang{L}_1^\ast$ und $\overline{\Slang{L}}_1$.}
+		
+		\theobox{\textbf{Satz (Pumping-Lemma):}
+			Für jede reguläre Sprache $\Slang{L}$\\
+			gibt es eine Zahl $n\geq 0$, so dass gilt:\\
+			~~für jedes Wort $x\in\Slang{L}$ mit $|x|\geq n$\\
+			~~gibt es eine Zerlegung $x=uvw$ mit $|v|\geq 1$ und $|uv|\leq n$, so dass:\\
+			~~~~für jede Zahl $k\geq 0$ gilt: $u v^k w\in\Slang{L}$
+		}
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 2}
+		\small
+		Gegeben ist das Alphabet $\Sigma = \menge{a,b}$. Welche der folgenden Sprachen $L_j$ über $\Sigma$ mit $1 \le j \le 2$ ist regulär? Beweisen Sie Ihre jeweilige Antwort.
+		\begin{enumerate}[a)]
+			\item $L_1 = \menge{a^i b^i : 1 \le i \le 15}$
+			\item $L_2 = \menge{a^n b^m a^{n*m} : n,m \ge 0}$
+		\end{enumerate}
+	\end{frame}
+
+
+
+	
+	\section{Aufgabe 3: \\ \itshape Wiederholung}
+	
+	\begin{frame} \frametitle{Aufgabe 3}
+		\small
+		Beweisen oder widerlegen Sie unter Verwendung von Resultaten aus der Vorlesung folgende Aussagen.
+		\begin{enumerate}[a)]
+			\item F\"ur die Grammatik $G=(\{S,X,Y,Z\},\{a,b\},\{S\rightarrow Y,\;X\rightarrow b,\;Y\rightarrow aYYb,\;aY\rightarrow aZ,\;ZY\rightarrow ZX,\;Z\rightarrow a\},S)$ gilt: $abab\in L(G)$.
+			\item Kann eine Sprache $L$ von einem DFA erkannt werden, so gibt es auch einen
+			$\varepsilon$-NFA $\mathcal M$ mit $L({\mathcal M})=L$.
+			\item F\"ur jeden NFA $\mathcal M$ mit Wort\"uberg\"angen gibt es einen \"aquivalenten NFA.
+			\item Es gibt eine regul\"are Sprache, f\"ur welche die Anzahl der \"Aquivalenzklassen der  {\emph{Nerode}}-Rechtskongruenz endlich ist.
+			\item Wenn es f\"ur eine Sprache $L$ ein $n\in \mathbb N$ gibt, so dass die {\emph{Nerode}}-Rechtskongruenz $\simeq_L$ höchstens $n$ Äquivalenzklassen hat, so
+			kann $L$ von einem DFA erkannt werden.
+			\item F\"ur jede Sprache $L$ gilt: $\displaystyle L = \bigcup\limits_{u \in L} \ [u]_{\simeq_{L}}\;$.
+		\end{enumerate}
+	\end{frame}
+
+
+	\section{Aufgabe 4 \\ \itshape Chomsky-Normalform}
+	
+	\begin{frame} \frametitle{Eliminieren von $\epsilon$-Regeln}
+		\small
+		\codebox{
+			\textbf{Eingabe}: CFG $G=\tuple{V,\Sigma,P,S}$\\
+			\textbf{Ausgabe}: $\epsilon$-freie CFG $G'=\tuple{V',\Sigma,P',S'}$ mit $\Slang{L}(G')=\Slang{L}(G)$
+
+			\begin{itemize}
+				\item Initialisiere $P' \defeq P$ und $V'\defeq V$
+				% 
+				\item Berechne $V_\epsilon = \{\Snterm{A}\in V\mid \Snterm{A}\Rightarrow^* \epsilon\}$
+				% 
+				\item Entferne alle $\epsilon$-Regeln aus $P'$
+				% 
+				\item Solange es in $P'$ eine Regel $\Snterm{B}\to x\Snterm{A}y$ gibt, mit\\[1ex]
+				%
+				\narrowcentering{ $\Snterm{A}\in V_\epsilon$\hfill $|x|+|y|\geq 1$\hfill $\Snterm{B}\to xy\notin P'$ }\\[1ex]
+				%
+				wähle eine solche Regel und setze $P'\defeq P'\cup \{\Snterm{B}\to xy\}$
+				%
+				\item Falls $S\in V_\epsilon$ dann definiere ein neues Startsymbol $S'\notin V$, setze $V'\defeq V'\cup\{S'\}$ und 
+				$P'\defeq P'\cup\{S'\to S,S'\to\epsilon\}$.
+				Falls $S\notin V_\epsilon$, dann verwenden wir einfach $S'\defeq S$ als Startsymbol.
+			\end{itemize}
+		}
+	\end{frame}
+	
+	\begin{frame}\frametitle{Eliminierung von Kettenregeln}
+		\small
+		\defbox{Eine \textbf{Kettenregel} ist eine Regel der Form $\Snterm{A}\to\Snterm{B}$.}
+		
+		Sei $G=\tuple{V,\Sigma,P,S}$ $\epsilon$-frei. Eine äquivalente Grammatik ohne Kettenregeln ist gegeben durch $G' = \tuple{V, \Sigma, P',S}$:
+		
+		\codebox{%
+			\textbf{Eliminieren von Kettenregeln:} 
+			
+			$E(A) \dots$ Menge aller $B\in V$, die man von $A \in V$ aus über Kettenregeln erreichen kann:
+			\begin{enumerate}[(1)]
+				\item $A\in E(A)$
+				\item Falls $B\in E(A)$ und $B\to B'\in P$ mit $B'\in V$ dann $B'\in E(A)$. Wiederhole.
+			\end{enumerate}
+			\begin{equation*}
+				\Longrightarrow
+				P' = \bigcup_{A\in V} \Big\{ A\to w\mid \text{es gibt }B\to w\in P\text{ mit }w\notin V\text{ und }B\in E(A) \Big\}
+			\end{equation*}
+		}
+	\end{frame}
+	
+	\begin{frame}\frametitle{Die Chomsky-Normalform}	
+		\small	
+		\defbox{Eine kontextfreie Grammatik $G=\tuple{V,\Sigma,P,S}$ ist in \redalert{Chomsky-Normalform} \redalert{(CNF)}, wenn alle ihre Produktionsregeln eine der beiden folgenden Formen haben:%
+			\[ \Snterm{A}\to \Snterm{BC} \quad\text{ (mit $\Snterm{B},\Snterm{C}\in V$)} \qquad\text{oder}\qquad \Snterm{A}\to \Sterm{c}\quad\text{ (mit $\Sterm{c}\in \Sigma$)}\]
+		}
+	
+		\textbf{Umwandlung in CNF}:
+		\begin{enumerate}[(1)]
+			\item Eliminierung von $\epsilon$-Regeln
+			\item Eliminierung von Kettenregeln
+		\end{enumerate}
+	\end{frame}
+
+	\begin{frame}
+		\small
+%		\textbf{Umwandlung in CNF}:
+		\begin{enumerate}[(1)]
+%			\item Eliminierung von $\epsilon$-Regeln
+%			\item Eliminierung von Kettenregeln
+			\setcounter{enumi}{2}
+			\item Extrahiere Regeln der Form $\Snterm{A} \to \Sterm{c}$, so dass alle anderen Regeln $\Snterm{B}\to w$ keine Terminale mehr in $w$ enthalten.
+			\begin{itemize}
+				\item für jedes Symbol $\Sterm{a}\in\Sigma$: \\
+				neue Variable $\Sntermsub{V}{a}$ mit Regel $\Sntermsub{V}{a}\to \Sterm{a}$
+				\item für Regeln $\Snterm{A}\to w$ mit $|w|>1$: \\ 
+				ersetze jedes Vorkommen von $\Sterm{a}\in\Sigma$ in $w$ durch $\Sntermsub{V}{a}$
+			\end{itemize}
+			\item Reduziere Regeln der Form $\Snterm{A}\to\Sntermsub{B}{1}\cdots\Sntermsub{B}{n}$ auf $n = 2$
+			
+			Für jede Produktionsregel $\Snterm{A}\to \Sntermsub{B}{1}\cdots\Sntermsub{B}{n}$ mit $n>2$:\\
+			\begin{itemize}
+				\item Führe $n-2$ neue Variablen $\Sntermsub{C}{1},\ldots,\Sntermsub{C}{n-2}$ ein
+				\item Ersetze die Regel durch neue Regeln:
+				\begin{align*}
+					\Snterm{A} &\to \Sntermsub{B}{1}\Sntermsub{C}{1} \\
+					\Sntermsub{C}{1} &\to \Sntermsub{B}{2}\Sntermsub{C}{2} \\
+					&\vdots \\
+					\Sntermsub{C}{n-3} &\to \Sntermsub{B}{n-2}\Sntermsub{C}{n-2} \\
+					\Sntermsub{C}{n-2} &\to \Sntermsub{B}{n-1}\Sntermsub{B}{n}
+				\end{align*}
+			\end{itemize}
+		\end{enumerate}
+	\end{frame}
+
+	
+	\begin{frame} \frametitle{Aufgabe 4}
+		\small
+		Betrachten Sie die Grammatik
+		$G_0 = \tuple{V, \Sigma, P, S}$ mit $V = \menge{S, T, U, V, R}$, $\Sigma = \menge{a,b}$ und
+		\begin{align*}
+			P = \{ \quad 
+			S &\to \varepsilon, & S &\to aSb, & S &\to T, & S &\to R, \\
+			T &\to bbT, & T &\to U, & U &\to aaU, & U &\to bb T, \\
+			V &\to bSa, &   &       & R &\to \varepsilon, & R &\to bSa \quad \}
+		\end{align*}
+		\vspace{-\baselineskip}
+		\begin{enumerate}[a)]
+			\item Konstruieren Sie eine Grammatik $G_1$, die
+			keine Regeln der Form $A \to \varepsilon$ für $A\in V$ enthält.
+			Erweitern Sie dazu, wenn nötig, die Grammatik $G_0$ um ein neues
+			Startsymbol $S'$ und entsprechende Regeln.
+			\item Geben Sie zu $G_1$ eine äquivalente Grammatik $G_2$ an, die
+			keine Kettenregeln, also Produktionen der Form $A \to B$ mit
+			Nichtterminalsymbolen $A,B$, enthält. 
+			\item Geben Sie eine Grammatik $G_3$ in
+			Chomsky-Normalform an mit $L(G_3) = L(G_2) \setminus \{\varepsilon\}$.
+		\end{enumerate}
+	\end{frame}
+
+	\section{Aufgabe 5 \\ \itshape CYK-Algorithmus}
+	
+	\begin{frame} \frametitle{Aufgabe 5}
+		\small
+		Gegeben ist folgende Grammatik $G=(V,\Sigma,P,S)$ mit 
+		$V=\{S,X,M,A,B\}$, $\Sigma=\{a,b\}$ und
+		\begin{align*}
+			P = \{ \quad S &\to \varepsilon, & S &\to AX, & S &\to AB, \\
+			X &\to MB, \\
+			M &\to AB, & M &\to AX, \\
+			A &\to a, \\
+			B &\to a, & B &\to b \rlap{\qquad \}} 
+		\end{align*}
+		Verwenden Sie den CYK-Algorithmus (mit der Matrix-Notation aus der
+		Vorlesung), um für die folgenden Wörter $w_i$ zu entscheiden, ob
+		$w_i\in L(G)$ ist. 
+		
+		\begin{enumerate}[a)]
+			\item $w_1 = aaabba$
+			\item $w_2 = aabbaa$
+		\end{enumerate}    
+	\end{frame}
+
+\end{document}
