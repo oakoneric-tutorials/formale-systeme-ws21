@@ -18,6 +18,47 @@
 \newcommand{\tuple}[1]{\langle{#1}\rangle}
 \newcommand{\simquot}[1]{#1/_{\!\!{\sim}}}
 
+\usepackage{pifont}
+
+\newcommand{\cmark}{\textcolor{cddarkgreen}{\ding{51}}}%
+\newcommand{\xmark}{\textcolor{darkred}{\ding{55}}}%
+
+\newcommand{\solutionmarkB}{%
+	\begin{tikzpicture}[remember picture, overlay]
+		\node [
+			fill=none,  % Farbe des Randstreifens
+			text=cdorange,  % Textfarbe
+			font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+			inner xsep=0,       % Abstand des Textes von unten
+			% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+			%			text width={\dimexpr\paperheight-2\footskip\relax},
+			align=center,
+			%			minimum height=8mm,% Breite des Randstreifens
+			anchor=south west,
+			rotate=90
+		] at ($(current page.north west)+(+8mm,-20mm)$)
+		{Lösung};
+		\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+	\end{tikzpicture}%
+}
+\newcommand{\solutionmarkFT}{\begin{tikzpicture}[remember picture, overlay]
+	\node [
+	fill=none,  % Farbe des Randstreifens
+	text=cdorange,  % Textfarbe
+	font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+	inner xsep=0,       % Abstand des Textes von unten
+	% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+	%			text width={\dimexpr\paperheight-2\footskip\relax},
+	align=center,
+	%			minimum height=8mm,% Breite des Randstreifens
+	anchor=south west,
+	rotate=90
+	] at ($(current page.north west)+(+8mm,-27mm)$)
+	{Lösung};
+	\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+	\end{tikzpicture}%
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -120,7 +161,7 @@
 		
 		\begin{enumerate}[a)]
 			\item Geben Sie für jedes $z\in \{bc,adc,cda,bcdc,acdc\}$ alle Zerlegungen $z=uvw$ mit
-			$u,w\in \Sigma^*$, $v\in \Sigma^{+}$ an, sodass für alle $k\ge 0$ gilt:
+			$u,w\in \Sigma^\ast$, $v\in \Sigma^{+}$ an, sodass für alle $k\ge 0$ gilt:
 			$uv^kw\in L(\mathcal M)$. Begründen Sie Ihre Antworten.
 			\item Ermitteln Sie eine Zahl $n \in \mathbb{N}$, sodass für alle $z \in L(\mathcal{M})$ mit $\abs{z} \ge n$ gilt, dass eine Zerlegung $z = uvw$ mit $u, w \in \Sigma^\ast$, $v \in \Sigma^+$ und $\abs{uv} \le n$ existiert, sodass für alle $k \ge 0$ gilt: $uv^kw \in L(\mathcal{M})$.
 		\end{enumerate}
@@ -154,24 +195,44 @@
 		\end{enumerate}
 	\end{frame}
 
+	\begin{frame}
+		\small
+		\begin{enumerate}[a)]
+			\item Die Sprache $L_1$ ist endlich, da $i$ eine obere Grenze hat. Jede endliche Sprache ist regulär.
+			\item $L_2$ ist nicht regulär --- Pumping-Lemma: Angenommen $L_2$ sei regulär. Dann existiert nach dem Pumping-Lemma ein $n \ge 0$, sodass jedes Wort $x \in L_2$ mit $\abs{x} \ge n$ gepumpt werden kann. Insbesondere muss dies auch für das Wort 
+			$x = a^n b^1 a^{n * 1}$
+			gelten. Dementsprechend muss es eine Zerlegung
+			\begin{equation*}
+				x = uvw \quad \text{ mit } \abs{uv} \le n \text{ und } \abs{v} \ge 1
+			\end{equation*}
+			geben. Wegen $\abs{uv} \le n$ muss $uv = a^\ell$ mit $1 \le \ell \le n$ gelten (d.h. $uv$ liegt in den ersten $a$'s). Ein Teil der $a$'s muss dem $v$ zugeschrieben werden, d.h. es gilt $v = a^h$ mit $1 \le h \le \ell$. 
+			Damit können wir nun pumpen, insbesondere mit $k=2$:
+			\begin{equation*}
+				u v^2 w = a^{\ell - h} a^{2h} a^{n - \ell} b a^n = a^{\ell - h + 2h + n - \ell} b a^n= a^{n + h} b a^n \notin L_2
+			\end{equation*}
+			im Widerspruch zur Aussage des Pumping-Lemmas, was $u v^2 w \in L_2$ sichern würde. Damit kann die Annahme der Regularität nicht richtig gewesen sein und $L_2$ muss nicht regulär sein.
+		\end{enumerate}
+		\solutionmarkB
+	\end{frame}
 
 
 	
 	\section{Aufgabe 3: \\ \itshape Wiederholung}
 	
 	\begin{frame} \frametitle{Aufgabe 3}
-		\small
+		\footnotesize
 		Beweisen oder widerlegen Sie unter Verwendung von Resultaten aus der Vorlesung folgende Aussagen.
 		\begin{enumerate}[a)]
-			\item F\"ur die Grammatik $G=(\{S,X,Y,Z\},\{a,b\},\{S\rightarrow Y,\;X\rightarrow b,\;Y\rightarrow aYYb,\;aY\rightarrow aZ,\;ZY\rightarrow ZX,\;Z\rightarrow a\},S)$ gilt: $abab\in L(G)$.
-			\item Kann eine Sprache $L$ von einem DFA erkannt werden, so gibt es auch einen
+			\item \only<2->{\xmark} F\"ur die Grammatik $G=(\{S,X,Y,Z\},\{a,b\},\{S\rightarrow Y,\;X\rightarrow b,\;Y\rightarrow aYYb,\;aY\rightarrow aZ,\;ZY\rightarrow ZX,\;Z\rightarrow a\},S)$ gilt: $abab\in L(G)$.
+			\item \only<3->{\cmark} Kann eine Sprache $L$ von einem DFA erkannt werden, so gibt es auch einen
 			$\varepsilon$-NFA $\mathcal M$ mit $L({\mathcal M})=L$.
-			\item F\"ur jeden NFA $\mathcal M$ mit Wort\"uberg\"angen gibt es einen \"aquivalenten NFA.
-			\item Es gibt eine regul\"are Sprache, f\"ur welche die Anzahl der \"Aquivalenzklassen der  {\emph{Nerode}}-Rechtskongruenz endlich ist.
-			\item Wenn es f\"ur eine Sprache $L$ ein $n\in \mathbb N$ gibt, so dass die {\emph{Nerode}}-Rechtskongruenz $\simeq_L$ höchstens $n$ Äquivalenzklassen hat, so
+			\item \only<4->{\cmark} F\"ur jeden NFA $\mathcal M$ mit Wort\"uberg\"angen gibt es einen \"aquivalenten NFA.
+			\item \only<5->{\cmark} Es gibt eine regul\"are Sprache, f\"ur welche die Anzahl der \"Aquivalenzklassen der  {\emph{Nerode}}-Rechtskongruenz endlich ist.
+			\item \only<6->{\cmark} Wenn es f\"ur eine Sprache $L$ ein $n\in \mathbb N$ gibt, so dass die {\emph{Nerode}}-Rechtskongruenz $\simeq_L$ höchstens $n$ Äquivalenzklassen hat, so
 			kann $L$ von einem DFA erkannt werden.
-			\item F\"ur jede Sprache $L$ gilt: $\displaystyle L = \bigcup\limits_{u \in L} \ [u]_{\simeq_{L}}\;$.
+			\item \only<7->{\cmark} F\"ur jede Sprache $L$ gilt: $\displaystyle L = \bigcup\limits_{u \in L} \ [u]_{\simeq_{L}}\;$.
 		\end{enumerate}
+		\onslide<2->{\solutionmarkFT}
 	\end{frame}
 
 
@@ -186,7 +247,7 @@
 			\begin{itemize}
 				\item Initialisiere $P' \defeq P$ und $V'\defeq V$
 				% 
-				\item Berechne $V_\epsilon = \{\Snterm{A}\in V\mid \Snterm{A}\Rightarrow^* \epsilon\}$
+				\item Berechne $V_\epsilon = \{\Snterm{A}\in V\mid \Snterm{A}\Rightarrow^\ast \epsilon\}$
 				% 
 				\item Entferne alle $\epsilon$-Regeln aus $P'$
 				% 
@@ -294,6 +355,65 @@
 	\end{frame}
 
 	\section{Aufgabe 5 \\ \itshape CYK-Algorithmus}
+	
+	\newcommand{\Rightarrowstarquest}{\mathrel{{\stackrel{?}{\Rightarrow}}{}^\ast}}
+
+	\begin{frame}\frametitle{CYK: Grundidee}
+		\small
+		\textbf{gegeben}: kontextfreie Grammatik $G$ in CNF \\
+		\textbf{Frage:} $w = \Sterm{a_1}\cdots\Sterm{a_n} \in \Slang{L}(G)$?
+		
+		\begin{itemize}
+			\item Falls $|w|=1$, dann ist $w\in\Sigma$ und es gilt:\\
+			$w\in\Slang{L}(G)$ genau dann wenn es eine Regel $\Snterm{S}\to w$ in $G$ gibt
+			\item Falls $|w|>1$, dann ist:\\
+			$w\in\Slang{L}(G)$ genau dann wenn es eine Regel
+			$\Snterm{S}\to\Snterm{A}\Snterm{B}$ und eine Zahl $i$ gibt, so dass gilt
+			\[\Snterm{A}\Rightarrow^\ast \Sterm{a_1}\cdots\Sterm{a_i}\qquad\text{und}\qquad \Snterm{B}\Rightarrow^\ast \Sterm{a_{i+1}}\cdots\Sterm{a_n}\]
+		\end{itemize}
+		
+		\textbf{Idee}: Fall 2 reduziert das Problem $\Snterm{S}\Rightarrowstarquest w$ auf zwei einfachere Probleme
+		$\Snterm{A}\Rightarrowstarquest \Sterm{a_1}\cdots\Sterm{a_i}$ und $\Snterm{B}\Rightarrowstarquest \Sterm{a_{i+1}}\cdots\Sterm{a_n}$, die man allerdings für alle Regeln $\Snterm{S}\to\Snterm{A}\Snterm{B}$ und Indizes $i$ lösen muss
+		
+	\end{frame}
+	
+	\newcommand{\MEC}[1]{\multicolumn{1}{c}{#1}}
+	
+	\begin{frame}\frametitle{CYK: Praktische Umsetzung}
+		\small
+		\textbf{Vorgehen}: $V[i,j] = $ Menge aller $\Snterm{A}$ mit $\Snterm{A}\Rightarrow^\ast w_{i,j}$ \\
+		$\leadsto$ $V[i,j]$ können in einer Dreiecksmatrix notiert werden
+		
+		\begin{itemize}
+			\item Diagonale = Fall 1: existiert Terminalsymbolregel
+			\item Fixiere Element $\blacksquare$: sei $\blacktriangleleft$ in der gleichen Zeile ganz links und $\blacktriangledown$ direkt unten drunter 
+			\begin{itemize}
+				\item wenn eine Regel $\blacklozenge \to \blacktriangleleft \blacktriangledown$, dann füge $\blacklozenge$ zu $\blacksquare$ hinzu
+				\item schiebe $\blacktriangleleft$ nach rechts und $\blacktriangledown$ nach unten und wiederhole
+			\end{itemize}
+		\end{itemize}
+		Ist am Ende das Startsymbol $S \in \alert{V[1,|w|]}$, dann liegt $w$ in der Sprache
+		
+		\textbf{Beispiel}: Wir betrachten das Wort $w=\Sterm{a+b*c}$ der Länge $|w|=5$.		
+		\begin{center}
+			\scalebox{0.7}{%
+			\begin{tabular}{c|c|c|c|c|c|}
+				%  \multicolumn{1}{c}{}  & \multicolumn{1}{c}{A} & \multicolumn{1}{c}{B} & \multicolumn{1}{c}{C} & \multicolumn{1}{c}{D}  \\\cline{2-5}
+				\cline{2-6}
+				\Sterm{a}
+				& $V[1,1]$ & $V[1,2]$ & $V[1,3]$ & $V[1,4]$ & \alert{$V[1,5]$} \\\cline{2-6}
+				\MEC{\Sterm{+}} &  
+				& $\blacktriangleleft$ & $V[2,3]$ & $\blacksquare \cup \blacklozenge$ & $V[2,5]$ \\\cline{3-6}
+				\MEC{\Sterm{b}} &\MEC{}   &
+				& $V[3,3]$ & $\blacktriangledown$ & $V[3,5]$ \\\cline{4-6}
+				\MEC{\Sterm{*}} &\MEC{}   &\MEC{}   &   
+				& $V[4,4]$ & $V[4,5]$ \\\cline{5-6}
+				\MEC{\Sterm{c}} &\MEC{}   &\MEC{}   &\MEC{}   &
+				& $V[5,5]$ \\\cline{6-6}
+				\MEC{}          &\MEC{\Sterm{a}} & \MEC{\Sterm{+}} & \MEC{\Sterm{b}} & \MEC{\Sterm{*}} & \MEC{\Sterm{c}}
+			\end{tabular}}
+		\end{center}
+	\end{frame}
 	
 	\begin{frame} \frametitle{Aufgabe 5}
 		\small
