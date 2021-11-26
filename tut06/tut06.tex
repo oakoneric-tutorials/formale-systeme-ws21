@@ -167,6 +167,28 @@
 		\end{enumerate}
 	\end{frame}
 
+	\begin{frame}
+		\small
+		\begin{enumerate}[a)]
+			\item Idee: Aufpumpen entspricht Zyklen/Schleifen in $\mathcal{M}$ \\
+			$\leadsto$ möglich durch Schleife in $q_1$ oder Zyklus $q_3 \to q_4 \to q_3$
+			\begin{itemize}
+				\item Für $z \in \menge{bc, adc}$ existiert keine Zerlegung (beachte, dass stets auch $k=0$ zulässig sein muss)
+				\item $z = cda \notin L(\mathcal{M})$
+				\item $z = bcdc \leadsto b \mid c \mid dc \text{ oder }
+				                         b \mid cd \mid c \text{ oder }
+				                         bc \mid dc \mid \epsilon$
+				\item $z = acdc \leadsto a \mid c \mid dc$
+			\end{itemize}
+			\item Laut Beweis des Pumping-Lemmas ist $n = \abs{Q} + 1 = 6$ zulässig. Tatsächlich reicht auch $n = 5$, da ein Lauf mit $i$ Übergängen automatisch $i+1$ Zustände besucht. Auch $n = 4$ ist ausreichend, wenn man sich überlegt wie Wörter der Länge $4$ aussehen dürfen:
+			\begin{itemize}
+				\item Weg über $q_3$: nutze Zyklus $q_3 \to q_4 \to q_3$
+				\item Weg über $q_1$ und $q_3$ -- Variante 1: nutze Loop in $q_1$
+				\item Weg über $q_1$ und $q_3$ -- Variante 2: nutze Zyklus $q_3 \to q_4 \to q_3$ (evtl. mit Start in $q_1$, d.h. $q_1 \to q_3 \to q_4 \to q_3 \to \dots \to q_4 \to q_2$)
+			\end{itemize} 
+		\end{enumerate}
+	\solutionmarkB
+	\end{frame}
 
 	\section{Aufgabe 2: \\ \itshape Regularität von Sprachen}
 	
@@ -210,7 +232,7 @@
 			\begin{equation*}
 				u v^2 w = a^{\ell - h} a^{2h} a^{n - \ell} b a^n = a^{\ell - h + 2h + n - \ell} b a^n= a^{n + h} b a^n \notin L_2
 			\end{equation*}
-			im Widerspruch zur Aussage des Pumping-Lemmas, was $u v^2 w \in L_2$ sichern würde. Damit kann die Annahme der Regularität nicht richtig gewesen sein und $L_2$ muss nicht regulär sein.
+			im Widerspruch zur Aussage des Pumping-Lemmas, was $u v^2 w \in L_2$ sichern würde. Damit kann die Annahme der Regularität nicht richtig gewesen sein und $L_2$ ist nicht regulär.
 		\end{enumerate}
 		\solutionmarkB
 	\end{frame}
@@ -354,6 +376,95 @@
 		\end{enumerate}
 	\end{frame}
 
+	\begin{frame}
+		\small
+		Zur Vereinfachung entfernen wir nicht erreichbare Symbole ($V$) und nicht terminierende Symbole ($T$, $U$).\footnote{Diese Vereinfachung ist nicht Bestandteil des Algorithmus.}
+		Damit sieht die Regelmenge in Kurznotation wie folgt aus:
+		\begin{equation*}
+			P = \menge{ \quad 
+				\begin{array}{lcl}
+					S &\to& \epsilon \mid aSb \mid R \\
+					R &\to& \epsilon \mid bSa 
+				\end{array}
+			  \quad }
+		\end{equation*}
+		a) \textbf{Eliminieren der $\epsilon$-Regeln} laut Algorithmus: $V_\epsilon = \menge{S,A}$
+		\begin{equation*}
+			P_1 = \menge{ \quad 
+				\begin{array}{lcl}
+					S &\to& aSb \mid R \mid ab \\
+					R &\to& bSa \mid ba \\
+					S' &\to& \epsilon \mid S
+				\end{array}
+				\quad }
+		\end{equation*}
+		
+		Damit erhalten wir $G_1 = \tuple{V_1, \Sigma, P_1, S'}$ mit $V_1 = \menge{S, R, S'}$ und $P_1$ von oben.
+		 \solutionmarkB
+	\end{frame}
+
+	\newcommand{\blue}[1]{\textcolor{darkblue}{#1}}
+	\newcommand{\purple}[1]{\textcolor{cdpurple}{#1}}
+	\newcommand{\green}[1]{\textcolor{cddarkgreen}{#1}}
+
+	\begin{frame}
+		\small
+		b) \textbf{Eliminieren von Kettenregeln}:
+		Erreichbarkeitsmengen: 
+		\begin{equation*}
+			E(S) = \menge{S, R}, \qquad E(R) = \menge{R}, \qquad E(S') = \menge{S',S,R}
+		\end{equation*}
+		\codebox{%
+			$\displaystyle P_{\text{neu}} = \bigcup_{\purple{A} \in V} \Big\{ \purple{A} \to w\mid \text{es gibt }\blue{B}\to w\in P\text{ mit }w\notin V\text{ und } \blue{B} \in E(A) \Big\}$%
+		}
+		\begin{equation*}
+			P_2 = \menge{ \quad 
+				\begin{array}{lclrl}
+					S &\to& \underbrace{aSb \mid ab}_{\blue{B = S}} \mid \underbrace{bSa \mid ba}_{\blue{B = R}} &&\purple{A = S}\\
+					R &\to& \underbrace{bSa \mid ba}_{\blue{B = R}} &&\purple{A = R}\\
+					S' &\to& \underbrace{\epsilon}_{\blue{B = S'}} \mid \underbrace{aSb \mid ab}_{\blue{B = S}} \mid \underbrace{bSa \mid ba}_{\blue{B = R}} && \purple{A = S'}
+				\end{array}
+				\quad }
+		\end{equation*}
+		
+		Damit erhalten wir $G_2 = \tuple{V_1, \Sigma, P_2, S'}$ mit $V_1 = \menge{S, R, S'}$ wie bisher und $P_2$ von oben.
+		\solutionmarkB
+	\end{frame}
+
+	\begin{frame}
+		\small
+		c) \textbf{Chomsky-Normalform}:
+		
+		Extrahieren von Terminalen
+			\begin{equation*}
+				\phantom{P_2 = }\menge{ \quad 
+					\begin{array}{lclrl}
+					S &\to& V_a \purple{S V_b} \mid V_a V_b \mid V_b \blue{S V_a} \mid V_b V_a\\
+					R &\to& V_b \blue{S V_a} \mid V_b V_a \\
+					S' &\to& \epsilon \mid V_a \purple{S V_b} \mid V_a V_b \mid V_b \blue{S V_a} \mid V_b V_a \\
+					V_a &\to& a \\
+					V_b &\to& b
+					\end{array}
+					\quad }
+			\end{equation*}
+		Verkürzen der Nichtterminalsequenzen
+			\begin{equation*}
+			P_3' = \menge{ \quad 
+				\begin{array}{lclrl}
+				S &\to& V_a \purple{C_b} \mid V_a V_b \mid V_b \blue{C_a} \mid V_b V_a\\
+				R &\to& V_b \blue{C_a} \mid V_b V_a \\
+				S' &\to& \epsilon \mid V_a \purple{C_b} \mid V_a V_b \mid V_b \blue{C_a} \mid V_b V_a \\
+				V_a &\to& a \\
+				V_b &\to& b \\
+				\blue{C_a} &\to& SV_a \\
+				\purple{C_b} &\to& SV_b
+				\end{array}
+				\quad }
+			\end{equation*}
+			Damit ist $G_3 = \tuple{V_3, \Sigma, P_3, S'}$ mit $V_3 = \menge{S',S,R,V_a,V_b,C_a,C_b}$ und $P_3 = P_3' \setminus \menge{S' \to \epsilon}$ in Chomsky-Normalform. Es gilt jedoch $L(G_3) = L(G_2) \setminus \menge{\epsilon}$.
+			\solutionmarkB
+	\end{frame}
+
 	\section{Aufgabe 5 \\ \itshape CYK-Algorithmus}
 	
 	\newcommand{\Rightarrowstarquest}{\mathrel{{\stackrel{?}{\Rightarrow}}{}^\ast}}
@@ -434,6 +545,56 @@
 			\item $w_1 = aaabba$
 			\item $w_2 = aabbaa$
 		\end{enumerate}    
+	\end{frame}
+
+	\begin{frame}
+		\small
+		\begin{enumerate}[a)]
+			\item $w_1 = aaabba$
+			\begin{center}
+				\scalebox{0.8}{%
+					\begin{tabular}{c|c|c|c|c|c|c|}
+						%  \multicolumn{1}{c}{}  & \multicolumn{1}{c}{A} & \multicolumn{1}{c}{B} & \multicolumn{1}{c}{C} & \multicolumn{1}{c}{D}  \\\cline{2-5}
+						\cline{2-7}
+						a
+						& $A,B$ & $S,M$ & $X$ & $S,M$ & $X$ & $\alert{S}, M$ \\\cline{2-7}
+						\MEC{a} &  
+						& $A,B$ & $S,M$ & $X$ & $S,M$ & $X$ \\\cline{3-7}
+						\MEC{a} &\MEC{}   &
+						& $A,B$ & $S,M$ & $X$ & $\emptyset$ \\\cline{4-7}
+						\MEC{b} &\MEC{}   &\MEC{}   &   
+						& $B$ & $\emptyset$ & $\emptyset$ \\\cline{5-7}
+						\MEC{b} &\MEC{}   &\MEC{}   &\MEC{}   &
+						& $B$ & $\emptyset$ \\\cline{6-7}
+						\MEC{a} & \MEC{} & \MEC{} & \MEC{} & \MEC{} &  & $A,B$ \\\cline{7-7}
+						\MEC{}          &\MEC{a} & \MEC{a} & \MEC{a} & \MEC{b} & \MEC{b} & \MEC{a}
+				\end{tabular}}
+			\end{center}
+			$\Rightarrow w_1 \in L(G)$
+			
+			\item $w_2 = aabbaa$
+			\begin{center}
+				\scalebox{0.8}{%
+					\begin{tabular}{c|c|c|c|c|c|c|}
+						%  \multicolumn{1}{c}{}  & \multicolumn{1}{c}{A} & \multicolumn{1}{c}{B} & \multicolumn{1}{c}{C} & \multicolumn{1}{c}{D}  \\\cline{2-5}
+						\cline{2-7}
+						a
+						& $A,B$ & $S,M$ & $X$ & $S,M$ & $X$ & \alert{$\emptyset$} \\\cline{2-7}
+						\MEC{a} &  
+						& $A,B$ & $S,M$ & $X$ & $\emptyset$ & $\emptyset$ \\\cline{3-7}
+						\MEC{b} &\MEC{}   &
+						& $B$ & $\emptyset$ & $\emptyset$ & $\emptyset$ \\\cline{4-7}
+						\MEC{b} &\MEC{}   &\MEC{}   &   
+						& $B$ & $\emptyset$ & $\emptyset$ \\\cline{5-7}
+						\MEC{a} &\MEC{}   &\MEC{}   &\MEC{}   &
+						& $A,B$ & $S,M$ \\\cline{6-7}
+						\MEC{a} & \MEC{} & \MEC{} & \MEC{} & \MEC{} &  & $A,B$ \\\cline{7-7}
+						\MEC{}          &\MEC{a} & \MEC{a} & \MEC{b} & \MEC{b} & \MEC{a} & \MEC{a}
+				\end{tabular}}
+			\end{center}
+		$\Rightarrow w_2 \notin L(G)$
+		\end{enumerate}
+		\solutionmarkB		
 	\end{frame}
 
 \end{document}
