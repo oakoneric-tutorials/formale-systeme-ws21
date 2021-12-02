@@ -59,11 +59,48 @@
 	\end{tikzpicture}%
 }
 
+\usepackage{tikzducks}
+\newcommand{\duckA}{%
+	\scalebox{0.2}{
+		\reflectbox{
+	\begin{tikzpicture}[baseline=2ex]
+	\duck[mask=teal,cape=teal, body=orange!60!yellow]
+	\end{tikzpicture}%
+	}
+	}
+}
+\newcommand{\duckB}{%
+	\scalebox{0.2}{
+	\begin{tikzpicture}[baseline=2ex]
+	\duck[body=pink,
+	unicorn=magenta!60!violet,
+	longhair=magenta!60!violet]
+	\end{tikzpicture}%
+	}
+}
+\newcommand{\duckC}{%
+	\scalebox{0.2}{
+	\begin{tikzpicture}[baseline=2ex]
+	\duck[santa=red!80!black,
+	beard=white!80!brown]
+	\end{tikzpicture}%
+	}
+}
+\newcommand{\duckD}{%
+	\scalebox{0.2}{
+	\begin{tikzpicture}[baseline=2ex]
+	\duck[signpost=420, sunglasses=black!90, body=brown!60!white]
+	\end{tikzpicture}%
+	}
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\ghost}[1]{\raisebox{0pt}[0pt][0pt]{\makebox[0pt][l]{#1}}}
 \newcommand{\blue}[1]{\textcolor{darkblue}{#1}}
 \newcommand{\purple}[1]{\textcolor{cdpurple}{#1}}
 \newcommand{\green}[1]{\textcolor{cddarkgreen}{#1}}
+
+
 
 \begin{document}	
 	\title{Formale Systeme}
@@ -77,7 +114,24 @@
 
 	\maketitle
 
+	\begin{frame} \frametitle{Corona-Umfrage}
+		\textbf{Wie stehst du zu Online-Übungen?}
+		\begin{itemize}
+			\item Ich bin für Online-Übungen. \\
+			\textit{nur online}
+			\item Ich kann mit Online-Übungen leben. \\ 
+			\textit{beides okay, bevorzugt online}
+			\item Ich kann mit Präsenzübungen leben. \\
+			\textit{beides okay, bevorzugt Präsenz}
+			\item Ich bin für Präsenzübungen. \\
+			\textit{nur Präsenz}
+		\end{itemize}
 	
+		\begin{center}
+			\Large
+			\fbox{\url{https://tudvote.tu-dresden.de/88314}}
+		\end{center}
+	\end{frame}
 
 	\section{Aufgabe 1: \\ \itshape Kontextfrei? Pumping-Lemma?}
 
@@ -117,8 +171,8 @@
 		Sprachen verwenden oder eine entsprechende kontextfreie Grammatik
 		angeben.
 		\begin{enumerate}[a)]
-			\item $L_1 =\{ a^n b^n c^n d^n \in \{a,b,c,d\}^* \mid n\ge 1 \}$
-			\item $L_2 =\{ a^mb^n c^pd^q \in \{a,b,c,d\}^* \mid m,n,p,q \ge 1
+			\item $L_1 =\{ a^n b^n c^n d^n \in \{a,b,c,d\}^\ast  \mid n\ge 1 \}$
+			\item $L_2 =\{ a^mb^n c^pd^q \in \{a,b,c,d\}^\ast  \mid m,n,p,q \ge 1
 			\text{ und } m+n = p + q \}$
 		\end{enumerate}
 	\end{frame}
@@ -161,7 +215,7 @@
 			\begin{enumerate}[(1)]
 				\item \mytabnote{$\Slangsub{L}{1}\cup\Slangsub{L}{2}$}{Abschluss unter Vereinigung}
 				\item \mytabnote{$\Slangsub{L}{1}\circ\Slangsub{L}{2}$}{Abschluss unter Konkatenation}
-				\item \mytabnote{$\Slang{L}^*$}{Abschluss unter Kleene-Stern}
+				\item \mytabnote{$\Slang{L}^\ast $}{Abschluss unter Kleene-Stern}
 			\end{enumerate}
 		}
 		
@@ -187,39 +241,43 @@
 
 	\begin{frame}
 		\small
-		\begin{align*} 
-			L_0 
-			&= \menge{ a^i b^j c^k : i=j \text{ oder } j=k \text{ mit } i,j,k \ge 1 } \\
-			&= \menge{ a^i b^j c^k : i=j \text{ mit } i,j,k \ge 1} \cup \menge{ a^i b^j c^k : j=k \text{ mit } i,j,k \ge 1 } \\
-			&= \menge{ a^i b^i c^k : i,k \ge 1} \cup \menge{ a^i b^j c^j : i,j \ge 1 } \\
-			&= \underbrace{\menge{ a^i b^i : i \ge 1}}_{\text{kontextfrei}} \underbrace{\menge{c}^\ast}_{\text{regulär}} \cup \underbrace{\menge{a}^\ast}_{\text{regulär}} \underbrace{\menge{b^j c^j : j \ge 1}}_{\text{kontextfrei}} 
-		\end{align*}
-		\pause
+		\onslide<1->{%
+			\begin{align*} 
+				L_0 
+				&= \menge{ a^i b^j c^k : i=j \text{ oder } j=k \text{ mit } i,j,k \ge 1 } \\
+				&= \menge{ a^i b^j c^k : i=j \text{ mit } i,j,k \ge 1} \cup \menge{ a^i b^j c^k : j=k \text{ mit } i,j,k \ge 1 } \\
+				&= \menge{ a^i b^i c^k : i,k \ge 1} \cup \menge{ a^i b^j c^j : i,j \ge 1 } \\
+				&= \underbrace{\menge{ a^i b^i : i \ge 1}}_{\text{kontextfrei}} \underbrace{\menge{c}^\ast}_{\text{regulär}} \cup \underbrace{\menge{a}^\ast}_{\text{regulär}} \underbrace{\menge{b^j c^j : j \ge 1}}_{\text{kontextfrei}} 
+			\end{align*}%
+		}
 		
-		\textbf{Grammatik} $G_0 = \tuple{V, \Sigma, P, S}$ mit $V = \menge{S, S_a, S_c, S_{ab}, S_{bc}}$ und
-		\begin{equation*}
-			P = \left\{
-			\begin{array}{lcl c lcl}
-				S &\to& S_{ab} S_c \mid S_a S_{bc} \\
-				S_a &\to& a S_a \mid a &\quad& S_{ab} &\to& a S_{ab} b \mid ab \\
-				S_c &\to& c S_c \mid c &\quad& S_{bc} &\to& b S_{bc} c \mid bc \\
-			\end{array}
-			\right\}
-		\end{equation*}
-		\pause
+		\onslide<2->{%
+			\textbf{Grammatik} $G_0 = \tuple{V, \Sigma, P, S}$ mit $V = \menge{S, S_a, S_c, S_{ab}, S_{bc}}$ und
+			\begin{equation*}
+				P = \left\{
+				\begin{array}{lcl c lcl}
+					S &\to& S_{ab} S_c \mid S_a S_{bc} \\
+					S_a &\to& a S_a \mid a &\quad& S_{ab} &\to& a S_{ab} b \mid ab \\
+					S_c &\to& c S_c \mid c &\quad& S_{bc} &\to& b S_{bc} c \mid bc \\
+				\end{array}
+				\right\}
+			\end{equation*}%
+		}
 		
-		\textbf{Ableitungen}:
-		\vspace{-.5\baselineskip}
-		\begin{itemize}
-			\item $w = abc$:
-			\begin{enumerate}[(i)]
-				\item $S \to S_{ab} \; S_c \to ab \; S_c \to ab \; c$
-				\item $S \to S_a \; S_{bc} \to a \; S_{bc} \to a \; bc$
-			\end{enumerate}
-			\item $w = abbcc$: $S \to S_a \;¸ S_{bc} \to a \; S_{bc} \to a \; b S_{bc} c \to a \; b \, bc \, c$
-		\end{itemize}
+		\onslide<3->{%
+			\textbf{Ableitungen}:
+			\vspace{-.5\baselineskip}
+			\begin{itemize}
+				\item $w = abc$:
+				\begin{enumerate}[(i)]
+					\item $S \to S_{ab} \; S_c \to ab \; S_c \to ab \; c$
+					\item $S \to S_a \; S_{bc} \to a \; S_{bc} \to a \; bc$
+				\end{enumerate}
+				\item $w = abbcc$: $S \to S_a \;¸ S_{bc} \to a \; S_{bc} \to a \; b S_{bc} c \to a \; b \, bc \, c$
+			\end{itemize}%
+		}
 		
-		\solutionmarkB
+		\onslide<1->{\solutionmarkB}
 	\end{frame}
 
 
@@ -266,18 +324,17 @@
 	
 	\begin{frame}\frametitle{CYK: Praktische Umsetzung}
 		\small
-		\textbf{Vorgehen}: $V[i,j] = $ Menge aller $\Snterm{A}$ mit $\Snterm{A}\Rightarrow^\ast w_{i,j}$ \\
-		$\leadsto$ $V[i,j]$ können in einer Dreiecksmatrix notiert werden
+		\textbf{Vorgehen}: $V[i,j] = $ Menge aller $\Snterm{A}$ mit $\Snterm{A}\Rightarrow^\ast w_{i,j}$ 
 		
 		\begin{itemize}
-			\item Diagonale = Fall 1: existiert Terminalsymbolregel
-			\item Fixiere Element $\blacksquare$: sei $\blacktriangleright$ in der gleichen Zeile ganz links und $\blacktriangledown$ direkt unten drunter 
+			\item Diagonale = Fall 1: existiert Terminalsymbolregel $\duckA \to \Sterm{a}$
+			\item Fixiere Element $\duckC$: sei $\duckA$ in der gleichen Zeile ganz links und $\duckB$ direkt unten drunter 
 			\begin{itemize}
-				\item wenn eine Regel $\blacklozenge \to \blacktriangleright \blacktriangledown$, dann füge $\blacklozenge$ zu $\blacksquare$ hinzu
-				\item schiebe $\blacktriangleright$ nach rechts und $\blacktriangledown$ nach unten und wiederhole
+				\item wenn eine Regel $\duckD \to \duckA \duckB$, dann füge $\duckD$ zu $\duckC$ hinzu
+				\item schiebe $\duckA$ nach rechts und $\duckB$ nach unten und wiederhole
 			\end{itemize}
 		\end{itemize}
-		Ist am Ende das Startsymbol $S \in \alert{V[1,|w|]}$, dann liegt $w$ in der Sprache
+		Ist am Ende das Startsymbol $S \in \alert{V[1,|w|]}$, dann $w \in \Slang{L}$.
 		
 		\textbf{Beispiel}: Wir betrachten das Wort $w=\Sterm{a+b*c}$ der Länge $|w|=5$.		
 		\begin{center}
@@ -288,9 +345,9 @@
 					\Sterm{a}
 					& $V[1,1]$ & $V[1,2]$ & $V[1,3]$ & $V[1,4]$ & \alert{$V[1,5]$} \\\cline{2-6}
 					\MEC{\Sterm{+}} &  
-					& $\blacktriangleright$ & $V[2,3]$ & $\blacksquare \cup \blacklozenge$ & $V[2,5]$ \\\cline{3-6}
+					& $\duckA$ & $V[2,3]$ & $\duckC \cup \duckD$ & $V[2,5]$ \\\cline{3-6}
 					\MEC{\Sterm{b}} &\MEC{}   &
-					& $V[3,3]$ & $\blacktriangledown$ & $V[3,5]$ \\\cline{4-6}
+					& $V[3,3]$ & $\duckB$ & $V[3,5]$ \\\cline{4-6}
 					\MEC{\Sterm{*}} &\MEC{}   &\MEC{}   &   
 					& $V[4,4]$ & $V[4,5]$ \\\cline{5-6}
 					\MEC{\Sterm{c}} &\MEC{}   &\MEC{}   &\MEC{}   &
