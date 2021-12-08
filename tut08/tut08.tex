@@ -1,0 +1,237 @@
+\documentclass{beamer}
+\usepackage{../tut-slides}
+\usepackage{../mathoperators}
+\usepackage{../fs}
+
+\usepackage{csquotes}
+
+\usepackage{amsmath,amssymb}
+%\usepackage{enumerate}
+\usepackage[normalem]{ulem}
+\newcommand{\labelitemi}{\raisebox{1pt}{\scalebox{.9}{$\blacktriangleright$}}}
+\newcommand{\labelitemii}{$\vartriangleright$}
+\newcommand{\labelitemiii}{--}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+\newcommand{\tuple}[1]{\langle{#1}\rangle}
+\newcommand{\simquot}[1]{#1/_{\!\!{\sim}}}
+
+\usepackage{pifont}
+
+\newcommand{\cmark}{\textcolor{cddarkgreen}{\ding{51}}}%
+\newcommand{\xmark}{\textcolor{darkred}{\ding{55}}}%
+
+\newcommand{\solutionmarkB}{%
+	\begin{tikzpicture}[remember picture, overlay]
+		\node [
+			fill=none,  % Farbe des Randstreifens
+			text=cdorange,  % Textfarbe
+			font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+			inner xsep=0,       % Abstand des Textes von unten
+			% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+			%			text width={\dimexpr\paperheight-2\footskip\relax},
+			align=center,
+			%			minimum height=8mm,% Breite des Randstreifens
+			anchor=south west,
+			rotate=90
+		] at ($(current page.north west)+(+8mm,-20mm)$)
+		{Lösung};
+		\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+	\end{tikzpicture}%
+}
+\newcommand{\solutionmarkFT}{\begin{tikzpicture}[remember picture, overlay]
+	\node [
+	fill=none,  % Farbe des Randstreifens
+	text=cdorange,  % Textfarbe
+	font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+	inner xsep=0,       % Abstand des Textes von unten
+	% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+	%			text width={\dimexpr\paperheight-2\footskip\relax},
+	align=center,
+	%			minimum height=8mm,% Breite des Randstreifens
+	anchor=south west,
+	rotate=90
+	] at ($(current page.north west)+(+8mm,-27mm)$)
+	{Lösung};
+	\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+	\end{tikzpicture}%
+}
+
+\usepackage{tikzducks}
+\newcommand{\duckA}{%
+	\scalebox{0.2}{
+		\reflectbox{
+	\begin{tikzpicture}[baseline=2ex]
+	\duck[mask=teal,cape=teal, body=orange!60!yellow]
+	\end{tikzpicture}%
+	}
+	}
+}
+\newcommand{\duckB}{%
+	\scalebox{0.2}{
+	\begin{tikzpicture}[baseline=2ex]
+	\duck[body=pink,
+	unicorn=magenta!60!violet,
+	longhair=magenta!60!violet]
+	\end{tikzpicture}%
+	}
+}
+\newcommand{\duckC}{%
+	\scalebox{0.2}{
+	\begin{tikzpicture}[baseline=2ex]
+	\duck[santa=red!80!black,
+	beard=white!80!brown]
+	\end{tikzpicture}%
+	}
+}
+\newcommand{\duckD}{%
+	\scalebox{0.2}{
+	\begin{tikzpicture}[baseline=2ex]
+	\duck[signpost=420, sunglasses=black!90, body=brown!60!white]
+	\end{tikzpicture}%
+	}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ghost}[1]{\raisebox{0pt}[0pt][0pt]{\makebox[0pt][l]{#1}}}
+\newcommand{\blue}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\purple}[1]{\textcolor{cdpurple}{#1}}
+\newcommand{\green}[1]{\textcolor{cddarkgreen}{#1}}
+
+
+
+\begin{document}	
+	\title{Formale Systeme}
+	\subtitle{Übung 8}
+	\author{Eric Kunze}
+	\email{eric.kunze@tu-dresden.de}
+	\city{TU Dresden}
+	\date{\formatdate{10}{12}{2021}}
+%	\institute{Lehrstuhl für Grundlagen der Programmierung}
+	\titlegraphic{\includegraphics[width=2cm]{../TUD-white.pdf}}
+
+	\maketitle
+
+%	\begin{frame} \frametitle{Corona-Umfrage}
+%		\textbf{Wie stehst du zu Online-Übungen?}
+%		\begin{itemize}
+%			\item Ich bin für Online-Übungen. \\
+%			\textit{nur online}
+%			\item Ich kann mit Online-Übungen leben. \\ 
+%			\textit{beides okay, bevorzugt online}
+%			\item Ich kann mit Präsenzübungen leben. \\
+%			\textit{beides okay, bevorzugt Präsenz}
+%			\item Ich bin für Präsenzübungen. \\
+%			\textit{nur Präsenz}
+%		\end{itemize}
+%	
+%		\begin{center}
+%			\Large
+%			\fbox{\url{https://tudvote.tu-dresden.de/88314}}
+%		\end{center}
+%	\end{frame}
+
+	\begin{frame} \frametitle{Übungsblatt 8}
+		\tableofcontents
+	\end{frame}
+
+	\section{Aufgabe 1: \\ \itshape Kellerautomaten}
+
+	\newcommand{\colstackrel}[3]{\,{\stackrel{\textcolor{#3}{#1}}{\textcolor{#3}{#2}}}\,}
+	\newcommand{\gstackrel}[2]{\colstackrel{#1}{#2}{darkgreen}}
+	\newcommand{\bstackrel}[2]{\colstackrel{#1}{#2}{darkblue}}
+	\newcommand{\rstackrel}[2]{\colstackrel{#1}{#2}{darkred}}
+	
+
+	\begin{frame} \frametitle{Aufgabe 1}
+		\small
+		Geben Sie einen Kellerautomaten $\mathcal{M}_i$ für die Sprachen
+		$L_i$ ($i = 1, \dots, 4$) sowie eine akzeptierende Folge von Konfigurationsübergängen für die gegebenen Wörter $w$.
+		\begin{enumerate}[(a)]
+			\item $L_0 = L(\mathcal{M}_0) = \{a^ib^jc^k \mid i=j \text{ oder } j=k \text{ mit } i,j,k\ge 1\}$
+			 \\ $w=aaabbcc$ 
+			\item $L_1 = L(\mathcal M_1)=\{a^{n}b^m\mid  n,m\ge 0\,, n=3m\}$ \\ $w=aaab$
+			\item $L_2 = L(\mathcal M_2) = \{w\in\{a,b\}^*\mid |w|_a = |w|_b\}$ \\ $w=aabbba$ 
+			\item $L_3 = L(\mathcal{M}_3) = \{ (ab)^{n}  (ba)^{n} \mid n \geq 0 \}$ \\ $w=ababbaba$ 
+		\end{enumerate}
+	\end{frame}
+
+	
+
+	\section{Aufgabe 2 \\ \itshape Permutationssprache kontextfrei?}
+	
+	\newcommand{\mytabnote}[2]{\ghost{#1}\hspace{2cm}{\textcolor{cdgray}{(#2)}}}
+
+	
+	\begin{frame}\frametitle{Abschluss für kontextfreie Sprachen}
+		\small
+		\theobox{
+			\textbf{Satz:} Wenn $\Slang{L}$, $\Slangsub{L}{1}$ und $\Slangsub{L}{2}$ kontextfreie Sprachen sind, dann beschreiben auch die folgenden Ausdrücke kontextfreie Sprachen:
+			
+			\begin{enumerate}[(1)]
+				\item \mytabnote{$\Slangsub{L}{1}\cup\Slangsub{L}{2}$}{Abschluss unter Vereinigung}
+				\item \mytabnote{$\Slangsub{L}{1}\circ\Slangsub{L}{2}$}{Abschluss unter Konkatenation}
+				\item \mytabnote{$\Slang{L}^\ast $}{Abschluss unter Kleene-Stern}
+			\end{enumerate}
+		}
+		
+		Aber: 
+		
+		\theobox{
+			\textbf{Satz:} Es gibt kontextfreie Sprachen $\Slang{L}$, $\Slangsub{L}{1}$ und $\Slangsub{L}{2}$, so dass die folgenden Ausdrücke keine kontextfreien Sprachen sind:
+			
+			\begin{enumerate}[(1)]
+				\item \mytabnote{$\Slangsub{L}{1}\cap\Slangsub{L}{2}$}{Nichtabschluss unter Schnitt}
+				\item \mytabnote{$\overline{\Slang{L}}$}{Nichtabschluss unter Komplement}
+			\end{enumerate}
+		}
+		
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 2}
+		\small
+		Beweisen oder widerlegen Sie folgende Aussage.
+		
+		Ist $L \subseteq \Sigma^*$ eine kontextfreie Sprache, so ist auch
+		$$\pi(L) = \left\{ a_1 \ldots a_n \in \Sigma^*: \begin{array}{l} \text{ex. Permutation } (i_1 \ldots i_n) \text{ von } (1 \ldots n), \\ \text{sodass }  a_{i_1} \ldots a_{i_n} \in L \end{array} \right\} $$
+		kontextfrei.
+	\end{frame}
+
+	\begin{frame}
+		\small
+		\onslide<1->{\solutionmarkB}
+	\end{frame}
+
+	\section{Aufgabe 3 \\ \itshape Deterministische Kellerautomaten}
+	
+	\begin{frame} \frametitle{Aufgabe 3}
+		\small
+		Gegeben sei die Sprache $L=\{w\in \Sigma^*\;|\;|w|_a+|w|_b=|w|_c\}$ \"uber dem Alphabet $\Sigma =\{a,b,c\}$, wobei $|w|_a$ der Anzahl der Vorkommen von $a$ in $w$ entspricht.
+		\begin{enumerate}[(a)]
+			\item Entwerfen Sie einen Kellerautomaten $\mathcal{M}$ mit $L(\mathcal{M})=L$, der mittels Finalzustand akzeptiert.
+			\item Welcher andere Akzeptanzbegriff f\"ur Kellerautomaten ist laut Anmerkung in der Vorlesung auch m\"oglich?
+			\item Wann ist eine Sprache deterministisch kontextfrei? Ist $L$ deterministisch kontextfrei?
+		\end{enumerate}
+	\end{frame}
+
+	\section{Aufgabe 4 \\ \itshape Wiederholung}
+	
+	\begin{frame} \frametitle{Aufgabe 4}
+		\small
+		Welche der folgenden Aussagen sind wahr und welche nicht? Begr"unden Sie Ihre
+		Antworten -- dabei d"urfen Sie den gesamten Stoff und alle Resultate
+		der Vorlesung und "Ubung verwenden.
+		\begin{enumerate}[(a)]
+			\item Es gibt eine Sprache, die von einem nichtdeterministischen Kellerautomaten erkannt wird, nicht aber von einem deterministischen Kellerautomaten.
+			\item Mithilfe des Pumping-Lemmas f\"ur kontextfreie Sprachen kann
+			bewiesen werden, dass eine Sprache $L$ kontextfrei ist. 
+			\item F\"ur eine beliebige Sprache $L$ gilt: $L$ ist regul\"ar, wenn es eine nat\"urliche Zahl $n_0\ge 1$ gibt, so dass sich jedes Wort $w\in L$ mit $|w|\ge n_0$ zerlegen l\"asst in $w=xyz$ mit $y\not = \varepsilon, xy^kz\in L$ f\"ur alle $k\ge 0$.
+		\end{enumerate}
+	\end{frame}
+
+	
+	
+
+\end{document}
