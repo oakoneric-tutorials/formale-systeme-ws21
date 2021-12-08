@@ -99,6 +99,7 @@
 \newcommand{\blue}[1]{\textcolor{darkblue}{#1}}
 \newcommand{\purple}[1]{\textcolor{cdpurple}{#1}}
 \newcommand{\green}[1]{\textcolor{cddarkgreen}{#1}}
+\newcommand{\gray}[1]{\textcolor{cdgray!75}{#1}}
 
 
 
@@ -386,4 +387,144 @@
 		\end{enumerate}
 	\end{frame}
 
+	\begin{frame}
+		\small
+		\begin{center}
+			\tiny Die Grammatiken sind hier informell nur über die Regelmenge angegeben. Ebenso führen wir für $\epsilon$-freie Grammatiken kein neues Startsymbol ein, um das Wort $\epsilon$ ableiten zu können, sondern fügen den Fall zum normalen Startsymbol hinzu mit dem Wissen es bei der Chomsky-Normalform zu ignorieren.
+		\end{center}
+	
+		\textbf{(a)} $L_1 = \text{Palindrome über } \Sigma = \menge{a,b}$
+		\begin{align*}
+			&\text{Grammatik:} \quad && S \to \epsilon \mid a \mid b \mid aSa \mid bSb \\
+			&\text{\enquote{$\epsilon$-freie} Grammatik:} \quad && S \to \epsilon \mid a \mid b \mid aSa  \mid bSb \mid aa \mid bb
+		\end{align*}
+		\textbf{Chomsky-Normalform}:
+		\begin{equation*}
+			P = \left\{
+			\begin{array}{lcl c lcl}
+				S &\to& \rlap{$a \mid b \mid V_a C_a \mid V_b C_b \mid V_a V_a \mid V_b V_b$} \\
+				V_a &\to& a &\qquad\qquad& C_a &\to& S V_a \\
+				V_b &\to& b &\qquad& C_b &\to& S V_b \\
+			\end{array}
+			\hspace{3em}\right\}
+		\end{equation*}
+		\textbf{CYK-Algorithmus}:
+		\begin{center}
+			\scalebox{0.8}{%
+				\begin{tabular}{c|c|c|c|}
+					%  \multicolumn{1}{c}{}  & \multicolumn{1}{c}{A} & \multicolumn{1}{c}{B} & \multicolumn{1}{c}{C} & \multicolumn{1}{c}{D}  \\\cline{2-5}
+					\cline{2-4}
+					\Sterm{a}
+					& $S, V_a$ & $C_b$ & $S$ \\\cline{2-4}
+					\MEC{\Sterm{b}} &  
+					& $S, V_b$ & $C_a$ \\\cline{3-4}
+					\MEC{\Sterm{a}} &\MEC{}   &
+					& $S, V_a$ \\\cline{4-4}
+					\MEC{}          &\MEC{\Sterm{a}} & \MEC{\Sterm{b}} & \MEC{\Sterm{a}}
+			\end{tabular}
+			\hspace{2em}
+			\begin{tabular}{c|c|c|c|c|}
+				%  \multicolumn{1}{c}{}  & \multicolumn{1}{c}{A} & \multicolumn{1}{c}{B} & \multicolumn{1}{c}{C} & \multicolumn{1}{c}{D}  \\\cline{2-5}
+				\cline{2-5}
+				\Sterm{a}
+				& $S, V_a$ & $C_b$ & $\emptyset$ & $S$ \\\cline{2-5}
+				\MEC{\Sterm{b}} &  
+				& $S, V_b$ & $S, C_b$ & $C_a$ \\\cline{3-5}
+				\MEC{\Sterm{b}} &\MEC{}   &
+				& $S, V_b$ & $C_a$ \\\cline{4-5}
+				\MEC{\Sterm{a}} &\MEC{}   &  \MEC{}
+				& & $S, V_a$ \\\cline{5-5}
+				\MEC{}          &\MEC{\Sterm{a}} & \MEC{\Sterm{b}} & \MEC{\Sterm{b}} &\MEC{\Sterm{a}}
+			\end{tabular}	
+	}
+		\end{center}
+		\solutionmarkB
+	\end{frame}
+
+	\begin{frame}
+		\small
+		\textbf{(b)} $L_2 = \menge{w \in \menge{a,b}^\ast : \abs{w}_a = \abs{w}_b}$
+		
+		\textbf{Grammatik:} $\quad S \to \epsilon \mid aB \mid bA, \quad A \to a \mid aS \mid bAA  \quad B \to b \mid bS \mid aBB $
+		
+		\textbf{Chomsky-Normalform}:
+		\begin{equation*}
+			\begin{array}{lcl c lcl c lcl}
+				S &\to& V_a B \mid V_b A 
+				&\qquad& V_a &\to& a &\qquad& C_A &\to& AA \\
+				A &\to& a \mid V_a S \mid V_b C_b 
+				&\qquad& V_b &\to& b &\qquad& C_B &\to& BB \\
+				B &\to& b \mid V_b S \mid V_a C_B \\
+			\end{array}	
+		\end{equation*}
+		\textbf{CYK-Algorithmus}: $w = aababb \in L_2$
+		\begin{center}
+			\scalebox{1}{%
+				\begin{tabular}{c|c|c|c|c|c|c|}
+					%  \multicolumn{1}{c}{}  & \multicolumn{1}{c}{A} & \multicolumn{1}{c}{B} & \multicolumn{1}{c}{C} & \multicolumn{1}{c}{D}  \\\cline{2-5}
+					\cline{2-7}
+					\Sterm{a}
+					& $A, V_a$ & $C_A$ & $A$ & $C_A$ & $A$ & $S$ \\\cline{2-7}
+					\MEC{\Sterm{a}} & 
+					& $A, V_a$ & $S$ & $A$ & $S$ & $B$ \\\cline{3-7}
+					\MEC{\Sterm{b}} &\MEC{}   & 
+					& $B, V_b$ & $S$ & $B$ & $C_B$ \\\cline{4-7}
+					\MEC{\Sterm{a}} &\MEC{}   &  \MEC{}
+					& & $A, V_a$ & $S$ & $B$\\\cline{5-7}
+					\MEC{\Sterm{b}} &\MEC{}   &  \MEC{} & \MEC{}
+					& & $B, V_b$ & $C_B$ \\\cline{6-7}
+					\MEC{\Sterm{b}} &\MEC{}   &  \MEC{} & \MEC{} & \MEC{}
+					& & $B, V_b$ \\\cline{7-7}
+					\MEC{}          &\MEC{\Sterm{a}} & \MEC{\Sterm{a}} & \MEC{\Sterm{b}} &\MEC{\Sterm{a}} & \MEC{\Sterm{b}} &\MEC{\Sterm{b}}
+				\end{tabular}	
+			}
+		\end{center}
+		\solutionmarkB
+	\end{frame}
+
+	\begin{frame}
+		\small
+		\textbf{(c)} $L_3 = \menge{(ab)^n \ (ba)^n : n \ge 0}$
+		
+		($\epsilon$-freie) \textbf{Grammatik:} $\quad S \to \gray{\epsilon} \mid ab \ S \ ba \mid abba$
+		
+		\textbf{Chomsky-Normalform}:
+		\begin{equation*}
+			P = \left\{
+			\begin{array}{lcl c lcl}
+				S &\to& C_{ab} C \mid C_{ab} C_{ba} \\
+				V_a &\to& a && C_{ab} &\to& V_a V_b \\
+				V_b &\to& b && C_{ba} &\to& V_b V_a \\
+				C &\to& S C_{ba}
+			\end{array}
+			\right\}
+		\end{equation*}
+		\textbf{CYK-Algorithmus}: $w = ababbaba \in L_3$
+		\begin{center}
+			\scalebox{0.9}{%
+				\begin{tabular}{c|c|c|c|c|c|c|c|c|}
+					%  \multicolumn{1}{c}{}  & \multicolumn{1}{c}{A} & \multicolumn{1}{c}{B} & \multicolumn{1}{c}{C} & \multicolumn{1}{c}{D}  \\\cline{2-5}
+					\cline{2-9}
+					\Sterm{a}
+					& $V_a$ & $C_{ab}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $S$ \\\cline{2-9}
+					\MEC{\Sterm{b}} & 
+					& $V_b$ & $C_{ba}$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ \\\cline{3-9}
+					\MEC{\Sterm{a}} &\MEC{}   & 
+					& $V_a$ & $C_{ab}$ & $\emptyset$ & $S$ & $\emptyset$ & $C$ \\\cline{4-9}
+					\MEC{\Sterm{b}} &\MEC{}   &  \MEC{}
+					& & $V_b$ & $\emptyset$ & $\emptyset$ & $\emptyset$ & $\emptyset$ \\\cline{5-9}
+					\MEC{\Sterm{b}} &\MEC{}   &  \MEC{} & \MEC{}
+					& & $V_b$ & $C_{ba}$ & $\emptyset$ & $\emptyset$ \\\cline{6-9}
+					\MEC{\Sterm{a}} &\MEC{}   &  \MEC{} & \MEC{} & \MEC{}
+					& & $V_a$ & $C_{ab}$ & $\emptyset$ \\\cline{7-9}
+					\MEC{\Sterm{b}} &\MEC{}   &  \MEC{} & \MEC{} & \MEC{} & \MEC{}
+					& & $V_b$ & $C_{ba}$ \\\cline{8-9}
+					\MEC{\Sterm{a}} &\MEC{}   &  \MEC{} & \MEC{} & \MEC{} & \MEC{} & \MEC{}
+					& & $V_a$ \\\cline{9-9}
+					\MEC{}          &\MEC{\Sterm{a}} & \MEC{\Sterm{b}} & \MEC{\Sterm{a}} &\MEC{\Sterm{b}} & \MEC{\Sterm{b}} &\MEC{\Sterm{a}} &\MEC{\Sterm{b}} &\MEC{\Sterm{b}}
+				\end{tabular}	
+			}
+		\end{center}
+		\solutionmarkB
+	\end{frame}
 \end{document}
