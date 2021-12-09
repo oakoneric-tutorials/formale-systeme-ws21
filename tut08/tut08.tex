@@ -94,6 +94,7 @@
 	}
 }
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\ghost}[1]{\raisebox{0pt}[0pt][0pt]{\makebox[0pt][l]{#1}}}
 \newcommand{\blue}[1]{\textcolor{darkblue}{#1}}
@@ -139,11 +140,39 @@
 
 	\section{Aufgabe 1: \\ \itshape Kellerautomaten}
 
-	\newcommand{\colstackrel}[3]{\,{\stackrel{\textcolor{#3}{#1}}{\textcolor{#3}{#2}}}\,}
-	\newcommand{\gstackrel}[2]{\colstackrel{#1}{#2}{darkgreen}}
-	\newcommand{\bstackrel}[2]{\colstackrel{#1}{#2}{darkblue}}
-	\newcommand{\rstackrel}[2]{\colstackrel{#1}{#2}{darkred}}
+	\begin{frame}\frametitle{Kellerautomaten}
+		\small			
+		\defbox{Ein \textbf{Kellerautomat} (PDA) 
+			\Smach{M} ist ein Tupel $\Smach{M}=\tuple{Q,\Sigma,\Gamma,\delta,Q_0,F}$:
+			\begin{itemize}
+				\item $Q$: endliche Menge von Zuständen
+				\item $\Sigma$: Eingabealphabet
+				\item $\Gamma$: \textit{Kelleralphabet}
+				\item $\delta$: totale Übergangsfunktion $Q\times\Sigma_\epsilon\times\Gamma_\epsilon \to 2^{Q\times\Gamma_\epsilon}$
+				\item $Q_0$: Menge möglicher Startzustände $Q_0\subseteq Q$
+				\item $F$: Menge von Endzuständen $F\subseteq Q$
+			\end{itemize}
+		} \pause
 	
+		$\tuple{q_2,\Snterm{D}}\in\delta(q_1,\Sterm{a},\Snterm{C})$ bedeutet:
+		"`Wenn der PDA in Zustand $q_1$ das Symbol \Sterm{a} einliest und $\Snterm{C}$ oben vom Keller nimmt (\texttt{pop}),
+		dann \textit{kann} er in Zustand $q_2$ wechseln und dabei $\Snterm{D}$ auf den Keller legen (\texttt{push})."' 
+		
+		\begin{center}
+			\vspace{-1.5em}
+			\scalebox{1}{%
+				\begin{tikzpicture} [->, >=stealth', initial text=, auto, node
+					distance=35mm, bend angle=20, semithick]%[node distance=2cm,auto]
+					
+					\node[state] (q_1) {$q_1$}; 
+					\node[state] (q_2) [right of=q_1] {$q_2$}; 
+					
+					\path[->]
+					(q_1) edge node {$\Sterm{a}, \Snterm{C} \mapsto \Snterm{D}$} (q_2);
+			\end{tikzpicture}}
+		\end{center}
+		
+	\end{frame}	
 
 	\begin{frame} \frametitle{Aufgabe 1}
 		\small
@@ -165,30 +194,6 @@
 	\newcommand{\mytabnote}[2]{\ghost{#1}\hspace{2cm}{\textcolor{cdgray}{(#2)}}}
 
 	
-	\begin{frame}\frametitle{Abschluss für kontextfreie Sprachen}
-		\small
-		\theobox{
-			\textbf{Satz:} Wenn $\Slang{L}$, $\Slangsub{L}{1}$ und $\Slangsub{L}{2}$ kontextfreie Sprachen sind, dann beschreiben auch die folgenden Ausdrücke kontextfreie Sprachen:
-			
-			\begin{enumerate}[(1)]
-				\item \mytabnote{$\Slangsub{L}{1}\cup\Slangsub{L}{2}$}{Abschluss unter Vereinigung}
-				\item \mytabnote{$\Slangsub{L}{1}\circ\Slangsub{L}{2}$}{Abschluss unter Konkatenation}
-				\item \mytabnote{$\Slang{L}^\ast $}{Abschluss unter Kleene-Stern}
-			\end{enumerate}
-		}
-		
-		Aber: 
-		
-		\theobox{
-			\textbf{Satz:} Es gibt kontextfreie Sprachen $\Slang{L}$, $\Slangsub{L}{1}$ und $\Slangsub{L}{2}$, so dass die folgenden Ausdrücke keine kontextfreien Sprachen sind:
-			
-			\begin{enumerate}[(1)]
-				\item \mytabnote{$\Slangsub{L}{1}\cap\Slangsub{L}{2}$}{Nichtabschluss unter Schnitt}
-				\item \mytabnote{$\overline{\Slang{L}}$}{Nichtabschluss unter Komplement}
-			\end{enumerate}
-		}
-		
-	\end{frame}
 
 	\begin{frame} \frametitle{Aufgabe 2}
 		\small
@@ -199,12 +204,67 @@
 		kontextfrei.
 	\end{frame}
 
-	\begin{frame}
+	\begin{frame}\frametitle{Abschluss für kontextfreie Sprachen}
 		\small
+		\theobox{
+			\textbf{Satz:} Wenn $\Slang{L}$, $\Slangsub{L}{1}$ und $\Slangsub{L}{2}$ kontextfreie Sprachen sind, dann beschreiben auch die folgenden Ausdrücke kontextfreie Sprachen: 
+			
+			$\Slangsub{L}{1}\cup\Slangsub{L}{2}$, $\Slangsub{L}{1}\circ\Slangsub{L}{2}$, $\Slang{L}^\ast$
+		}
+		
+		Aber: 
+		
+		\theobox{
+			\textbf{Satz:} Es gibt kontextfreie Sprachen $\Slang{L}$, $\Slangsub{L}{1}$ und $\Slangsub{L}{2}$, so dass die folgenden Ausdrücke keine kontextfreien Sprachen sind:
+			
+			$\Slangsub{L}{1}\cap\Slangsub{L}{2}$, $\overline{\Slang{L}}$
+		}
+		
+		Aber (nicht in VL):
+		\codebox{
+			\textbf{Lemma:} Es sei $\Slang{L}$ kontextfrei und $\Slang{R}$ regulär. Dann ist $\Slang{L} \cap \Slang{R}$ kontextfrei.
+		}
+		
+		\textit{Beweisidee:} Konstruiere einen Produktautomaten wie für reguläre Sprachen. Dieser wird wieder ein PDA sein.
+	\end{frame}
+
+	\begin{frame}
+		\footnotesize
+		Die Aussagen ist falsch. Wir betrachten die Sprache $L = \menge{(abc)^n : n \ge 0}$, welche bekanntermaßen regulär und insbesondere also kontextfrei ist. Ihre Permutationssprache ist
+		\begin{equation*}
+			\pi(L) = \menge{w \in \Sigma^\ast : \abs{w}_a = \abs{w}_b = \abs{w}_c}.
+		\end{equation*}
+		Wir wollen nun also zeigen, dass $\pi(L)$ nicht kontextfrei ist. 
+		\begin{enumerate}[(i)]
+			\item Wir nutzen Abschlusseigenschaften. Es gilt
+			\begin{equation*}
+				\pi(L) \cap \underbrace{\menge{a^n b^m c^k : n,m,k \ge 0}}_{\text{regulär}} = \underbrace{\menge{a^n b^n c^n : n \ge 0}}_{\text{nicht kontextfrei}}.
+			\end{equation*}
+			Angenommen $\pi(L)$ wäre kontextfrei. Dann ist $\menge{a^n b^n c^n : n \ge 0} = \text{ kontextfrei } \cap \text{ regulär}$ auch kontextfrei --- Widerspruch.
+			\item Alternativ kann man das Pumping-Lemma bedienen. Dazu sei $n \ge 0$ die Zahl aus dem Pumping-Lemma und wir betrachten das Wort $z = a^n b^n c^n \in \pi(L)$. Damit läuft der Beweis wie das Musterbeispiel der Vorlesung für die Sprache $\menge{a^n b^n c^n : n \ge 0}$ (d.h. Fallunterscheidung nach möglichen Positionen der Pump-Region und in jedem Fall verändern sich die Anzahlen von $a$, $b$ und $c$ unterschiedlich).
+		\end{enumerate}
 		\onslide<1->{\solutionmarkB}
 	\end{frame}
 
 	\section{Aufgabe 3 \\ \itshape Deterministische Kellerautomaten}
+	
+	\begin{frame}\frametitle{Deterministische Kellerautomaten}
+		\small
+		\defbox{Ein \textbf{deterministischer Kellerautomat} (DPDA) 
+			\Smach{M} ist ein Tupel $\Smach{M}=\tuple{Q,\Sigma,\Gamma,\delta,q_0,F}$ mit
+			den folgenden Bestandteilen:
+			\begin{itemize}
+				\item $Q$: endliche Menge von Zuständen
+				\item $\Sigma$: Eingabealphabet
+				\item $\Gamma$: Kelleralphabet
+				\item $\delta$: \textit{partielle} Übergangsfunktion $Q\times\Sigma_\epsilon\times\Gamma_\epsilon \to Q\times\Gamma_\epsilon$, 
+				so dass für alle $q\in Q$, $\Sterm{a}\in\Sigma$ und $\Snterm{A}\in\Gamma$ jeweils nur eines der folgenden definiert ist: \\[1ex]
+				\narrowcentering{$\delta(q,\Sterm{a},\Snterm{A})$\hfill$\delta(q,\Sterm{a},\epsilon)$\hfill$\delta(q,\epsilon,\Snterm{A})$\hfill$\delta(q,\epsilon,\epsilon)$}
+				\item $q_0$: ein Startzustand $q_0 \in Q$
+				\item $F$: Menge von Endzuständen $F \subseteq Q$
+			\end{itemize}
+		}
+	\end{frame}
 	
 	\begin{frame} \frametitle{Aufgabe 3}
 		\small
@@ -216,6 +276,60 @@
 		\end{enumerate}
 	\end{frame}
 
+	\begin{frame}
+		\setlength\arraycolsep{2pt}
+		\begin{enumerate}[(a)]
+			\item<+-> $\mathcal{M} \defeq \tuple{Q, \Sigma, \Gamma, \delta, \menge{q_0}, \menge{q_F}}$ mit $Q = \menge{q_0, q_1, q_2}$, $\Sigma = \menge{a, b, c}$, $\Gamma = \menge{S, A, C}$ und $\delta$:
+			\begin{center}
+				\scalebox{0.7}{%
+					\begin{tikzpicture} [->, >=stealth', initial text=, auto, node
+						distance=35mm, bend angle=20, semithick]%[node distance=2cm,auto]
+						
+						\node[state,initial] (q_0) {$q_0$}; 
+						\node[state] (q_1) [right of=q_0] {$q_1$}; 
+						\node[state,accepting] (q_F) [right of=q_1] {$q_F$}; 
+						
+						\path[->]
+						(q_0) edge node {$\epsilon, \epsilon \mapsto S$} (q_1) 
+						(q_1) edge node {$\epsilon, S \mapsto \epsilon$} (q_F)
+						(q_1) edge [loop above] node {$\begin{array}{rl c rl} 
+								a, &\epsilon \mapsto A, &\phantom{MI}& c, &A \mapsto \epsilon, \\
+								b, &\epsilon \mapsto A, && a, &C \mapsto \epsilon, \\
+								c, &\epsilon \mapsto C, && b, &C \mapsto \epsilon \\
+							\end{array}$} (q_1) ;
+				\end{tikzpicture}}
+			\end{center}
+			\item<+-> Akzeptanz mittels leerem Keller
+			\item<+-> Eine Sprache $L$ heißt deterministisch kontextfrei, falls ein deterministischer Kellerautomat existiert, der $L$ akzeptiert.
+			\begin{center}
+				\scalebox{0.7}{%
+					\begin{tikzpicture} [->, >=stealth', initial text=, auto, node
+						distance=35mm, bend angle=20, semithick]%[node distance=2cm,auto]
+						
+						\node[state, initial, accepting] (q_0) {$q_0$}; 
+						\node[state] (q_1) [right of=q_0] {$q_1$}; 
+						
+						\path[->]
+						(q_0) edge[bend left] node {$\begin{array}{rl} 
+								a, &\epsilon \mapsto AS, \\
+								b, &\epsilon \mapsto AS, \\
+								c, &\epsilon \mapsto CS, \\
+							\end{array}$} (q_1) 
+						(q_1) edge[bend left] node {$\epsilon, S \mapsto \epsilon$} (q_0)
+						(q_1) edge [loop right] node {$\begin{array}{rl} 
+								a, &A \mapsto AA,  \\
+								a, &C \mapsto \epsilon, \\
+								b, &A \mapsto AA, \\
+								b, &C \mapsto \epsilon, \\
+								c, &A \mapsto \epsilon, \\
+								c, &C \mapsto CC \\
+							\end{array}$} (q_1) ;
+				\end{tikzpicture}}
+			\end{center}
+		\end{enumerate}
+		\solutionmarkB
+	\end{frame}
+
 	\section{Aufgabe 4 \\ \itshape Wiederholung}
 	
 	\begin{frame} \frametitle{Aufgabe 4}
@@ -224,11 +338,14 @@
 		Antworten -- dabei d"urfen Sie den gesamten Stoff und alle Resultate
 		der Vorlesung und "Ubung verwenden.
 		\begin{enumerate}[(a)]
-			\item Es gibt eine Sprache, die von einem nichtdeterministischen Kellerautomaten erkannt wird, nicht aber von einem deterministischen Kellerautomaten.
-			\item Mithilfe des Pumping-Lemmas f\"ur kontextfreie Sprachen kann
-			bewiesen werden, dass eine Sprache $L$ kontextfrei ist. 
-			\item F\"ur eine beliebige Sprache $L$ gilt: $L$ ist regul\"ar, wenn es eine nat\"urliche Zahl $n_0\ge 1$ gibt, so dass sich jedes Wort $w\in L$ mit $|w|\ge n_0$ zerlegen l\"asst in $w=xyz$ mit $y\not = \varepsilon, xy^kz\in L$ f\"ur alle $k\ge 0$.
+			\item \only<2->{\cmark} Es gibt eine Sprache, die von einem nichtdeterministischen Kellerautomaten erkannt wird, nicht aber von einem deterministischen Kellerautomaten. \\
+			\only<3->{\textit{Es gilt $\text{deterministisch } \subsetneq \text{ eindeutig } \subsetneq \text{ Typ 2}$.}}
+			\item \only<4->{\xmark} Mithilfe des Pumping-Lemmas f\"ur kontextfreie Sprachen kann bewiesen werden, dass eine Sprache $L$ kontextfrei ist.\\
+			\only<5->{\textit{Pumping ist notwendig, aber nicht hinreichend.}}
+			\item \only<6->{\xmark} Für eine beliebige Sprache $L$ gilt: $L$ ist regul\"ar, wenn es eine nat\"urliche Zahl $n_0\ge 1$ gibt, so dass sich jedes Wort $w\in L$ mit $|w|\ge n_0$ zerlegen l\"asst in $w=xyz$ mit $y\not = \varepsilon, xy^kz\in L$ f\"ur alle $k\ge 0$. \\
+			\only<7->{\textit{Pumping ist notwendig, aber nicht hinreichend.}}
 		\end{enumerate}
+		\onslide<2->{\solutionmarkFT}
 	\end{frame}
 
 	
