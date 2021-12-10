@@ -182,7 +182,7 @@
 			\item $L_0 = L(\mathcal{M}_0) = \{a^ib^jc^k \mid i=j \text{ oder } j=k \text{ mit } i,j,k\ge 1\}$
 			 \\ $w=aaabbcc$ 
 			\item $L_1 = L(\mathcal M_1)=\{a^{n}b^m\mid  n,m\ge 0\,, n=3m\}$ \\ $w=aaab$
-			\item $L_2 = L(\mathcal M_2) = \{w\in\{a,b\}^*\mid |w|_a = |w|_b\}$ \\ $w=aabbba$ 
+			\item $L_2 = L(\mathcal M_2) = \{w\in\{a,b\}^\ast \mid |w|_a = |w|_b\}$ \\ $w=aabbba$ 
 			\item $L_3 = L(\mathcal{M}_3) = \{ (ab)^{n}  (ba)^{n} \mid n \geq 0 \}$ \\ $w=ababbaba$ 
 		\end{enumerate}
 	\end{frame}
@@ -199,8 +199,8 @@
 		\small
 		Beweisen oder widerlegen Sie folgende Aussage.
 		
-		Ist $L \subseteq \Sigma^*$ eine kontextfreie Sprache, so ist auch
-		$$\pi(L) = \left\{ a_1 \ldots a_n \in \Sigma^*: \begin{array}{l} \text{ex. Permutation } (i_1 \ldots i_n) \text{ von } (1 \ldots n), \\ \text{sodass }  a_{i_1} \ldots a_{i_n} \in L \end{array} \right\} $$
+		Ist $L \subseteq \Sigma^\ast $ eine kontextfreie Sprache, so ist auch
+		$$\pi(L) = \left\{ a_1 \ldots a_n \in \Sigma^\ast : \begin{array}{l} \text{ex. Permutation } (i_1 \ldots i_n) \text{ von } (1 \ldots n), \\ \text{sodass }  a_{i_1} \ldots a_{i_n} \in L \end{array} \right\} $$
 		kontextfrei.
 	\end{frame}
 
@@ -268,7 +268,7 @@
 	
 	\begin{frame} \frametitle{Aufgabe 3}
 		\small
-		Gegeben sei die Sprache $L=\{w\in \Sigma^*\;|\;|w|_a+|w|_b=|w|_c\}$ \"uber dem Alphabet $\Sigma =\{a,b,c\}$, wobei $|w|_a$ der Anzahl der Vorkommen von $a$ in $w$ entspricht.
+		Gegeben sei die Sprache $L=\{w\in \Sigma^\ast \;|\;|w|_a+|w|_b=|w|_c\}$ \"uber dem Alphabet $\Sigma =\{a,b,c\}$, wobei $|w|_a$ der Anzahl der Vorkommen von $a$ in $w$ entspricht.
 		\begin{enumerate}[(a)]
 			\item Entwerfen Sie einen Kellerautomaten $\mathcal{M}$ mit $L(\mathcal{M})=L$, der mittels Finalzustand akzeptiert.
 			\item Welcher andere Akzeptanzbegriff f\"ur Kellerautomaten ist laut Anmerkung in der Vorlesung auch m\"oglich?
