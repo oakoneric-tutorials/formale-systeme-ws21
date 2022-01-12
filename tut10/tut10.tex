@@ -1,0 +1,224 @@
+\documentclass{beamer}
+\usepackage{../tut-slides}
+\usepackage{../mathoperators}
+\usepackage{../fs}
+
+\usepackage{csquotes}
+\usepackage{ragged2e}
+
+\usepackage{amsmath,amssymb}
+%\usepackage{enumerate}
+\usepackage[normalem]{ulem}
+\newcommand{\labelitemi}{\raisebox{1pt}{\scalebox{.9}{$\blacktriangleright$}}}
+\newcommand{\labelitemii}{$\vartriangleright$}
+\newcommand{\labelitemiii}{--}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+\newcommand{\tuple}[1]{\langle{#1}\rangle}
+\newcommand{\simquot}[1]{#1/_{\!\!{\sim}}}
+
+\usepackage{pifont}
+
+\newcommand{\cmark}{\textcolor{cddarkgreen}{\ding{51}}}%
+\newcommand{\xmark}{\textcolor{darkred}{\ding{55}}}%
+
+\newcommand{\solutionmarkB}{%
+	\begin{tikzpicture}[remember picture, overlay]
+		\node [
+			fill=none,  % Farbe des Randstreifens
+			text=cdorange,  % Textfarbe
+			font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+			inner xsep=0,       % Abstand des Textes von unten
+			% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+			%			text width={\dimexpr\paperheight-2\footskip\relax},
+			align=center,
+			%			minimum height=8mm,% Breite des Randstreifens
+			anchor=south west,
+			rotate=90
+		] at ($(current page.north west)+(+8mm,-20mm)$)
+		{Lösung};
+		\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+	\end{tikzpicture}%
+}
+\newcommand{\solutionmarkFT}{\begin{tikzpicture}[remember picture, overlay]
+	\node [
+	fill=none,  % Farbe des Randstreifens
+	text=cdorange,  % Textfarbe
+	font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+	inner xsep=0,       % Abstand des Textes von unten
+	% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+	%			text width={\dimexpr\paperheight-2\footskip\relax},
+	align=center,
+	%			minimum height=8mm,% Breite des Randstreifens
+	anchor=south west,
+	rotate=90
+	] at ($(current page.north west)+(+8mm,-27mm)$)
+	{Lösung};
+	\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+	\end{tikzpicture}%
+}
+
+\usepackage{tikzducks}
+\newcommand{\duckA}{%
+	\scalebox{0.2}{
+		\reflectbox{
+	\begin{tikzpicture}[baseline=2ex]
+	\duck[mask=teal,cape=teal, body=orange!60!yellow]
+	\end{tikzpicture}%
+	}
+	}
+}
+\newcommand{\duckB}{%
+	\scalebox{0.2}{
+	\begin{tikzpicture}[baseline=2ex]
+	\duck[body=pink,
+	unicorn=magenta!60!violet,
+	longhair=magenta!60!violet]
+	\end{tikzpicture}%
+	}
+}
+\newcommand{\duckC}{%
+	\scalebox{0.2}{
+	\begin{tikzpicture}[baseline=2ex]
+	\duck[santa=red!80!black,
+	beard=white!80!brown]
+	\end{tikzpicture}%
+	}
+}
+\newcommand{\duckD}{%
+	\scalebox{0.2}{
+	\begin{tikzpicture}[baseline=2ex]
+	\duck[signpost=420, sunglasses=black!90, body=brown!60!white]
+	\end{tikzpicture}%
+	}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ghost}[1]{\raisebox{0pt}[0pt][0pt]{\makebox[0pt][l]{#1}}}
+\newcommand{\blue}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\purple}[1]{\textcolor{cdpurple}{#1}}
+\newcommand{\green}[1]{\textcolor{cddarkgreen}{#1}}
+
+
+
+\begin{document}	
+	\title{Formale Systeme}
+	\subtitle{Übung 10}
+	\author{Eric Kunze}
+	\email{eric.kunze@tu-dresden.de}
+	\city{TU Dresden}
+	\date{\formatdate{7}{1}{2022}}
+%	\institute{Lehrstuhl für Grundlagen der Programmierung}
+	\titlegraphic{\includegraphics[width=2cm]{../TUD-white.pdf}}
+
+	\maketitle
+
+
+	\begin{frame} \frametitle{Übungsblatt 10}
+		\tableofcontents
+	\end{frame}
+
+	\section{Aufgabe 1: \\ \itshape Design von Turingmaschinen}
+
+	
+
+	\begin{frame} \frametitle{Aufgabe 1}
+		\small		
+		Geben Sie Turingmaschinen an, die folgende Funktionen 
+		berechnen. Dabei wird eine Eingabe $n \in \mathbb N$ als $\emptyset^n$ mit $\emptyset \in \Sigma$ dargestellt. Es kann vorausgesetzt werden, dass die Eingabe wohlgeformt auf dem Band vorliegt. Am Ende der Berechnung hält die Turingmaschine in einem Finalzustand und das Band enthält nur das Berechnungsergebnis. 
+		
+		\begin{enumerate}[(a)]
+			\item Die Turingmaschine $\mathcal M_{0}$ berechnet die
+			Funktion $f: \mathbb N \rightarrow \mathbb N,\,n\mapsto 0$, d.\,h. das Eingabewort auf dem
+			Band wird gelöscht.
+			\item Die Turingmaschine $\mathcal M_{\operatorname{succ}}$ berechnet die
+			Funktion $f:\mathbb N\rightarrow \mathbb N,\,n\mapsto n+1$.
+			\item Die Turingmaschine $\mathcal M_{\times 3}$ berechnet die
+			Funktion $f:\mathbb N \rightarrow \mathbb N,\,n\mapsto 3*n$.
+		\end{enumerate} 
+	\end{frame}
+
+	
+
+	\section{Aufgabe 2 \\ \itshape Typ 1 und LBAs}
+	
+
+	\begin{frame} \frametitle{Aufgabe 2}
+		\small
+		Wir betrachten die Sprache 
+		\begin{equation*}
+			L = \menge{a^n b^m c^k : n,m,k \ge 1, n = 2m \text{ oder } m = k} .
+		\end{equation*}
+		Zeigen Sie, dass $L$ von Typ 1 ist, indem Sie einen LBA skizzieren, der $L$ entscheidet.
+	
+		
+	\end{frame}
+
+	
+
+	\section{Aufgabe 3 \\ \itshape Quadratische Laufzeit entscheidbar?}
+
+	
+	\begin{frame} \frametitle{Aufgabe 3}
+		\small
+		\justifying
+		Im Folgenden bezeichne $\mathcal{M}_w$ eine deterministische 
+		Turingmaschine mit einem Band und dem Eingabe\-alphabet $\Sigma=\{0,1,\#\}$, deren Codewort $\operatorname{enc}(\mathcal{M}_w)$ 
+		gleich $w$ ist, falls es ein solches gibt (vgl. Vorlesung 19, Folie 15).
+		Andernfalls ist $\mathcal{M}_w = \mathcal{M}_{\bot}$, eine fest 
+		gew\"ahlte deterministische Turingmaschine 
+		mit dem Eingabealphabet $\Sigma=\{0,1\}$, die f\"ur alle 
+		Eingabewörter endlos läuft.
+		
+		Ist die nachfolgende Sprache entscheidbar?
+		\begin{equation*}
+			\setlength\arraycolsep{2pt}
+			L = \left\{ \, w \in \{0,1,\#\}^\ast  \, \left\vert \
+			\begin{array}{l}
+			\text{es gibt ein Wort } z \in \{0,1,\#\}^\ast \text{ mit} \\
+			|z| \leqslant |w|^2, \text{ so dass } \mathcal{M}_w \text{ das Eingabewort } \\
+			z \text{ in höchstens } |z| \text{ Schritten akzeptiert}
+			\end{array}
+			\right.\right\}
+		\end{equation*}
+		Begründen Sie Ihre Antwort.
+	\end{frame}
+
+	\section{Aufgabe 4 \\ \itshape Exponentielle Laufzeit entscheidbar?}
+	
+	\begin{frame} \frametitle{Aufgabe 4}
+		\small
+		Sei $\mathcal{M}_w$ wie in Aufgabe~3 und 
+		\begin{equation*}
+		t_{\mathcal{M}_w} (x)
+		\defeq
+		\text{Anzahl der Schritte, die $\mathcal{M}_w$ bei
+			Eingabe $x$ durchf\"uhrt.}
+		\end{equation*}
+		
+		Ist die Sprache $L = \{ w \in \{0,1\}^\ast  \, \mid t_{\mathcal{M}_w}(w) > 2^{|w|} \}$ entscheidbar?
+		Begründen Sie Ihre Antwort.
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 5 \\ \itshape Quadratzahlen erkennen}
+		\begin{enumerate}[(a)]
+			\item Zeigen Sie, dass die Summer der ersten $n$ ungeraden Zahlen $n^2$ ergibt; also dass
+			\begin{equation*}
+				\sum_{i=1}^n (2i - 1) = n^2 .
+			\end{equation*}
+			\item Geben Sie eine Grammatik für die Sprache 
+			\begin{equation*}
+				L = \menge{0^n : n \text{ ist eine Quadratzahl}}
+			\end{equation*}
+			an.
+			\item Geben Sie eine deterministische Zwei-Band-Turingmaschine an, die $L$ akzeptiert.
+		\end{enumerate}
+	\end{frame}
+
+	
+	
+
+\end{document}
