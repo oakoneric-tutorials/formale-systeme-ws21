@@ -1,0 +1,529 @@
+\documentclass{beamer}
+\usepackage{../tut-slides}
+\usepackage{../mathoperators}
+\usepackage{../fs}
+
+\usepackage{csquotes}
+
+\usepackage{amsmath,amssymb}
+%\usepackage{enumerate}
+\usepackage[normalem]{ulem}
+\newcommand{\labelitemi}{\raisebox{1pt}{\scalebox{.9}{$\blacktriangleright$}}}
+\newcommand{\labelitemii}{$\vartriangleright$}
+\newcommand{\labelitemiii}{--}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+\newcommand{\tuple}[1]{\langle{#1}\rangle}
+\newcommand{\simquot}[1]{#1/_{\!\!{\sim}}}
+
+\usepackage{pifont}
+
+\newcommand{\cmark}{\textcolor{cddarkgreen}{\ding{51}}}%
+\newcommand{\xmark}{\textcolor{darkred}{\ding{55}}}%
+
+\newcommand{\solutionmarkB}{%
+	\begin{tikzpicture}[remember picture, overlay]
+		\node [
+			fill=none,  % Farbe des Randstreifens
+			text=cdorange,  % Textfarbe
+			font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+			inner xsep=0,       % Abstand des Textes von unten
+			% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+			%			text width={\dimexpr\paperheight-2\footskip\relax},
+			align=center,
+			%			minimum height=8mm,% Breite des Randstreifens
+			anchor=south west,
+			rotate=90
+		] at ($(current page.north west)+(+8mm,-20mm)$)
+		{Lösung};
+		\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+	\end{tikzpicture}%
+}
+\newcommand{\solutionmarkFT}{\begin{tikzpicture}[remember picture, overlay]
+	\node [
+	fill=none,  % Farbe des Randstreifens
+	text=cdorange,  % Textfarbe
+	font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+	inner xsep=0,       % Abstand des Textes von unten
+	% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+	%			text width={\dimexpr\paperheight-2\footskip\relax},
+	align=center,
+	%			minimum height=8mm,% Breite des Randstreifens
+	anchor=south west,
+	rotate=90
+	] at ($(current page.north west)+(+8mm,-27mm)$)
+	{Lösung};
+	\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+	\end{tikzpicture}%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ghost}[1]{\raisebox{0pt}[0pt][0pt]{\makebox[0pt][l]{#1}}}
+\newcommand{\blue}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\purple}[1]{\textcolor{cdpurple}{#1}}
+\newcommand{\green}[1]{\textcolor{cddarkgreen}{#1}}
+
+\usepackage{ragged2e}
+\undef\Var
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Sub}{Sub}
+
+
+\begin{document}	
+	\title{Formale Systeme}
+	\subtitle{Übung 11}
+	\author{Eric Kunze}
+	\email{eric.kunze@tu-dresden.de}
+	\city{TU Dresden}
+	\date{\formatdate{14}{1}{2022}}
+%	\institute{Lehrstuhl für Grundlagen der Programmierung}
+	\titlegraphic{\includegraphics[width=2cm]{../TUD-white.pdf}}
+
+	\maketitle
+
+
+	\begin{frame} \frametitle{Übungsblatt 11}
+		\tableofcontents
+	\end{frame}
+
+	\section{Aussagenlogik}
+	
+	\begin{frame}\frametitle{Aussagenlogik: Syntax}
+		\small
+		Wir betrachten eine abzählbar unendliche Menge $\Slang{P}$ von
+		\redalert{atomaren Aussagen} (auch: aussagenlogische Variablen oder Atome)
+		\medskip\pause
+		
+		\defbox{Die Menge der \redalert{aussagenlogischen Formeln} ist induktiv\footnote{Das bedeutet: Die Definition ist selbstbezüglich und soll die kleinste \\ Menge an Formeln beschreiben, die alle Bedingungen erfüllen.} definiert: 
+			\begin{itemize}
+				\item Jedes Atom $p\in\Slang{P}$ ist eine aussagenlogische Formel \pause
+				\item Wenn $F$ und $G$ aussagenlogische Formeln sind, so auch:
+				\begin{itemize}
+					\item \makebox[2.5cm][l]{Negation:} $\neg F$ \hfill "`nicht $F$"' \pause
+					\item \makebox[2.5cm][l]{Konjunktion:} $(F \land G)$ \hfill "`$F$ und $G$"'
+					\item \makebox[2.5cm][l]{Disjunktion:} $(F \lor G)$ \hfill "`$F$ oder $G$"'
+					\item \makebox[2.5cm][l]{Implikation:} $(F\to G)$ \hfill "`$F$ impliziert $G$"'
+					\item \makebox[2.5cm][l]{Äquivalenz:} $(F\leftrightarrow G)$ \hfill "`$F$ ist äquivalent zu $G$"'
+				\end{itemize}
+			\end{itemize}
+		}
+	\end{frame}
+
+	\begin{frame}\frametitle{Teilformeln}
+		\small
+		Wir können Formeln als Wörter über (endlichen Teilmengen aus) dem unendlichen Alphabet
+		$\Slang{P}\cup\{\Sterm{\neg},\Sterm{\wedge},\Sterm{\vee},\Sterm{\to},\Sterm{\leftrightarrow},\Sterm{(},\Sterm{)}\}$ sehen:
+		\begin{equation*}
+		\Snterm{F}\to \Slang{P}\mid \Sterm{\neg}\Snterm{F}\mid\Sterm{(}\Snterm{F}\Sterm{\wedge}\Snterm{F}\Sterm{)} \mid\Sterm{(}\Snterm{F}\Sterm{\vee}\Snterm{F}\Sterm{)} \mid\Sterm{(}\Snterm{F}\Sterm{\to}\Snterm{F}\Sterm{)} \mid\Sterm{(}\Snterm{F}\Sterm{\leftrightarrow}\Snterm{F}\Sterm{)}
+		\end{equation*}
+		Eine \redalert{Teilformel} ist ein Teilwort (Infix) einer Formel, welches selbst eine Formel ist.
+		\pause
+		\medskip
+		
+		Alternativ kann man Teilformeln auch rekursiv definieren:
+		
+		\defbox{Die \redalert{Menge $\operatorname{Sub}(F)$ der Teilformeln} einer Formel $F$ ist definiert als:
+			\vspace{-2ex}
+			\[ \operatorname{Sub}(F) = \left\{\begin{array}{l@{~~}l@{}}
+			\{F\} & \text{falls }F\in\Slang{P} \\
+			\{\neg G\}\cup\operatorname{Sub}(G) & \text{falls }F=\neg G \\
+			\{(G_1\wedge G_2)\}\cup\operatorname{Sub}(G_1)\cup\operatorname{Sub}(G_2) & \text{falls }F=(G_1\wedge G_2) \\
+			\{(G_1\vee G_2)\}\cup\operatorname{Sub}(G_1)\cup\operatorname{Sub}(G_2) & \text{falls }F=(G_1\vee G_2) \\
+			\{(G_1\to G_2)\}\cup\operatorname{Sub}(G_1)\cup\operatorname{Sub}(G_2) & \text{falls }F=(G_1\to G_2) \\
+			\{(G_1\leftrightarrow G_2)\}\cup\operatorname{Sub}(G_1)\cup\operatorname{Sub}(G_2) & \text{falls }F=(G_1\leftrightarrow G_2)
+			\end{array}\right.\]\vspace{-2ex}
+		}
+	\end{frame}
+
+
+	
+	\begin{frame}\frametitle{Aussagenlogik: Semantik}
+		\footnotesize
+		Eine \redalert{Wertzuweisung} ist eine Funktion $w:\Slang{P}\to\{\mytrue,\myfalse\}$
+		\bigskip\pause
+		
+		% Die Wahrheit einer Formel kann rekursiv definiert werden:
+		
+		\defbox{Eine Wertzuweisung $w$ \redalert{erfüllt} eine Formel $F$, in Symbolen \redalert{$w\models F$}, wenn
+			eine der folgenden rekursiven Bedingungen gilt:\smallskip
+			
+			\narrowcentering{\begin{tabular}{rll}
+					\rowcolor{darkred!70!gray}
+					\textcolor{white}{Form von $F$} & \textcolor{white}{$w\models F$ wenn:} & \textcolor{white}{$w\not\models F$ wenn:}\\
+					$F\in \Slang{P}$: & $w(F)=\mytrue$ & $w(F)=\myfalse$\\
+					\rowcolor{lightred!20}
+					$F=\neg G$ & $w\not\models G$ & $w\models G$\\
+					$F=(G_1\wedge G_2)$ & $w\models G_1$ und $w\models G_2$ & $w\not\models G_1$ oder $w\not\models G_2$\\
+					\rowcolor{lightred!20}
+					$F=(G_1\vee G_2)$ & $w\models G_1$ oder $w\models G_2$ & $w\not\models G_1$ und $w\not\models G_2$\\
+					$F=(G_1\to G_2)$ & $w\not\models G_1$ oder $w\models G_2$ & $w\models G_1$ und $w\not\models G_2$\\
+					\rowcolor{lightred!20}
+					$F=(G_1\leftrightarrow G_2)$ & $w\models G_1$ und $w\models G_2$ & $w\models G_1$ und $w\not\models G_2$\\%[-1ex]
+					\rowcolor{lightred!20}
+					& \multicolumn{1}{c}{\raisebox{1ex}{oder}} & \multicolumn{1}{c}{\raisebox{1ex}{oder}} \\[-2ex]
+					\rowcolor{lightred!20}
+					& $w\not\models G_1$ und $w\not\models G_2$ & $w\not\models G_1$ und $w\models G_2$\\[-1ex]
+					\\[-1.5ex]
+			\end{tabular}}
+		}
+			Dabei bedeutet "`A oder B"' immer "`A oder B \textit{oder beides}"'.	
+	\end{frame}
+	
+	\begin{frame}\frametitle{Aussagenlogik: Semantik}
+		\footnotesize
+		Wir können Wertzuweisungen von Atomen auf Formeln erweitern:
+		\begin{equation*}
+			w(F)=\left\{\begin{array}{rl}\mytrue & \text{falls } w\models F\\
+			\myfalse & \text{falls } w\not\models F
+			\end{array}\right.
+		\end{equation*}
+		\pause
+		
+		\redalert{Wahrheitswertetabellen} illustrieren die Semantik der Junktoren:\medskip
+		
+		\narrowcentering{%
+			\begin{tabular}{cc}
+				\rowcolor{lightblue!20}
+				$w(F)$ & $w(\neg F)$\\
+				\myfalse & \mytrue \\
+				\rowcolor{gray!10}
+				\mytrue & \myfalse \\
+		\end{tabular}}\medskip
+		
+		\narrowcentering{\begin{tabular}{cccccc}
+				\rowcolor{lightblue!20}
+				$w(F)$ & $w(G)$ & $w(F\wedge G)$ & $w(F\vee G)$ & $w(F\to G)$ & $w(F\leftrightarrow G)$\\
+				\myfalse & \myfalse & \myfalse & \myfalse& \mytrue & \mytrue\\
+				\rowcolor{gray!10}
+				\mytrue & \myfalse & \myfalse & \mytrue& \myfalse & \myfalse\\
+				\myfalse & \mytrue & \myfalse & \mytrue& \mytrue & \myfalse\\
+				\rowcolor{gray!10}
+				\mytrue & \mytrue & \mytrue & \mytrue& \mytrue & \mytrue\\
+		\end{tabular}}
+	\end{frame}
+	
+	
+
+	\section{Aufgabe 1: \\ \itshape Logisches Rätsel}
+
+	\begin{frame} \frametitle{Aufgabe 1}
+		\footnotesize\justifying
+		Die Menschen sagen stets die Wahrheit, die Vampire lügen stets.  
+		
+		Außerdem ist ein Teil der Bevölkerung Transsilvaniens verrückt: Alles, was wahr ist, glauben sie, sei falsch, und umgekehrt. Nicht verrückte Transsilvanier hingegen halten genau das für wahr, was wahr ist. 
+		
+		Insbesondere sagt ein verrückter Vampir (wie auch ein nicht-verrückter Mensch) stets das Richtige: Eine Aussage, die wahr ist, glaubt er, sei falsch, da er aber stets lügt, gibt er dennoch eine richtige Antwort.
+		
+		Craig verhört die zwei Beschuldigten Lucy und Minna, von denen bekannt ist,	dass eine ein Vampir ist und die andere nicht. Das Verhör geht wie folgt	vonstatten:
+		
+		\begin{quote}
+			\emph{Craig} (zu Lucy): Erzählen Sie mir von Ihnen.\\
+			\emph{Lucy}: Wir sind beide verrückt.\\
+			\emph{Craig} (zu Minna): Ist das richtig?\\
+			\emph{Minna}: Natürlich nicht!
+		\end{quote}
+	
+		Formalisieren Sie dieses Szenario mithilfe aussagenlogischer Formeln und
+		finden Sie heraus, wer der Vampir ist!
+	\end{frame}
+
+	\begin{frame}
+		\footnotesize \setlength\tabcolsep{2pt}
+		Wir führen folgende aussagenlogische Variablen ein:
+		\begin{tabular}{ccl c ccl}
+			$V_L$ & $\dots$ & Lucy ist ein Vampir  & & $T_L$ & $\dots$ & Lucy sagt immer die Wahrheit \\
+			$V_M$ & $\dots$ & Minna ist ein Vampir & & $T_M$ & $\dots$ & Minna sagt immer die Wahrheit \\
+			$C_L$ & $\dots$ & Lucy ist verrückt    & & $B_L$ & $\dots$ & Lucys Behauptung ist wahr \\
+			$C_M$ & $\dots$ & Lucy ist verrückt    & & $B_M$ & $\dots$ & Minnas Behauptung ist wahr
+		\end{tabular}
+	
+		\makebox[7cm][l]{Entweder Lucy oder Minna ist ein Vampir:}  $V_L \leftrightarrow \lnot V_M$ \hfill (1)
+				
+		\makebox[7cm][l]{Wir sind beide verrückt:} $B_L \leftrightarrow C_L \land C_M$ \hfill (2)
+		
+		\makebox[7cm][l]{Natürlich nicht:} $B_M \leftrightarrow \lnot B_L$ \hfill (3)
+		
+		Lucy bzw. Minna sagt die Wahrheit:
+		\begin{align*}
+			T_L &\leftrightarrow \Big( (V_L \land C_L) \lor (\lnot V_L \land \lnot C_L) \Big) \tag{4} \\ 
+			T_M &\leftrightarrow \Big( (V_M \land C_M) \lor (\lnot V_M \land \lnot C_M) \Big) \tag{5}
+		\end{align*}
+		
+		Interessant sind nun folgende Aussagen:
+		\begin{itemize}
+			\item Lucy sagt genau dann die Wahrheit, wenn beide verrückt sind: \\ \hfill 
+			$F_1 \defeq T_L \leftrightarrow B_L$ \hfill (6)
+			\item Minna sagt genau dann die Wahrheit, wenn eine von beiden nicht verrückt ist: \\[-\baselineskip] \hfill
+			$F_2 \defeq T_M \leftrightarrow B_M$ \hfill (7)
+		\end{itemize}
+		\solutionmarkB
+	\end{frame}
+	
+	\begin{frame}
+		\footnotesize
+		Wir wollen untersuchen, ob es eine Möglichkeit gibt, in der $F_1$ und $F_2$ beide wahr werden sich daraus schlussfolgern lässt, ob $V_L$ oder $V_M$ wahr sein muss -- damit ist die Vampirfrage entschieden:
+		\begin{center}
+			\begin{tabular}{cc|cc|cc|cc|cc}
+				\hline
+				$V_L$ & $V_M$ & $C_L$ & $C_M$ & $T_L$ & $T_M$ & $B_L$ & $B_M$ & $F_1$ & $F_2$ \\
+				\hline
+				 0 & 1 & 0 & 0 & 1 & 0 & 0 & 1 & 0 & 0 \\
+				 0 & 1 & 0 & 1 & 1 & 1 & 0 & 1 & 0 & 1 \\
+				 0 & 1 & 1 & 0 & 0 & 0 & 0 & 1 & 1 & 0 \\
+				 0 & 1 & 1 & 1 & 0 & 1 & 1 & 0 & 0 & 0 \\
+				 \alert{1} & 0 & 0 & 0 & 0 & 1 & 0 & 1 & \alert{1} & \alert{1} \\
+				 1 & 0 & 0 & 1 & 0 & 0 & 0 & 1 & 1 & 0 \\
+				 1 & 0 & 1 & 0 & 1 & 1 & 0 & 1 & 0 & 1 \\
+				 \alert{1} & 0 & 1 & 1 & 1 & 0 & 1 & 0 & \alert{1} & \alert{1} \\
+				 & $\uparrow$ & & & $\uparrow$ & $\uparrow$ & $\uparrow$ & $\uparrow$ & $\uparrow$ & $\uparrow$  \\
+				 & (1)        & & & (4)        & (5)        & (2)        & (3)        & (6)        & (7)
+			\end{tabular}
+		\end{center}
+	
+		Damit ist Lucy der Vampir.
+		\solutionmarkB
+	\end{frame}
+
+	\section{Aufgabe 2 \\ \itshape Logische Konsequenzen}
+	
+	\begin{frame}\frametitle{Logische Konsequenzen}
+		\footnotesize
+		Sei $F$ eine Formel, $\mathcal{F}$ eine \textit{Menge von Formeln} und $w$ eine Wertzuweisung.
+		
+		\defbox{ \vspace{-.6\baselineskip}
+			\begin{itemize}
+				\item $w$ ist Modell von $F$, wenn $w \models F$ gilt.
+				\item $w$ ist Modell von $\mathcal{F}$, wenn $w \models F$ für alle $F \in \mathcal{F}$. \\
+				Wir schreiben dann auch hier $w \models \mathcal{F}$.
+			\end{itemize}
+		}
+		\pause
+		
+		Die logischen Schlussfolgerungen aus einer Formel(menge) ergeben sich aus ihren Modellen:
+		
+		\defbox{Sei $\mathcal{F}$ eine Menge von Formeln.
+			Eine Formel $G$ ist eine \redalert{logische Konsequenz} aus $\mathcal{F}$ wenn jedes Modell
+			von $\mathcal{F}$ auch ein Modell von $G$ ist.\\ In diesem Fall schreiben wir $\mathcal{F}\models G$.
+		}
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 2}
+		\small
+		Zeigen Sie, welche der folgenden Aussagen gültig sind und welche nicht:
+		\begin{enumerate}[(a)]
+			\item $\{ (\neg a \lor b), (\neg b \lor c), (b \land c) \}
+			\models ((a \leftrightarrow b) \lor c)$
+			\item $\{ (a \rightarrow b), (c \lor a), (a \rightarrow \neg b),
+			\neg c \} \models a$
+			\item $\{ (a \land \neg b) \lor (\neg a \land b), (\neg c
+			\land b), \neg (\neg a \lor b) \} \models \neg(a \lor b)$
+		\end{enumerate}
+	\end{frame}
+
+	\begin{frame}
+		\newcommand{\cellblue}{\cellcolor{cdblue!20}}
+		\newcommand{\cellred}{\cellcolor{cdpurple!20}}
+		\small \vspace{1em}
+		\textbf{(a)} $\Big\{ (\neg a \lor b), (\neg b \lor c), (b \land c) \Big\} \models ((a \leftrightarrow b) \lor c)$
+		\begin{center}
+			\begin{tabular}{c|c|c||c|c|c||c|c}
+				\hline
+				$a$ & $b$ & $c$ & $\lnot a \lor b$ & $\lnot b \lor c$ & $b \land c$ & $a \leftrightarrow b$ & $(a \leftrightarrow b) \lor c$ \\
+				\hline
+				0 & 0 & 0 & 1 & 1 & 0 & 1 & \cellred 1 \\
+				0 & 0 & 1 & 1 & 1 & 0 & 1 &  \cellred1 \\
+				0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 \\
+				0 & 1 & 1 & \cellblue 1 & \cellblue 1 & \cellblue 1 & 0 & \cellred 1 \\
+				1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+				1 & 0 & 1 & 0 & 1 & 0 & 0 & \cellred 1 \\
+				1 & 1 & 0 & 1 & 0 & 0 & 1 & \cellred 1 \\
+				1 & 1 & 1 & \cellblue 1 & \cellblue 1 & \cellblue 1 & 1 & \cellred 1 \\ \hline
+			\end{tabular}
+		\end{center}
+	
+		Jedes Modell von \colorbox{cdblue!20}{$\Big\{ (\neg a \lor b), (\neg b \lor c), (b \land c) \Big\}$} ist auch Modell von \colorbox{cdpurple!20}{$((a \leftrightarrow b) \lor c)$}. Damit gilt die Aussage.
+		\solutionmarkB
+	\end{frame}
+
+	\begin{frame}
+		\small \vspace{1em}
+		\textbf{(b)} $\Big\{ (a \rightarrow b), (c \lor a), (a \rightarrow \neg b), \neg c \Big\} \models a$
+		\begin{center}
+			\begin{tabular}{c|c|c||c|c|c|c}
+				\hline
+				$a$ & $b$ & $c$ & $a \rightarrow b$ & $c \lor a$ & $a \rightarrow \lnot b$ & $\lnot c$ \\
+				\hline
+				0 & 0 & 0 & 1 & 0 & 1 & 1 \\
+				0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+				0 & 1 & 0 & 1 & 0 & 1 & 1 \\
+				0 & 1 & 1 & 1 & 1 & 1 & 0 \\
+				1 & 0 & 0 & 0 & 1 & 1 & 1 \\
+				1 & 0 & 1 & 0 & 1 & 1 & 0 \\
+				1 & 1 & 0 & 1 & 1 & 0 & 1 \\
+				1 & 1 & 1 & 1 & 1 & 0 & 0 \\ \hline
+			\end{tabular}
+		\end{center}
+	
+		\justifying
+		Die Menge $\Big\{ (a \rightarrow b), (c \lor a), (a \rightarrow \neg b), \neg c \Big\}$ hat keine Modelle, d.h. es folgt Beliebiges. Insbesondere ist also jedes (nicht existente) Modell von $\Big\{ (a \rightarrow b), (c \lor a), (a \rightarrow \neg b), \neg c \Big\}$ auch Modell der Formel $a$. Damit gilt die Aussage.
+		
+		\solutionmarkB
+	\end{frame}
+
+	\begin{frame}
+		\small \vspace{1em}
+		\textbf{(c)} $\Big\{ (a \land \neg b) \lor (\neg a \land b), (\neg c \land b), \neg (\neg a \lor b) \Big\} \models \neg(a \lor b)$
+		\begin{center}
+			\begin{tabular}{c|c|c||c|c|c||c}
+				\hline
+				$a$ & $b$ & $c$ & $(a \land \lnot b) \lor (\lnot a \land b)$ & $\lnot c \land b$ & $\lnot (\lnot a \lor b)$ & $\lnot (a \lor b)$ \\
+				\hline
+				0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+				0 & 0 & 1 & 0 & 0 & 0 & 1 \\
+				0 & 1 & 0 & 1 & 1 & 0 & 0 \\
+				0 & 1 & 1 & 1 & 0 & 0 & 0 \\
+				1 & 0 & 0 & 1 & 0 & 1 & 0 \\
+				1 & 0 & 1 & 1 & 0 & 1 & 0 \\
+				1 & 1 & 0 & 0 & 1 & 0 & 0 \\
+				1 & 1 & 1 & 0 & 0 & 0 & 0 \\ \hline
+			\end{tabular}
+		\end{center}
+		
+		\justifying
+		Die Menge $\Big\{ (a \land \neg b) \lor (\neg a \land b), (\neg c \land b), \neg (\neg a \lor b) \Big\}$ hat keine Modelle, d.h. es folgt Beliebiges. Insbesondere ist also jedes (nicht existente) Modell von $\Big\{ (a \land \neg b) \lor (\neg a \land b), (\neg c \land b), \neg (\neg a \lor b) \Big\}$ auch Modell der Formel $\neg(a \lor b)$. Damit gilt die Aussage.
+		
+		\solutionmarkB
+	\end{frame}
+
+	\section{Aufgabe 3 \\ \itshape Beschränktheit von Variablen und Teilformeln}
+	
+	\begin{frame}\frametitle{Teilformeln}
+		\small
+		Wir können Formeln als Wörter über (endlichen Teilmengen aus) dem unendlichen Alphabet
+		$\Slang{P}\cup\{\Sterm{\neg},\Sterm{\wedge},\Sterm{\vee},\Sterm{\to},\Sterm{\leftrightarrow},\Sterm{(},\Sterm{)}\}$ sehen:
+		\begin{equation*}
+			\Snterm{F}\to \Slang{P}\mid \Sterm{\neg}\Snterm{F}\mid\Sterm{(}\Snterm{F}\Sterm{\wedge}\Snterm{F}\Sterm{)} \mid\Sterm{(}\Snterm{F}\Sterm{\vee}\Snterm{F}\Sterm{)} \mid\Sterm{(}\Snterm{F}\Sterm{\to}\Snterm{F}\Sterm{)} \mid\Sterm{(}\Snterm{F}\Sterm{\leftrightarrow}\Snterm{F}\Sterm{)}
+		\end{equation*}
+		Eine \redalert{Teilformel} ist ein Teilwort (Infix) einer Formel, welches selbst eine Formel ist.
+		\pause
+		\medskip
+		
+		Alternativ kann man Teilformeln auch rekursiv definieren:
+		
+		\defbox{Die \redalert{Menge $\operatorname{Sub}(F)$ der Teilformeln} einer Formel $F$ ist definiert als:
+			\vspace{-2ex}
+			\[ \operatorname{Sub}(F) = \left\{\begin{array}{l@{~~}l@{}}
+			\{F\} & \text{falls }F\in\Slang{P} \\
+			\{\neg G\}\cup\operatorname{Sub}(G) & \text{falls }F=\neg G \\
+			\{(G_1\wedge G_2)\}\cup\operatorname{Sub}(G_1)\cup\operatorname{Sub}(G_2) & \text{falls }F=(G_1\wedge G_2) \\
+			\{(G_1\vee G_2)\}\cup\operatorname{Sub}(G_1)\cup\operatorname{Sub}(G_2) & \text{falls }F=(G_1\vee G_2) \\
+			\{(G_1\to G_2)\}\cup\operatorname{Sub}(G_1)\cup\operatorname{Sub}(G_2) & \text{falls }F=(G_1\to G_2) \\
+			\{(G_1\leftrightarrow G_2)\}\cup\operatorname{Sub}(G_1)\cup\operatorname{Sub}(G_2) & \text{falls }F=(G_1\leftrightarrow G_2)
+			\end{array}\right.\]\vspace{-2ex}
+		}
+	\end{frame}
+
+
+	\newcommand{\size}[1]{\abs{#1}}
+	
+	\begin{frame} \frametitle{Aufgabe 3}
+		\small
+		Für eine Formel $F$ ist die Größe $\size{F}$ definiert durch:
+		\begin{align*}
+			\size{p} &:= 1 \\
+			\size{\lnot G} &:= \size{G} + 1 \\
+			\size{(G_1 \lor G_2)} &:= \size{G_1} + \size{G_2} + 1 \\
+			\size{(G_1 \land G_2)} &:= \size{G_1} + \size{G_2} + 1 \\
+			\size{(G_1 \rightarrow G_2)} & := \size{G_1} + \size{G_2} + 1 \\
+			\size{(G_1 \leftrightarrow G_2)} & := \size{G_1} + \size{G_2} + 1,
+		\end{align*}
+		wobei $G_1$ und $G_2$ Formeln sind und $p \in \Slang{P}$ ist.  Zeigen Sie
+		die folgenden Aussagen:
+		\begin{enumerate}[(a)]
+			\item Die Anzahl der Variablen in $F$ ist beschränkt durch $\size{F}$.
+			\item Die Anzahl der Unterformeln in $F$ ist beschränkt durch $\size{F}$.
+		\end{enumerate}
+	\end{frame}
+
+	
+	\begin{frame}
+		\footnotesize
+		Wir definieren zunächst die Variablen $\Var(F)$ einer Formel $F$. Sei $p \in \Slang{P}$ eine Variable, $F$ und $G$ seien Formel und $\circ \in \menge{\land, \lor, \rightarrow, \leftrightarrow}$ ein binärer Junktor.
+		\begin{align*}
+			\Var(p) &\defeq \menge{p}  \tag{Atome} \\
+			\Var(\lnot F) &\defeq \Var(F) \tag{Negation} \\
+			\Var(F \circ G)  &\defeq \Var(F) \cup \Var(G) \tag{binäre Junktoren}
+		\end{align*}
+		
+		Aus der Vorlesung ist die Menge der Teilformeln schon bekannt:
+		\begin{align*}
+			\Sub(p) &\defeq \menge{p}  \tag{Atome} \\
+			\Sub(\lnot F) &\defeq \menge{\lnot F} \cup \Sub(F) \tag{Negation} \\
+			\Sub(F \circ G)  &\defeq \menge{F \circ G} \cup \Sub(F) \cup \Sub(G) \tag{binäre Junktoren}
+		\end{align*}
+		\solutionmarkB
+	\end{frame}
+
+	\begin{frame}
+		\footnotesize
+		\textbf{(a)} zu zeigen: $\abs{\Var(F)} \le \abs{F}$
+		
+		Strukturelle Induktion über den Aufbau aussagenlogischer Formeln:
+		\begin{itemize}
+			\item[IA:] Sei $F = p \in \Slang{P}$ eine Variable. Dann gilt
+			\begin{equation*}
+			\abs{\Var(F)} = \abs{\Var(p)} = \abs{\menge{p}} = 1 \le 1 = \abs{p} = \abs{F} .
+			\end{equation*}
+			\item[IV:] Für Formeln $F_1$ und $F_2$ gelte $\abs{\Var(F_1)} \le \abs{F_1}$ und $\abs{\Var(F_2)} \le \abs{F_2}$.
+			\item[IS:] Falls $F = \lnot F_1$, dann gilt
+			\begin{equation*}
+			\abs{\Var(F)} = \abs{\Var(\lnot F_1)} = \abs{\Var(F_1)} \overset{IV}{\le} \abs{F_1} \le \abs{F_1} + 1 = \abs{\lnot F_1} = \abs{F} .
+			\end{equation*}
+			Falls $F = F_1 \circ F_2$ für $\circ \in \menge{\land, \lor, \rightarrow, \leftrightarrow}$, dann gilt
+			\begin{align*}
+			\abs{\Var(F)} = \abs{\Var(F_1 \circ F_2)} &= \abs{\Var(F_1) \cup \Var(F_2)} \\
+			&\le \abs{\Var(F_1)} + \abs{\Var(F_2)} \\
+			\overset{IV}&{\le} \abs{F_1} + \abs{F_2} \\
+			&\le \abs{F_1} + \abs{F_2} + 1 \\
+			&= \abs{F_1 \circ F_2} \\
+			&= \abs{F} .
+			\end{align*}
+		\end{itemize}
+	\solutionmarkB
+	\end{frame}
+
+	\begin{frame}
+		\footnotesize
+		\textbf{(b)} zu zeigen: $\abs{\Sub(F)} \le \abs{F}$
+		
+		Strukturelle Induktion über den Aufbau aussagenlogischer Formeln:
+		\begin{itemize}
+			\item[IA:] Sei $F = p \in \Slang{P}$ eine Variable. Dann gilt
+			\begin{equation*}
+			\abs{\Sub(F)} = \abs{\Sub(p)} = \abs{\menge{p}} = 1 \le 1 = \abs{p} = \abs{F} .
+			\end{equation*}
+			\item[IV:] Für Formeln $F_1$ und $F_2$ gelte $\abs{\Sub(F_1)} \le \abs{F_1}$ und $\abs{\Sub(F_2)} \le \abs{F_2}$.
+			\item[IS:] Falls $F = \lnot F_1$, dann gilt
+			\begin{align*}
+			\abs{\Sub(F)} = \abs{\Sub(\lnot F_1)} &= \abs{\menge{\lnot F_1} \cup \Sub(F_1)} \\
+			&\le \abs{\menge{F_1}} + \abs{\Sub(F_1)} \\
+			\overset{IV}&{\le} 1 + \abs{F_1} = \abs{\lnot F_1} = \abs{F} .
+			\end{align*}
+			Falls $F = F_1 \circ F_2$ für $\circ \in \menge{\land, \lor, \rightarrow, \leftrightarrow}$, dann gilt
+			\begin{align*}
+			\abs{\Sub(F)} = \abs{\Sub(F_1 \circ F_2)} &= \abs{\menge{F_1 \circ F_2} \cup \Sub(F_1) \cup \Sub(F_2)} \\
+			&\le 1 + \abs{\Sub(F_1)} + \abs{\Sub(F_2)} \\
+			\overset{IV}&{\le} 1 + \abs{F_1} + \abs{F_2} \\
+			&= \abs{F_1 \circ F_2} \\
+			&= \abs{F} .
+			\end{align*}
+		\end{itemize}
+		\solutionmarkB
+	\end{frame}
+	
+	
+
+\end{document}
