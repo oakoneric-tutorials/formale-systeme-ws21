@@ -1,0 +1,406 @@
+\documentclass{beamer}
+\usepackage{../tut-slides}
+\usepackage{../mathoperators}
+\usepackage{../fs}
+
+\usepackage{csquotes}
+
+\usepackage{amsmath,amssymb}
+%\usepackage{enumerate}
+\usepackage[normalem]{ulem}
+\newcommand{\labelitemi}{\raisebox{1pt}{\scalebox{.9}{$\blacktriangleright$}}}
+\newcommand{\labelitemii}{$\vartriangleright$}
+\newcommand{\labelitemiii}{--}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+\newcommand{\tuple}[1]{\langle{#1}\rangle}
+\newcommand{\simquot}[1]{#1/_{\!\!{\sim}}}
+
+\usepackage{pifont}
+
+\newcommand{\cmark}{\textcolor{cddarkgreen}{\ding{51}}}%
+\newcommand{\xmark}{\textcolor{darkred}{\ding{55}}}%
+
+\newcommand{\solutionmarkB}{%
+	\begin{tikzpicture}[remember picture, overlay]
+		\node [
+			fill=none,  % Farbe des Randstreifens
+			text=cdorange,  % Textfarbe
+			font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+			inner xsep=0,       % Abstand des Textes von unten
+			% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+			%			text width={\dimexpr\paperheight-2\footskip\relax},
+			align=center,
+			%			minimum height=8mm,% Breite des Randstreifens
+			anchor=south west,
+			rotate=90
+		] at ($(current page.north west)+(+8mm,-20mm)$)
+		{Lösung};
+		\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+	\end{tikzpicture}%
+}
+\newcommand{\solutionmarkFT}{\begin{tikzpicture}[remember picture, overlay]
+	\node [
+	fill=none,  % Farbe des Randstreifens
+	text=cdorange,  % Textfarbe
+	font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+	inner xsep=0,       % Abstand des Textes von unten
+	% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+	%			text width={\dimexpr\paperheight-2\footskip\relax},
+	align=center,
+	%			minimum height=8mm,% Breite des Randstreifens
+	anchor=south west,
+	rotate=90
+	] at ($(current page.north west)+(+8mm,-27mm)$)
+	{Lösung};
+	\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+	\end{tikzpicture}%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ghost}[1]{\raisebox{0pt}[0pt][0pt]{\makebox[0pt][l]{#1}}}
+\newcommand{\blue}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\purple}[1]{\textcolor{cdpurple}{#1}}
+\newcommand{\green}[1]{\textcolor{cddarkgreen}{#1}}
+
+\usepackage{ragged2e}
+\undef\Var
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Sub}{Sub}
+
+
+\begin{document}	
+	\title{Formale Systeme}
+	\subtitle{Übung 12}
+	\author{Eric Kunze}
+	\email{eric.kunze@tu-dresden.de}
+	\city{TU Dresden}
+	\date{\formatdate{21}{1}{2022}}
+%	\institute{Lehrstuhl für Grundlagen der Programmierung}
+	\titlegraphic{\includegraphics[width=2cm]{../TUD-white.pdf}}
+
+	\maketitle
+
+
+	\begin{frame} \frametitle{Übungsblatt 12}
+		\tableofcontents
+	\end{frame}
+
+	\begin{frame}\frametitle{Logische Äquivalenz}
+		\small
+		Formeln sind äquivalent, wenn sie die gleiche Semantik haben:
+		
+		\defbox{Zwei Formeln $F$ und $G$ sind \redalert{semantisch äquivalent}, in Symbolen \redalert{$F\equiv G$},
+			wenn sie genau die selben Modelle haben, d.h. wenn\\[1ex]
+			
+			\narrowcentering{für alle Wertzuweisungen $w$ gilt: $w(F)=w(G)$}}
+	\end{frame}
+
+	\begin{frame}\frametitle{Junktoren äquivalent ausdrücken}
+		\footnotesize
+		\begin{align*}
+			F\to G & \equiv \neg F\vee G \equiv \neg(F\wedge\neg G) \\
+			F\leftrightarrow G & \equiv (F\to G)\wedge(G\to F)\equiv (F\wedge G)\vee(\neg F\wedge \neg G) \\
+			F\wedge G & \equiv \neg(\neg F\vee\neg G) \quad \text{\textcolor{devilscss}{(De Morgansches Gesetz)}} \\
+			F\vee G & \equiv \neg(\neg F\wedge\neg G) \quad \text{\textcolor{devilscss}{(De Morgansches Gesetz)}}
+		\end{align*}\pause
+		
+		\theobox{Satz: Sei $F$ eine beliebige aussagenlogische Formel.
+			\begin{itemize}
+				\item Es gibt eine zu $F$ äquivalente Formel, die nur die Junktoren $\wedge$ und $\neg$ enthält.
+				\item Es gibt eine zu $F$ äquivalente Formel, die nur die Junktoren $\vee$ und $\neg$ enthält.
+		\end{itemize}}		
+	\end{frame}
+
+	
+	\begin{frame}\frametitle{Nützliche Äquivalenzen}
+		\small
+		\begin{align*}
+			\begin{split}
+				F\wedge G & \equiv G\wedge F\\
+				F\vee G & \equiv G\vee F
+			\end{split}
+			& \text{\textcolor{devilscss}{Kommutativität}} \\[1ex]
+			%
+			\begin{split}
+				(F\wedge G)\wedge H & \equiv F\wedge (G\wedge H)\\
+				(F\vee G)\vee H & \equiv F\vee (G\vee H)
+			\end{split}
+			& \text{\textcolor{devilscss}{Assoziativität}} \\[1ex]
+			%
+			\begin{split}
+				F\wedge (G\vee H) & \equiv (F\wedge G) \vee (F\wedge H)\\
+				F\vee (G\wedge H) & \equiv (F\vee G)\wedge (F\vee H)
+			\end{split}
+			& \text{\textcolor{devilscss}{Distributivität}} \\[1ex]
+			%
+			\begin{split}
+				F\wedge F & \equiv F\\
+				F\vee F & \equiv F
+			\end{split}
+			& \text{\textcolor{devilscss}{Idempotenz}} \\[1ex]
+			%
+			\begin{split}
+				F\wedge (F\vee G) & \equiv F\\
+				F\vee (F\wedge G) & \equiv F
+			\end{split}
+			& \text{\textcolor{devilscss}{Absorption}}
+		\end{align*}
+		
+	\end{frame}
+	
+	\begin{frame}\frametitle{Nützliche Äquivalenzen}
+		\small
+		\begin{align*}
+			\neg\neg F &\equiv F
+			& \text{\textcolor{devilscss}{doppelte Negation}}\\[1ex]
+			%
+			\begin{split}
+				\neg(F\wedge G) & \equiv (\neg F\vee \neg G)\\
+				\neg(F\vee G) & \equiv (\neg F\wedge \neg G)
+			\end{split}
+			& \text{\textcolor{devilscss}{De Morgansche Gesetze}} \\[1ex]
+			%
+			\begin{split}
+				F\wedge \top & \equiv F\\
+				F\vee \top & \equiv \top
+			\end{split}
+			& \text{\textcolor{devilscss}{Gesetze mit $\top$}}\\[1ex]
+			%
+			\begin{split}
+				F\wedge \bot & \equiv \bot\\
+				F\vee \bot & \equiv F
+			\end{split}
+			& \text{\textcolor{devilscss}{Gesetze mit $\bot$}}\\[1ex]
+			%
+			\begin{split}
+				\neg\top & \equiv \bot\\
+				\neg\bot & \equiv \top
+			\end{split}
+			& 
+		\end{align*}
+		
+		Alle diese Äquivalenzen können leicht mit Wahrheitswertetabellen überprüft werden.
+	\end{frame}
+
+
+	\section{Aufgabe 1 \\ \itshape weitere Äquivalenzen}
+	
+	\begin{frame} \frametitle{Aufgabe 1}
+		\small
+		Zeigen Sie die Gültigkeit der folgenden Äquivalenzen:
+		\begin{enumerate}[a)]
+			\item Distributivitätsregel:
+			\begin{equation*}
+				(\phi \lor (\psi \land \pi)) \equiv ((\phi \lor \psi) \land (\phi \lor \pi))
+			\end{equation*}
+			\item Absorptionsregel:
+			\begin{equation*}
+				(\phi \land (\phi \lor \psi)) \equiv \phi
+			\end{equation*}
+		\end{enumerate}
+	\end{frame}
+	
+
+	\section{Aufgabe 2 \\ \itshape mehr Äquivalenzen}
+
+	\begin{frame} \frametitle{Aufgabe 2}
+		\small
+		Prüfen Sie, ob die folgenden Äquivalenzen gelten.
+		\begin{enumerate}[(a)]
+			\item $(((a \to b) \land (\lnot a \to (b \land c))) \land ((\lnot b \lor c) \to d))$ \\
+			$\equiv$ \\
+			$((\lnot (a \leftrightarrow b) \land (a \lor c)) \land  \lnot ((b \lor d) \to (c \land \lnot d)))$
+			\item $(((b \land \ell) \to m) \land ((a \land b) \to \ell) \land a \land b)$ \\
+			$\equiv$ \\
+			$((\lnot b \land \ell \land \lnot a \land b) \lor (\lnot \ell \land \ell \land \lnot a \land b) \lor (m \land \ell \land a \land b))$
+		\end{enumerate}
+	\end{frame}
+
+%	\begin{frame}
+%		\newcommand{\cellblue}{\cellcolor{cdblue!20}}
+%		\newcommand{\cellred}{\cellcolor{cdpurple!20}}
+%		\small \vspace{1em}
+%		\textbf{(a)} $\Big\{ (\neg a \lor b), (\neg b \lor c), (b \land c) \Big\} \models ((a \leftrightarrow b) \lor c)$
+%		\begin{center}
+%			\begin{tabular}{c|c|c||c|c|c||c|c}
+%				\hline
+%				$a$ & $b$ & $c$ & $\lnot a \lor b$ & $\lnot b \lor c$ & $b \land c$ & $a \leftrightarrow b$ & $(a \leftrightarrow b) \lor c$ \\
+%				\hline
+%				0 & 0 & 0 & 1 & 1 & 0 & 1 & \cellred 1 \\
+%				0 & 0 & 1 & 1 & 1 & 0 & 1 &  \cellred1 \\
+%				0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 \\
+%				0 & 1 & 1 & \cellblue 1 & \cellblue 1 & \cellblue 1 & 0 & \cellred 1 \\
+%				1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+%				1 & 0 & 1 & 0 & 1 & 0 & 0 & \cellred 1 \\
+%				1 & 1 & 0 & 1 & 0 & 0 & 1 & \cellred 1 \\
+%				1 & 1 & 1 & \cellblue 1 & \cellblue 1 & \cellblue 1 & 1 & \cellred 1 \\ \hline
+%			\end{tabular}
+%		\end{center}
+%	
+%		Jedes Modell von \colorbox{cdblue!20}{$\Big\{ (\neg a \lor b), (\neg b \lor c), (b \land c) \Big\}$} ist auch Modell von \colorbox{cdpurple!20}{$((a \leftrightarrow b) \lor c)$}. Damit gilt die Aussage.
+%		\solutionmarkB
+%	\end{frame}
+%
+%	\begin{frame}
+%		\small \vspace{1em}
+%		\textbf{(b)} $\Big\{ (a \rightarrow b), (c \lor a), (a \rightarrow \neg b), \neg c \Big\} \models a$
+%		\begin{center}
+%			\begin{tabular}{c|c|c||c|c|c|c}
+%				\hline
+%				$a$ & $b$ & $c$ & $a \rightarrow b$ & $c \lor a$ & $a \rightarrow \lnot b$ & $\lnot c$ \\
+%				\hline
+%				0 & 0 & 0 & 1 & 0 & 1 & 1 \\
+%				0 & 0 & 1 & 1 & 1 & 1 & 0 \\
+%				0 & 1 & 0 & 1 & 0 & 1 & 1 \\
+%				0 & 1 & 1 & 1 & 1 & 1 & 0 \\
+%				1 & 0 & 0 & 0 & 1 & 1 & 1 \\
+%				1 & 0 & 1 & 0 & 1 & 1 & 0 \\
+%				1 & 1 & 0 & 1 & 1 & 0 & 1 \\
+%				1 & 1 & 1 & 1 & 1 & 0 & 0 \\ \hline
+%			\end{tabular}
+%		\end{center}
+%	
+%		\justifying
+%		Die Menge $\Big\{ (a \rightarrow b), (c \lor a), (a \rightarrow \neg b), \neg c \Big\}$ hat keine Modelle, d.h. es folgt Beliebiges. Insbesondere ist also jedes (nicht existente) Modell von $\Big\{ (a \rightarrow b), (c \lor a), (a \rightarrow \neg b), \neg c \Big\}$ auch Modell der Formel $a$. Damit gilt die Aussage.
+%		
+%		\solutionmarkB
+%	\end{frame}
+%
+%	\begin{frame}
+%		\small \vspace{1em}
+%		\textbf{(c)} $\Big\{ (a \land \neg b) \lor (\neg a \land b), (\neg c \land b), \neg (\neg a \lor b) \Big\} \models \neg(a \lor b)$
+%		\begin{center}
+%			\begin{tabular}{c|c|c||c|c|c||c}
+%				\hline
+%				$a$ & $b$ & $c$ & $(a \land \lnot b) \lor (\lnot a \land b)$ & $\lnot c \land b$ & $\lnot (\lnot a \lor b)$ & $\lnot (a \lor b)$ \\
+%				\hline
+%				0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+%				0 & 0 & 1 & 0 & 0 & 0 & 1 \\
+%				0 & 1 & 0 & 1 & 1 & 0 & 0 \\
+%				0 & 1 & 1 & 1 & 0 & 0 & 0 \\
+%				1 & 0 & 0 & 1 & 0 & 1 & 0 \\
+%				1 & 0 & 1 & 1 & 0 & 1 & 0 \\
+%				1 & 1 & 0 & 0 & 1 & 0 & 0 \\
+%				1 & 1 & 1 & 0 & 0 & 0 & 0 \\ \hline
+%			\end{tabular}
+%		\end{center}
+%		
+%		\justifying
+%		Die Menge $\Big\{ (a \land \neg b) \lor (\neg a \land b), (\neg c \land b), \neg (\neg a \lor b) \Big\}$ hat keine Modelle, d.h. es folgt Beliebiges. Insbesondere ist also jedes (nicht existente) Modell von $\Big\{ (a \land \neg b) \lor (\neg a \land b), (\neg c \land b), \neg (\neg a \lor b) \Big\}$ auch Modell der Formel $\neg(a \lor b)$. Damit gilt die Aussage.
+%		
+%		\solutionmarkB
+%	\end{frame}
+
+	\section{Aufgabe 3 \\ \itshape Normalformen}
+	
+	\begin{frame}\frametitle{Negationsnormalform}
+		\small
+		\defbox{Eine Formel $F$ ist in \redalert{Negationsnormalform} (\alert{NNF}) wenn
+			\begin{enumerate}[(a)]
+				\item sie nur die Junktoren $\wedge$, $\vee$ und $\neg$ enthält und
+				\item der Junktor $\neg$ nur direkt vor Atomen vorkommt (d.h. nur in Teilformeln der Form $\neg p$ mit $p\in\Slang{P}$).
+			\end{enumerate}
+		}\medskip
+		
+		Formeln, die negierte oder nichtnegierte Atome sind, nennt man \redalert{Literale}.
+		In NNF darf Negation also nur in Literalen auftauchen.
+		\pause
+		
+		\examplebox{Beispiele:
+			\begin{itemize}
+				\item $(\neg p\wedge q)\vee (p\wedge\neg q)$ ist in NNF
+				\item $(b\wedge b)\vee\neg(b\wedge b)$ ist nicht in NNF
+				\item $q\vee \neg\neg p$ ist nicht in NNF
+				\item $p\leftrightarrow p$ ist nicht in NNF
+		\end{itemize}}
+		
+	\end{frame}
+
+	\begin{frame}\frametitle{Konjunktive und Disjunktive Normalform}
+		\footnotesize
+		
+		\defbox{Eine Formel $F$ ist in \redalert{konjunktiver Normalform} (\alert{KNF}) wenn sie 
+			eine Konjunktion von Disjunktionen von Literalen ist, d.h. wenn sie die Form hat:\\[1ex]
+			%
+			\narrowcentering{$(L_{1,1}\vee \ldots\vee L_{1,m_1})\wedge(L_{2,1}\vee \ldots\vee L_{2,m_2})\wedge\ldots
+				\wedge(L_{n,1}\vee \ldots\vee L_{n,m_n}) $}\\[1ex]
+			% \narrowcentering{$\bigwedge_{i=1}^n \bigvee_{j=1}^{m_i} L_{i,j}$}\\[1ex]
+			%
+			wobei die Formeln $L_{i,j}$ Literale sind. Eine Disjunktion von Literalen heißt \redalert{Klausel}.
+		}\medskip
+		
+		\defbox{Eine Formel $F$ ist in \redalert{disjunktiver Normalform} (\alert{DNF}) wenn sie 
+			eine Disjunktion von Konjunktionen von Literalen ist, d.h. wenn sie die Form hat:\\[1ex]
+			%
+			\narrowcentering{$(L_{1,1}\wedge \ldots\wedge L_{1,m_1})\vee(L_{2,1}\wedge \ldots\wedge L_{2,m_2})\vee\ldots
+				\vee(L_{n,1}\wedge \ldots\wedge L_{n,m_n}) $}\\[1ex]
+			% \narrowcentering{$\bigwedge_{i=1}^n \bigvee_{j=1}^{m_i} L_{i,j}$}\\[1ex]
+			%
+			wobei die Formeln $L_{i,j}$ Literale sind. Eine Konjunktion von Literalen heißt \redalert{Monom}.
+		}
+	\end{frame}
+
+	\newcommand{\colA}[2]{\textcolor<#2>{darkred}{#1}}
+	\newcommand{\colB}[2]{\textcolor<#2>{darkblue}{#1}}
+	\newcommand{\colC}[2]{\textcolor<#2>{darkgreen}{#1}}
+	\begin{frame}\frametitle{KNF und DNF bilden}
+		\footnotesize
+		Man kann KNF und DNF bilden, indem man die NNF erzeugt und anschließend Distributivgesetze anwendet
+		$\leadsto$ oft direkter\bigskip
+		
+		\textbf{Konjunktive Normalform}
+		\medskip
+		
+		Distributivgesetz: $\colA{F}{2-}\vee(\colB{G}{2-}\wedge \colC{H}{2-}) \equiv (\colA{F}{2-}\vee \colB{G}{2-})\wedge (\colA{F}{2-}\vee \colC{H}{2-})$\pause
+		\medskip
+		
+		\examplebox{Beispiel:\\
+			$\begin{array}{r@{{}\equiv{}}l}
+				\colA{(p\wedge\neg q)}{3}\vee(\colB{\neg p}{3}\wedge\colC{q}{3}) \pause& (\colA{(\colB{p}{4}\wedge\colC{\neg q}{4})}{3}\vee\colA{\colB{\neg p}{3}}{4})\wedge (\colA{(p\wedge\neg q)}{3}\vee \colC{q}{3})) \pause\\
+				& (\colB{p}{4}\vee\colA{\neg p}{4})\wedge(\colC{\neg q}{4}\vee\colA{\neg p}{4})\wedge ((\colB{p}{5}\wedge\colC{\neg q}{5})\vee \colA{q}{5}))\pause\\
+				& (p\vee\neg p)\wedge(\neg q\vee\neg p)\wedge (\colB{p}{5}\vee \colA{q}{5})\wedge(\colC{\neg q}{5}\vee \colA{q}{5})\pause
+			\end{array}$\\[1ex]
+			(Man könnte die wahren Klauseln $(p\vee\neg p)$ und $(\neg q\vee q)$ streichen.)
+		}\smallskip
+		
+		\visible<6->{
+			\textbf{Disjunktive Normalform}
+			\medskip
+			
+			Distributivgesetz: $F\wedge(G\vee H) \equiv (F\wedge G)\vee (F\wedge H)$ ~~~(analog)
+		}
+	\end{frame}
+	
+	\begin{frame} \frametitle{Aufgabe 3}
+		\small
+		Transformieren Sie die Formel
+		\begin{equation*}
+			\phi = \Big( \big( \lnot (a \leftrightarrow b) \lor \lnot (c \land a) \big) \lor \lnot \big( c \to b \big) \Big)
+		\end{equation*}
+	in
+	\begin{enumerate}[a)]
+		\item Negationsnormalform
+		\item konkjunktive Normalform
+		\item disjunktive Normalform
+	\end{enumerate}
+	\end{frame}
+
+	
+	\section{Aufgabe 4 \\ \itshape Resolution}
+	
+	\begin{frame} \frametitle{Aufgabe 4}
+		\small
+		Prüfen Sie die folgende Formel mittels Resolutionsverfahren auf Erfüllbarkeit:
+		\begin{enumerate}[a)]
+			\item $b \land (a \lor b) \land (\lnot b \lor c) \land (\lnot b \lor \lnot c) \land (\lnot a \lor c)$
+			\item $\lnot \Big( c \to \big( (\lnot a \land b \land c) \lor (a \land \lnot b) \big) \Big)$
+		\end{enumerate}
+	\end{frame}
+	
+	
+
+\end{document}
