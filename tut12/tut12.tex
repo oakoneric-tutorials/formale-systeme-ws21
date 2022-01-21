@@ -65,11 +65,13 @@
 \newcommand{\blue}[1]{\textcolor{darkblue}{#1}}
 \newcommand{\purple}[1]{\textcolor{cdpurple}{#1}}
 \newcommand{\green}[1]{\textcolor{cddarkgreen}{#1}}
+\newcommand{\orange}[1]{\textcolor{cdorange}{#1}}
+\newcommand{\indigo}[1]{\textcolor{cdindigo}{#1}}
 
 \usepackage{ragged2e}
-\undef\Var
-\DeclareMathOperator{\Var}{Var}
-\DeclareMathOperator{\Sub}{Sub}
+
+\newcommand{\cellblue}{\cellcolor{cdblue!20}}
+\newcommand{\cellred}{\cellcolor{cdpurple!20}}
 
 
 \begin{document}	
@@ -88,6 +90,8 @@
 	\begin{frame} \frametitle{Übungsblatt 12}
 		\tableofcontents
 	\end{frame}
+
+	\section{Logische Äquivalenzen}
 
 	\begin{frame}\frametitle{Logische Äquivalenz}
 		\small
@@ -203,6 +207,47 @@
 			\end{equation*}
 		\end{enumerate}
 	\end{frame}
+
+	\begin{frame}
+		\small
+		\textbf{(a)} Beweis mittels Wahrheitswertetabelle:
+		\begin{center}
+			\begin{tabular}{c|c|c||c|c||c|c|c}
+				\hline
+				$\phi$ & $\psi$ & $\pi$ & $\psi \land \pi$ & $\phi \lor (\psi \land \pi)$ & $\phi \lor \psi$ & $\phi \lor \pi$ & $(\phi \lor \psi) \land (\phi \lor \pi)$ \\
+				\hline
+				0 & 0 & 0 & 0 & \cellblue 0 & 0 & 0 & \cellblue 0 \\
+				0 & 0 & 1 & 0 & \cellblue 0 & 0 & 1 & \cellblue 0 \\
+				0 & 1 & 0 & 0 & \cellblue 0 & 1 & 0 & \cellblue 0 \\
+				0 & 1 & 1 & 1 & \cellblue 1 & 1 & 1 & \cellblue 1 \\
+				1 & 0 & 0 & 0 & \cellblue 1 & 1 & 1 & \cellblue 1 \\
+				1 & 0 & 1 & 0 & \cellblue 1 & 1 & 1 & \cellblue 1 \\
+				1 & 1 & 0 & 0 & \cellblue 1 & 1 & 1 & \cellblue 1 \\
+				1 & 1 & 1 & 1 & \cellblue 1 & 1 & 1 & \cellblue 1 \\ \hline
+			\end{tabular}
+		\end{center}
+		Damit ist also $w(\phi \lor (\psi \land \pi)) = w((\phi \lor \psi) \land (\phi \lor \pi))$ für alle Wertzuweisungen $w$. Per Definition gilt also $(\phi \lor (\psi \land \pi)) \equiv ((\phi \lor \psi) \land (\phi \lor \pi))$.
+		
+		\solutionmarkB
+	\end{frame}
+
+	\begin{frame}
+		\small
+		\textbf{(b)} Beweis mittels Wahrheitswertetabelle:
+		\begin{center}
+			\begin{tabular}{c|c||c|c}
+				\hline
+				$\phi$ & $\psi$ & $\phi \lor \psi$ & $\phi \land (\phi \lor \psi)$ \\
+				\hline
+				\cellblue 0 & 0 & 0 & \cellblue 0 \\
+				\cellblue 0 & 1 & 1 & \cellblue 0 \\
+				\cellblue 1 & 0 & 1 & \cellblue 1 \\
+				\cellblue 1 & 1 & 1 & \cellblue 1 \\ \hline
+			\end{tabular}
+		\end{center}
+		Damit ist also $w(\phi \land (\phi \lor \psi))) = w(\phi)$ für alle Wertzuweisungen $w$. Per Definition gilt also $(\phi \land (\phi \lor \psi)) \equiv \phi$.
+		\solutionmarkB
+	\end{frame}
 	
 
 	\section{Aufgabe 2 \\ \itshape mehr Äquivalenzen}
@@ -211,89 +256,19 @@
 		\small
 		Prüfen Sie, ob die folgenden Äquivalenzen gelten.
 		\begin{enumerate}[(a)]
-			\item $(((a \to b) \land (\lnot a \to (b \land c))) \land ((\lnot b \lor c) \to d))$ \\
+			\item $(((a \to \lnot b) \land (\lnot a \to (b \land c))) \land ((\lnot b \lor c) \to d))$ \\
 			$\equiv$ \\
-			$((\lnot (a \leftrightarrow b) \land (a \lor c)) \land  \lnot ((b \lor d) \to (c \land \lnot d)))$
+			$((\lnot (a \leftrightarrow b) \land (a \lor c)) \land  \lnot ((b \lor d) \to (c \land \lnot d)))$ 
+			\medskip
+			\item $\Big(  \big( a \to b) \to a \big) \to a \Big)$ \\
+			$\equiv$ \\
+			$\Big( \big( (a \to b) \land (b \to c) \big) \to \lnot (\lnot c \land a) \Big)$
+			\medskip
 			\item $(((b \land \ell) \to m) \land ((a \land b) \to \ell) \land a \land b)$ \\
 			$\equiv$ \\
 			$((\lnot b \land \ell \land \lnot a \land b) \lor (\lnot \ell \land \ell \land \lnot a \land b) \lor (m \land \ell \land a \land b))$
 		\end{enumerate}
 	\end{frame}
-
-%	\begin{frame}
-%		\newcommand{\cellblue}{\cellcolor{cdblue!20}}
-%		\newcommand{\cellred}{\cellcolor{cdpurple!20}}
-%		\small \vspace{1em}
-%		\textbf{(a)} $\Big\{ (\neg a \lor b), (\neg b \lor c), (b \land c) \Big\} \models ((a \leftrightarrow b) \lor c)$
-%		\begin{center}
-%			\begin{tabular}{c|c|c||c|c|c||c|c}
-%				\hline
-%				$a$ & $b$ & $c$ & $\lnot a \lor b$ & $\lnot b \lor c$ & $b \land c$ & $a \leftrightarrow b$ & $(a \leftrightarrow b) \lor c$ \\
-%				\hline
-%				0 & 0 & 0 & 1 & 1 & 0 & 1 & \cellred 1 \\
-%				0 & 0 & 1 & 1 & 1 & 0 & 1 &  \cellred1 \\
-%				0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 \\
-%				0 & 1 & 1 & \cellblue 1 & \cellblue 1 & \cellblue 1 & 0 & \cellred 1 \\
-%				1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
-%				1 & 0 & 1 & 0 & 1 & 0 & 0 & \cellred 1 \\
-%				1 & 1 & 0 & 1 & 0 & 0 & 1 & \cellred 1 \\
-%				1 & 1 & 1 & \cellblue 1 & \cellblue 1 & \cellblue 1 & 1 & \cellred 1 \\ \hline
-%			\end{tabular}
-%		\end{center}
-%	
-%		Jedes Modell von \colorbox{cdblue!20}{$\Big\{ (\neg a \lor b), (\neg b \lor c), (b \land c) \Big\}$} ist auch Modell von \colorbox{cdpurple!20}{$((a \leftrightarrow b) \lor c)$}. Damit gilt die Aussage.
-%		\solutionmarkB
-%	\end{frame}
-%
-%	\begin{frame}
-%		\small \vspace{1em}
-%		\textbf{(b)} $\Big\{ (a \rightarrow b), (c \lor a), (a \rightarrow \neg b), \neg c \Big\} \models a$
-%		\begin{center}
-%			\begin{tabular}{c|c|c||c|c|c|c}
-%				\hline
-%				$a$ & $b$ & $c$ & $a \rightarrow b$ & $c \lor a$ & $a \rightarrow \lnot b$ & $\lnot c$ \\
-%				\hline
-%				0 & 0 & 0 & 1 & 0 & 1 & 1 \\
-%				0 & 0 & 1 & 1 & 1 & 1 & 0 \\
-%				0 & 1 & 0 & 1 & 0 & 1 & 1 \\
-%				0 & 1 & 1 & 1 & 1 & 1 & 0 \\
-%				1 & 0 & 0 & 0 & 1 & 1 & 1 \\
-%				1 & 0 & 1 & 0 & 1 & 1 & 0 \\
-%				1 & 1 & 0 & 1 & 1 & 0 & 1 \\
-%				1 & 1 & 1 & 1 & 1 & 0 & 0 \\ \hline
-%			\end{tabular}
-%		\end{center}
-%	
-%		\justifying
-%		Die Menge $\Big\{ (a \rightarrow b), (c \lor a), (a \rightarrow \neg b), \neg c \Big\}$ hat keine Modelle, d.h. es folgt Beliebiges. Insbesondere ist also jedes (nicht existente) Modell von $\Big\{ (a \rightarrow b), (c \lor a), (a \rightarrow \neg b), \neg c \Big\}$ auch Modell der Formel $a$. Damit gilt die Aussage.
-%		
-%		\solutionmarkB
-%	\end{frame}
-%
-%	\begin{frame}
-%		\small \vspace{1em}
-%		\textbf{(c)} $\Big\{ (a \land \neg b) \lor (\neg a \land b), (\neg c \land b), \neg (\neg a \lor b) \Big\} \models \neg(a \lor b)$
-%		\begin{center}
-%			\begin{tabular}{c|c|c||c|c|c||c}
-%				\hline
-%				$a$ & $b$ & $c$ & $(a \land \lnot b) \lor (\lnot a \land b)$ & $\lnot c \land b$ & $\lnot (\lnot a \lor b)$ & $\lnot (a \lor b)$ \\
-%				\hline
-%				0 & 0 & 0 & 0 & 0 & 0 & 1 \\
-%				0 & 0 & 1 & 0 & 0 & 0 & 1 \\
-%				0 & 1 & 0 & 1 & 1 & 0 & 0 \\
-%				0 & 1 & 1 & 1 & 0 & 0 & 0 \\
-%				1 & 0 & 0 & 1 & 0 & 1 & 0 \\
-%				1 & 0 & 1 & 1 & 0 & 1 & 0 \\
-%				1 & 1 & 0 & 0 & 1 & 0 & 0 \\
-%				1 & 1 & 1 & 0 & 0 & 0 & 0 \\ \hline
-%			\end{tabular}
-%		\end{center}
-%		
-%		\justifying
-%		Die Menge $\Big\{ (a \land \neg b) \lor (\neg a \land b), (\neg c \land b), \neg (\neg a \lor b) \Big\}$ hat keine Modelle, d.h. es folgt Beliebiges. Insbesondere ist also jedes (nicht existente) Modell von $\Big\{ (a \land \neg b) \lor (\neg a \land b), (\neg c \land b), \neg (\neg a \lor b) \Big\}$ auch Modell der Formel $\neg(a \lor b)$. Damit gilt die Aussage.
-%		
-%		\solutionmarkB
-%	\end{frame}
 
 	\section{Aufgabe 3 \\ \itshape Normalformen}
 	
@@ -317,7 +292,6 @@
 				\item $q\vee \neg\neg p$ ist nicht in NNF
 				\item $p\leftrightarrow p$ ist nicht in NNF
 		\end{itemize}}
-		
 	\end{frame}
 
 	\begin{frame}\frametitle{Konjunktive und Disjunktive Normalform}
@@ -381,16 +355,119 @@
 		\begin{equation*}
 			\phi = \Big( \big( \lnot (a \leftrightarrow b) \lor \lnot (c \land a) \big) \lor \lnot \big( c \to b \big) \Big)
 		\end{equation*}
-	in
-	\begin{enumerate}[a)]
-		\item Negationsnormalform
-		\item konkjunktive Normalform
-		\item disjunktive Normalform
-	\end{enumerate}
+		in
+		\begin{enumerate}[a)]
+			\item Negationsnormalform
+			\item konkjunktive Normalform
+			\item disjunktive Normalform
+		\end{enumerate}
+	\end{frame}
+
+	\begin{frame} 
+		\small
+		\textbf{Vorbereitung:} Eliminiere $\leftrightarrow$ und $\to$
+		\begin{equation*}
+			\phi \equiv \Big( \big( \lnot ((a \land b) \lor (\lnot a \land \lnot b)) \lor \lnot (c \land a) \big) \lor \lnot (\lnot c \lor b) =: \phi_1
+		\end{equation*}
+		\textbf{(a) Negationsnormalform:}
+		\begin{align*}
+			\phi_1 &= \Big( \big( \lnot ((a \land b) \lor (\lnot a \land \lnot b)) \lor \lnot (c \land a) \big) \lor \blue{\lnot (\lnot c \lor b)} \Big) \\
+			 &\equiv \Big( \big( \lnot ((a \land b) \lor (\lnot a \land \lnot b)) \lor \green{\lnot (c \land a)} \big) \lor \blue{(c \land \lnot b)} \Big) \\
+			 &\equiv \Big( \big( \purple{\lnot ((a \land b) \lor (\lnot a \land \lnot b))} \lor \green{(\lnot c \lor \lnot a)} \big) \lor \blue{(c \land \lnot b)} \Big) \\
+			 &\equiv \Big( \big( \purple{(\orange{\lnot (a \land b)} \land \orange{\lnot (\lnot a \land \lnot b)})} \lor (\lnot c \lor \lnot a) \big) \lor (c \land \lnot b) \Big) \\
+			 &\equiv \Big( \big( (\orange{(\lnot a \lor \lnot b)} \land \orange{(a \lor b)}) \lor (\lnot c \lor \lnot a) \big) \lor (c \land \lnot b) \Big) =: \phi_2 \\
+		\end{align*}
+		\solutionmarkB
+	\end{frame}
+
+	\begin{frame} 
+		\small
+		\textbf{(b) konjunktive Normalform:}
+		\begin{align*}
+		\phi_2 &= \Big( \big( ((\lnot a \lor \lnot b) \orange{\land} (a \lor b)) \orange{\lor} (\lnot c \lor \lnot a) \big) \lor (c \land \lnot b) \Big) \\
+		&\equiv \Big( \big( ((\lnot a \lor \lnot b) \lor (\lnot c \lor \lnot a)) \land ((a \lor b) \lor (\lnot c \lor \lnot a))  \big) \lor (c \land \lnot b) \Big) \\
+		&\equiv \Big( \big( (\lnot a \lor \lnot b \lor \lnot c \lor \lnot a) \land \underbrace{(a \lor b \lor \lnot c \lor \lnot a)}_{\equiv \top} \big) \lor (c \land \lnot b) \Big) \\
+		&\equiv \Big( (\lnot a \lor \lnot b \lor \lnot c) \orange{\lor} (c \orange{\land} \lnot b) \Big) \\
+		&\equiv \Big( \underbrace{\big( (\lnot a \lor \lnot b \lor \lnot c) \lor c \big)}_{\equiv \top}  \land \big( ( \lnot a \lor \lnot b \lor \lnot c) \lor \lnot b \big) \Big) \\
+		&\equiv \Big( \lnot a \lor \lnot b \lor \lnot c \Big) =: \phi_3
+		\end{align*}
+		
+		\textbf{(c) disjunktive Normalform:} $\phi_3$ ist bereits auch in disjunktiver Normalform. Mit den Distributivgesetzen erhält man
+		\begin{equation*}
+			\phi_4 = \Big( (\lnot a \land b) \lor (a \land \lnot b) \lor (\lnot c) \lor (\lnot a) \lor (\lnot b \land c) \Big)
+		\end{equation*}
+		in disjunktiver Normalform.
+		\solutionmarkB
 	\end{frame}
 
 	
 	\section{Aufgabe 4 \\ \itshape Resolution}
+	
+	\begin{frame} \frametitle{Klauselform \& Resolution}
+		\small
+		\begin{itemize}
+			\item Eine Klausel $L_1\vee\ldots\vee L_n$ wir dargestellt als Menge $\{L_1,\ldots,L_n\}$
+			\item Eine Konjunktion von Klauseln $K_1\wedge\ldots\wedge K_\ell$ wird dargestellt als Menge $\{K_1,\ldots,K_\ell\}$
+		\end{itemize}
+		Eine Menge von Mengen von Literalen unter dieser Interpretation heißt \redalert{Klauselform}.
+		\medskip\pause
+		
+		\defbox{
+			Gegeben seien zwei Klauseln $K_1$ und $K_2$ für die es ein Atom $p \in \Slang{P}$ gibt mit $p \in K_1$ und $\neg p \in K_2$. \\
+			Die \redalert{Resolvente von $K_1$ und $K_2$ bezüglich $p$} ist die Klausel 
+			\begin{equation*}
+				(K_1\setminus\{p\})\cup(K_2\setminus\{\neg p\})
+			\end{equation*}
+			
+			Eine Klausel $R$ ist eine \redalert{Resolvente einer Klauselmenge $\mathcal{K}$} wenn $R$ Resolvente zweier Klauseln  $K_1,K_2\in\mathcal{K}$ ist.
+		}	
+	\end{frame}
+
+	
+	\begin{frame}\frametitle{Bedeutung von Resolutionsschritten}
+		\small
+		Wir betrachten Klauseln $\{L_1,\ldots,L_n,p\}$ und $\{\neg p,M_1,\ldots,M_\ell\}$:\pause
+		\begin{itemize}
+			\item $\{L_1,\ldots,L_n,p\}\equiv (L_1\vee\ldots\vee L_n\vee p) \equiv \blue{(\neg L_1\wedge\ldots\wedge\neg L_n)\to p}$ \pause
+			\item $\{\neg p,M_1,\ldots,M_\ell\}\equiv (\neg p\vee M_1\vee\ldots\vee M_\ell)\equiv \blue{p\to (M_1\vee\ldots\vee M_\ell)}$ \pause
+		\end{itemize}
+		\medskip
+		
+		Daraus folgt unmittelbar \blue{$(\neg L_1\wedge\ldots\wedge\neg L_n)\to (M_1\vee\ldots\vee M_\ell)$}\\
+		$\leadsto$ dies entspricht der Klausel $\{L_1,\ldots,L_n,M_1,\ldots,M_\ell\}$ \pause
+		\bigskip
+		
+		\theobox{\textbf{Satz:} Wenn $R$ Resolvente der Klauseln $K_1$ und $K_2$ ist, dann gilt $\{K_1,K_2\}\models R$.
+		}		
+		
+		\begin{itemize}
+			\item Die leere Klausel ist eine Disjunktionen von $0$ Literalen, also gerade $\bot$ (neutrales Element von $\lor$)
+			\item $\bot$ in einer Konjunktion macht die gesamte Formel falsch (unerfüllbar).
+			\item Lässt sich $\bot$ ableiten, so ist die Formel unerfüllbar.
+		\end{itemize}
+	\end{frame}
+%	
+	\begin{frame}\frametitle{Das Resolutionskalkül}
+		\small
+		\codebox{\textbf{Resolution}\\
+			Gegeben: Formel $\mathcal{F}$ in Klauselform\\
+			Gesucht: Ist $\mathcal{F}$ erfüllbar oder unerfüllbar?\\[1ex]
+			
+			\begin{enumerate}[(1)]
+				\item Finde ein Klauselpaar $K_1,K_2\in \mathcal{F}$ mit Resolvente $R\notin \mathcal{F}$
+				\item Setze $\mathcal{F}\defeq \mathcal{F}\cup\{R\}$
+				\item Wiederhole Schritt (1) und (2) bis keine neuen Resolventen gefunden werden können
+				\item Falls $\bot\in \mathcal{F}$, dann gib "`unerfüllbar"' aus;\\andernfalls gib "`erfüllbar"' aus
+			\end{enumerate}
+		}\pause
+		
+		\emph{Beobachtung:} Unerfüllbarkeit steht fest, sobald $\bot$ abgeleitet \ghost{wurde}\\
+		$\leadsto$ dann kann man das Verfahren frühzeitig abbrechen
+		\medskip
+		
+		Erfüllbarkeit kann dagegen erst erkannt werden, wenn alle Resolventen erschöpfend gebildet worden sind
+		
+	\end{frame}
 	
 	\begin{frame} \frametitle{Aufgabe 4}
 		\small
@@ -400,7 +477,63 @@
 			\item $\lnot \Big( c \to \big( (\lnot a \land b \land c) \lor (a \land \lnot b) \big) \Big)$
 		\end{enumerate}
 	\end{frame}
+
+	\begin{frame} 
+		\footnotesize
+		\textbf{(a)} Die Formel ist bereits in konjunktiver Normalform. Die zugehörige Klauselform lautet
+		\begin{equation*}
+			\menge{\menge{b}, \menge{a, b}, \menge{\lnot b, c}, \menge{\lnot b, \lnot c}, {\lnot a, c}}.
+		\end{equation*}
+		Durchnummerieren liefert:
+		
+		\begin{enumerate}[(1)]
+			\item $\menge{b}$
+			\item $\menge{a,b}$
+			\item $\menge{\lnot b, c}$
+			\item $\menge{\lnot b, \lnot c}$
+			\item $\menge{\lnot a, c}$
+		\end{enumerate}
+		
+		Als Resolutionsschritte kann man beispielsweise folgende wählen:
+		
+		\begin{enumerate}[(1)]			
+			\setcounter{enumi}{5}%
+			\item \makebox[4cm][l]{$\menge{c}$} (1) + (3)
+			\item \makebox[4cm][l]{$\menge{\lnot b}$} (4) + (6)
+			\item \makebox[4cm][l]{$\bot$} (1) + (7)
+		\end{enumerate}
 	
+		Da die leere Klausel ableitbar ist, ist die Formel nicht erfüllbar.
+		\solutionmarkB
+	\end{frame}
 	
+	\begin{frame} 
+		\footnotesize
+		\textbf{(b)} Transformation in konjunktive Normalform liefert
+		\begin{equation*}
+			\big( c \land (a \lor \lnot b \lor \lnot c) \land (\lnot a \lor b) \big)
+		\end{equation*}
+		Klauselform: $\menge{\menge{c}, \menge{a, \lnot b, \lnot c}, \menge{\lnot a, b}}$
+		
+		\begin{enumerate}[(1)]
+			\item $\menge{c}$
+			\item $\menge{a, \lnot b, \lnot c}$
+			\item $\menge{\lnot a, b}$
+		\end{enumerate}
+	
+		Als Resolutionsschritte kann man beispielsweise folgende wählen:
+	
+		\begin{enumerate}[(1)]
+			\setcounter{enumi}{5}%
+			\item \makebox[4cm][l]{$\menge{a, \lnot b}$} (1) + (2)
+			\item \makebox[4cm][l]{$\menge{b, \lnot b, \lnot c}$} (2) + (3)
+			\item \makebox[4cm][l]{$\menge{a, \lnot a, \lnot c}$} (2) + (3)
+			\item \makebox[4cm][l]{$\menge{b, \lnot b}$} (1) + (5)
+			\item \makebox[4cm][l]{$\menge{a, \lnot a}$} (1) + (6)
+			\item \makebox[4cm][l]{$\menge{\lnot a, b, \lnot c}$} (3) + (5)						
+		\end{enumerate}
+		\justifying Man kann diesen Prozess nun noch weiter durchführen, allerdings wird man die nie die leere Klausel ableiten können. Die Formel ist daher erfüllbar.
+		\solutionmarkB
+	\end{frame}
 
 \end{document}
