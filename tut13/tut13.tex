@@ -1,0 +1,450 @@
+\documentclass{beamer}
+\usepackage{../tut-slides}
+\usepackage{../mathoperators}
+\usepackage{../fs}
+
+\usepackage{csquotes}
+
+\usepackage{amsmath,amssymb}
+%\usepackage{enumerate}
+\usepackage[normalem]{ulem}
+\newcommand{\labelitemi}{\raisebox{1pt}{\scalebox{.9}{$\blacktriangleright$}}}
+\newcommand{\labelitemii}{$\vartriangleright$}
+\newcommand{\labelitemiii}{--}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+\newcommand{\tuple}[1]{\langle{#1}\rangle}
+\newcommand{\simquot}[1]{#1/_{\!\!{\sim}}}
+
+\usepackage{pifont}
+
+\newcommand{\cmark}{\textcolor{cddarkgreen}{\ding{51}}}%
+\newcommand{\xmark}{\textcolor{darkred}{\ding{55}}}%
+
+\newcommand{\solutionmarkB}{%
+	\begin{tikzpicture}[remember picture, overlay]
+		\node [
+			fill=none,  % Farbe des Randstreifens
+			text=cdorange,  % Textfarbe
+			font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+			inner xsep=0,       % Abstand des Textes von unten
+			% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+			%			text width={\dimexpr\paperheight-2\footskip\relax},
+			align=center,
+			%			minimum height=8mm,% Breite des Randstreifens
+			anchor=south west,
+			rotate=90
+		] at ($(current page.north west)+(+8mm,-20mm)$)
+		{Lösung};
+		\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+	\end{tikzpicture}%
+}
+\newcommand{\solutionmarkFT}{\begin{tikzpicture}[remember picture, overlay]
+	\node [
+	fill=none,  % Farbe des Randstreifens
+	text=cdorange,  % Textfarbe
+	font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+	inner xsep=0,       % Abstand des Textes von unten
+	% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+	%			text width={\dimexpr\paperheight-2\footskip\relax},
+	align=center,
+	%			minimum height=8mm,% Breite des Randstreifens
+	anchor=south west,
+	rotate=90
+	] at ($(current page.north west)+(+8mm,-27mm)$)
+	{Lösung};
+	\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+	\end{tikzpicture}%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ghost}[1]{\raisebox{0pt}[0pt][0pt]{\makebox[0pt][l]{#1}}}
+\newcommand{\blue}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\purple}[1]{\textcolor{cdpurple}{#1}}
+\newcommand{\green}[1]{\textcolor{cddarkgreen}{#1}}
+\newcommand{\orange}[1]{\textcolor{cdorange}{#1}}
+\newcommand{\indigo}[1]{\textcolor{cdindigo}{#1}}
+
+\usepackage{ragged2e}
+
+\newcommand{\cellblue}{\cellcolor{cdblue!20}}
+\newcommand{\cellred}{\cellcolor{cdpurple!20}}
+
+\undef\Var
+\DeclareMathOperator{\Var}{Var}
+
+
+\begin{document}	
+	\title{Formale Systeme}
+	\subtitle{Übung 13}
+	\author{Eric Kunze}
+	\email{eric.kunze@tu-dresden.de}
+	\city{TU Dresden}
+	\date{\formatdate{28}{1}{2022}}
+%	\institute{Lehrstuhl für Grundlagen der Programmierung}
+	\titlegraphic{\includegraphics[width=2cm]{../TUD-white.pdf}}
+
+	\maketitle
+
+
+	\begin{frame} \frametitle{Übungsblatt 13}
+		\tableofcontents
+	\end{frame}
+
+	
+	\section{Aufgabe 1 \\ \itshape Resolution}
+	
+	\begin{frame} \frametitle{Klauselform \& Resolution}
+		\small
+		\begin{itemize}
+			\item Eine Klausel $L_1\vee\ldots\vee L_n$ wir dargestellt als Menge $\{L_1,\ldots,L_n\}$
+			\item Eine Konjunktion von Klauseln $K_1\wedge\ldots\wedge K_\ell$ wird dargestellt als Menge $\{K_1,\ldots,K_\ell\}$
+		\end{itemize}
+		Eine Menge von Mengen von Literalen unter dieser Interpretation heißt \redalert{Klauselform}.
+		\medskip\pause
+		
+		\defbox{
+			Gegeben seien zwei Klauseln $K_1$ und $K_2$ für die es ein Atom $p \in \Slang{P}$ gibt mit $p \in K_1$ und $\neg p \in K_2$. \\
+			Die \redalert{Resolvente von $K_1$ und $K_2$ bezüglich $p$} ist die Klausel 
+			\begin{equation*}
+				(K_1\setminus\{p\})\cup(K_2\setminus\{\neg p\})
+			\end{equation*}
+			
+			Eine Klausel $R$ ist eine \redalert{Resolvente einer Klauselmenge $\mathcal{K}$} wenn $R$ Resolvente zweier Klauseln  $K_1,K_2\in\mathcal{K}$ ist.
+		}	
+	\end{frame}
+
+	
+	\begin{frame}\frametitle{Bedeutung von Resolutionsschritten}
+		\small
+		Wir betrachten Klauseln $\{L_1,\ldots,L_n,p\}$ und $\{\neg p,M_1,\ldots,M_\ell\}$:\pause
+		\begin{itemize}
+			\item $\{L_1,\ldots,L_n,p\}\equiv (L_1\vee\ldots\vee L_n\vee p) \equiv \blue{(\neg L_1\wedge\ldots\wedge\neg L_n)\to p}$ \pause
+			\item $\{\neg p,M_1,\ldots,M_\ell\}\equiv (\neg p\vee M_1\vee\ldots\vee M_\ell)\equiv \blue{p\to (M_1\vee\ldots\vee M_\ell)}$ \pause
+		\end{itemize}
+		\medskip
+		
+		Daraus folgt unmittelbar \blue{$(\neg L_1\wedge\ldots\wedge\neg L_n)\to (M_1\vee\ldots\vee M_\ell)$}\\
+		$\leadsto$ dies entspricht der Klausel $\{L_1,\ldots,L_n,M_1,\ldots,M_\ell\}$ \pause
+		\bigskip
+		
+		\theobox{\textbf{Satz:} Wenn $R$ Resolvente der Klauseln $K_1$ und $K_2$ ist, dann gilt $\{K_1,K_2\}\models R$.
+		}		
+		
+		\begin{itemize}
+			\item Die leere Klausel ist eine Disjunktionen von $0$ Literalen, also gerade $\bot$ (neutrales Element von $\lor$)
+			\item $\bot$ in einer Konjunktion macht die gesamte Formel falsch (unerfüllbar).
+			\item Lässt sich $\bot$ ableiten, so ist die Formel unerfüllbar.
+		\end{itemize}
+	\end{frame}
+%	
+	\begin{frame}\frametitle{Das Resolutionskalkül}
+		\small
+		\codebox{\textbf{Resolution}\\
+			Gegeben: Formel $\mathcal{F}$ in Klauselform\\
+			Gesucht: Ist $\mathcal{F}$ erfüllbar oder unerfüllbar?\\[1ex]
+			
+			\begin{enumerate}[(1)]
+				\item Finde ein Klauselpaar $K_1,K_2\in \mathcal{F}$ mit Resolvente $R\notin \mathcal{F}$
+				\item Setze $\mathcal{F}\defeq \mathcal{F}\cup\{R\}$
+				\item Wiederhole Schritt (1) und (2) bis keine neuen Resolventen gefunden werden können
+				\item Falls $\bot\in \mathcal{F}$, dann gib "`unerfüllbar"' aus;\\andernfalls gib "`erfüllbar"' aus
+			\end{enumerate}
+		}\pause
+		
+		\emph{Beobachtung:} Unerfüllbarkeit steht fest, sobald $\bot$ abgeleitet \ghost{wurde}\\
+		$\leadsto$ dann kann man das Verfahren frühzeitig abbrechen
+		\medskip
+		
+		Erfüllbarkeit kann dagegen erst erkannt werden, wenn alle Resolventen erschöpfend gebildet worden sind
+		
+	\end{frame}
+	
+	\begin{frame} \frametitle{Aufgabe 4}
+		\small
+		Prüfen Sie die folgende Formel mittels Resolutionsverfahren auf Erfüllbarkeit:
+		\begin{enumerate}[a)]
+			\item $b \land (a \lor b) \land (\lnot b \lor c) \land (\lnot b \lor \lnot c) \land (\lnot a \lor c)$
+			\item $\lnot \Big( c \to \big( (\lnot a \land b \land c) \lor (a \land \lnot b) \big) \Big)$
+		\end{enumerate}
+	\end{frame}
+
+	\begin{frame} 
+		\footnotesize
+		\textbf{(a)} Die Formel ist bereits in konjunktiver Normalform. Die zugehörige Klauselform lautet
+		\begin{equation*}
+			\menge{\menge{b}, \menge{a, b}, \menge{\lnot b, c}, \menge{\lnot b, \lnot c}, {\lnot a, c}}.
+		\end{equation*}
+		Durchnummerieren liefert:
+		
+		\begin{enumerate}[(1)]
+			\item $\menge{b}$
+			\item $\menge{a,b}$
+			\item $\menge{\lnot b, c}$
+			\item $\menge{\lnot b, \lnot c}$
+			\item $\menge{\lnot a, c}$
+		\end{enumerate}
+		
+		Als Resolutionsschritte kann man beispielsweise folgende wählen:
+		
+		\begin{enumerate}[(1)]			
+			\setcounter{enumi}{5}%
+			\item \makebox[4cm][l]{$\menge{c}$} (1) + (3)
+			\item \makebox[4cm][l]{$\menge{\lnot b}$} (4) + (6)
+			\item \makebox[4cm][l]{$\bot$} (1) + (7)
+		\end{enumerate}
+	
+		Da die leere Klausel ableitbar ist, ist die Formel nicht erfüllbar.
+		\solutionmarkB
+	\end{frame}
+	
+	\begin{frame} 
+		\footnotesize
+		\textbf{(b)} Transformation in konjunktive Normalform liefert
+		\begin{equation*}
+			\big( c \land (a \lor \lnot b \lor \lnot c) \land (\lnot a \lor b) \big)
+		\end{equation*}
+		Klauselform: $\menge{\menge{c}, \menge{a, \lnot b, \lnot c}, \menge{\lnot a, b}}$
+		
+		\begin{enumerate}[(1)]
+			\item $\menge{c}$
+			\item $\menge{a, \lnot b, \lnot c}$
+			\item $\menge{\lnot a, b}$
+		\end{enumerate}
+	
+		Als Resolutionsschritte kann man beispielsweise folgende wählen:
+	
+		\begin{enumerate}[(1)]
+			\setcounter{enumi}{5}%
+			\item \makebox[4cm][l]{$\menge{a, \lnot b}$} (1) + (2)
+			\item \makebox[4cm][l]{$\menge{b, \lnot b, \lnot c}$} (2) + (3)
+			\item \makebox[4cm][l]{$\menge{a, \lnot a, \lnot c}$} (2) + (3)
+			\item \makebox[4cm][l]{$\menge{b, \lnot b}$} (1) + (5)
+			\item \makebox[4cm][l]{$\menge{a, \lnot a}$} (1) + (6)
+			\item \makebox[4cm][l]{$\menge{\lnot a, b, \lnot c}$} (3) + (5)						
+		\end{enumerate}
+		\justifying Man kann diesen Prozess nun noch weiter durchführen, allerdings wird man nie die leere Klausel ableiten können. Die Formel ist daher erfüllbar.
+		\solutionmarkB
+	\end{frame}
+
+	\section{Aufgabe 1 \\ \itshape Resolution}
+	
+	\begin{frame} \frametitle{Aufgabe 1}
+		Prüfen Sie mittels Resolution die folgenden Formeln jeweils auf Erfüllbarkeit:
+		\begin{enumerate}[a)]
+			\item $a \land \Big(  (c \land b) \land \big( (\lnot c \lor \lnot b) \lor (a \land (c \land b)) \big) \Big)$
+			\item $\begin{alignedat}{5}
+				&(\lnot a \lor \lnot b) &\land& (a \lor b) &\land& (\lnot a \lor c) &\land& (a \lor \lnot c) \\ 
+				\land \enskip &(b \lor \lnot d) &\land& (\lnot b \lor d) &\land& (\lnot c \lor d) &\land& (c \lor \lnot d)
+				\end{alignedat}$
+		\end{enumerate}
+%	  a \wedge \Bigl(( c \wedge b) \wedge \bigl((\neg c \vee \neg b ) \vee
+%	(a \wedge (c \wedge b))\bigr)\Bigr) \\[1ex]
+%	(\neg a \vee \neg b) \wedge
+%	(     a \vee      b) \wedge
+%	(\neg a \vee  c ) \wedge
+%	( a \vee \neg c) \wedge {}
+%	( b \vee \neg d) \wedge
+%	(\neg b  \vee d) \wedge
+%	(\neg c \vee d) \wedge
+%	(c \vee \neg d)
+	\end{frame}
+
+	\section{Aufgabe 2 \\ \itshape $k$-Färbbarkeit}
+	
+	\begin{frame} \frametitle{Aufgabe 2}
+		\justifying
+		Eine $k$-Färbung für einen endlichen Graphen $G$ ist eine Zuordnung der Knoten von $G$ zu Werten (\enquote{Farben}) in $\{\,1, \dots, k\,\}$, so dass Knoten, die in $G$ durch eine Kante verbunden sind, nicht denselben Wert zugeordnet bekommen.
+		
+		Geben Sie für einen endlichen Graphen $G = (V,E)$ mit $n$ Knoten und einen Wert $k$ eine aussagenlogische Formel $\phi_{G,k}$ an, so dass $\phi_{G,k}$ genau dann erfüllbar ist, wenn es eine $k$-Färbung von $G$ gibt.
+	\end{frame}
+
+	\begin{frame}
+		\footnotesize \justifying
+		Wir bezeichnen die Menge aller Farben mit $C_k = \menge{1, \dots, k}$.
+		Wir verwenden die aussagenlogischen Variablen $p_{v, c}$ für $v \in V$ und $c \in C_k$ um auszudrücken, dass der Knoten $v$ mit der Farbe $c$ gefärbt wird. 
+		
+		\begin{itemize}
+			\item Jeder Knoten hat mindestens eine Farbe:
+			\begin{equation*}
+				\phi_{\ge 1} \defeq \bigwedge_{v \in V} \bigvee_{c \in C_k} p_{v, c}
+			\end{equation*}
+			\item Jeder Knoten hat höchstens eine Farbe:
+			\begin{equation*}
+			\phi_{\le 1} \defeq \bigwedge_{v \in V} \bigvee_{\substack{c_1, c_2 \in C_k \\ c_1 \neq c_2}} \lnot \Big( p_{v, c_1} \land p_{v, c_2} \Big)
+			\end{equation*}
+			\item Benachbarte Knoten haben unterschiedliche Farben
+			\begin{equation*}
+			\phi_{\neq} \defeq \bigwedge_{\substack{v_1, v_2 \in V \\ (v_1, v_2) \in E}} \bigvee_{c \in C_k} \lnot \Big( p_{v_1, c} \land p_{v_2, c} \Big)
+			\end{equation*}
+		\end{itemize} 
+		
+		Die Formel $\phi_{G, k}$ ergibt sich dann als
+		\begin{equation*}
+			\phi_{G, k} \defeq \phi_{\ge 1} \land \phi_{\le 1} \land \phi_{\neq}.
+		\end{equation*}		
+		\solutionmarkB
+	\end{frame}
+
+	\section{Aufgabe 3 \\ \itshape Aussagenlogik nur mit $\to$?}
+	
+	\begin{frame} \frametitle{Aufgabe 3}
+		\justifying
+		\begin{enumerate}[a)]
+			\item Es sei $\varphi$ eine Formel, die ausschließlich den Junktor
+			$\rightarrow$ verwendet. Zeigen Sie: Wenn $w(p_i) = 1$ für alle $p_i \in
+			\Var(\varphi)$ ist, dann ist auch $w(\varphi) = 1$.
+			\item Es sei $\varphi$ eine allgemeine aussagenlogische Formel.  Beweisen oder
+			widerlegen Sie: $\varphi$ ist äquivalent zu einer Formel, die ausschließlich
+			den Junktor $\rightarrow$ verwendet.
+		\end{enumerate}
+	\end{frame}
+
+	\begin{frame}
+		\footnotesize 
+		\begin{enumerate}[\bfseries (a)] \justifying
+			\item Induktion über den Aufbau von Formeln.
+			\begin{itemize} \footnotesize \justifying
+				\item[(IA)] Sei $\phi = p \in \Slang P$ ein Atom. Dann gilt $w(p) = 1 \implies w(\phi) = 1$.
+				\item[(IV)] Seien $\phi_1, \phi_2$ Formeln, die nur den Junktor $\to$ verwenden und Folgendes erfüllen: Gilt $w(p_1) = 1$ für alle $p_1 \in \Var(\phi_1)$, dann gilt $w(\phi_1) = 1$; sowie gilt $w(p_2) = 1$ für alle $p_2 \in \Var(\phi_2)$, dann gilt $w(\phi_2) =  1$.
+				\item[(IS)] Sei $\phi \defeq (\phi_1 \to \phi_2)$. Es gilt $\Var(\phi) = \Var(\phi_1) \cup \Var(\phi_2)$. Ist $w(p) = 1$ für alle $p \in \Var(\phi)$, so auch $w(p) = 1$ für alle $p \in \Var(\phi_1)$ und $w(p) = 1$ für alle $p \in \Var(\phi_2)$. Per Induktionsvoraussetzung gilt dann auch $w(\phi_1) = 1$ und $w(\phi_2) = 1$; und somit schließlich $w(\phi) = w(\phi_1 \to \phi_2) = 1$. 
+			\end{itemize}
+			\item Die Aussage ist falsch. Sei $p \in \Slang P$ ein Atom mit $w(p) = 1$. Dann gibt es keine zu $\lnot p$ äquivalente Formel mit nur dem Junktor $\to$. 
+			
+			Achtung: auch die \enquote{Abkürzungen} $\top$ und $\bot$ dürfen nicht verwendet werden, d.h. $p \to \bot$ ist keine Formel, die nur den Junktor $\to$ verwendet.
+		\end{enumerate}
+	\end{frame}
+
+	\section{Aufgabe 4 \\ \itshape Polynomielle Abschlüsse}
+	
+	\begin{frame} \frametitle{Aufgabe 4}
+		\small
+		Seien $\Sigma$ ein Alphabet und $L, L_1, L_2 \subseteq \Sigma^\ast$ Sprachen mit $L, L_1, L_2 \in \Slang{P}$.
+		
+		Zeigen Sie:
+		\begin{enumerate}[a)]
+			\item		
+			$L_1 \cup L_2, L_1 \circ L_2$ und $\bar{L}$ sind in polynomieller Zeit entscheidbar.
+			
+			\item $L^R \, = \, \{w^R :\, w \, \in \, L\}$ ist in polynomieller Zeit entscheidbar,
+			wobei f\"ur $w \, = \, a_1 \dots a_n \in \Sigma^\ast$ das Rückwärtswort $w^R$ definiert ist durch 
+			\[
+			w^R = a_n a_{n-1} \dots a_1
+			\]
+			(und $\varepsilon^R = \varepsilon$, $a^R = a$ f\"ur $a \in \Sigma$).			
+		\end{enumerate}
+	\end{frame}
+
+	\begin{frame}
+		\footnotesize
+		\begin{enumerate}[\bfseries (a)]
+			\item Seien $\Smach{M}$, $\Smach{M}_1$ und $\Smach{M}_2$ polynomiell zeitbeschränkte Turingmaschinen.
+			\begin{itemize} \footnotesize
+				\item[$\quer{L}$:] Die folgende Turingmaschine $\quer{\Smach M}$ entscheidet $\quer L$:
+				
+				\begin{slshape}
+					Eingabe $w$ \\
+					Simuliere $\Smach M$ auf $w$. \\
+					\hspace{2em} falls $\Smach M$ akzeptiert: verwerfe \\
+					\hspace{2em} falls $\Smach M$ verwirft: akzeptiere
+				\end{slshape}
+								
+				Da $\Smach M$ in polynomieller Zeit entscheidet, entscheidet auch $\quer{\Smach M}$ in polynomieller Zeit. Es gilt also $\quer{L} \in \Slang P$.
+				%
+				\item[$L_1 \cup L_2$:] Die folgende Turingmaschine $\Smach M_{\cup}$ entscheidet $L_1 \cup L_2$:
+				
+				\begin{slshape}
+					Eingabe $w$ \\
+					Simuliere $\Smach M_1$ auf $w$. \\
+					\hspace{2em} falls $\Smach M_1$ akzeptiert: akzeptiere \\
+					\hspace{2em} falls $\Smach M_1$ verwirft: \\
+					\hspace{4em} Simuliere $\Smach M_2$ auf $w$. \\
+					\hspace{6em} falls $\Smach M_2$ akzeptiert: akzeptiere \\
+					\hspace{6em} falls $\Smach M_2$ verwirft: verwerfe
+				\end{slshape}
+			
+				\justifying
+				Sowohl $\Smach M_1$ als auch $\Smach M_2$ entscheiden ihren Teil in polynomieller Zeit und \enquote{polynomiell + polynomiell = polynomiell}, d.h. auch $\Smach M_{\cup}$ entscheidet in polynomieller Zeit. Somit gilt $L_1 \cup L_2 \in \Slang P$.
+			\end{itemize}
+		\end{enumerate}
+		\solutionmarkB
+	\end{frame}
+
+	\begin{frame}
+		\footnotesize
+		\begin{enumerate}[\bfseries (a)]
+			\item Seien weiterhin $\Smach{M}$, $\Smach{M}_1$ und $\Smach{M}_2$ polynomiell zeitbeschränkte Turingmaschinen.
+			\begin{itemize} \footnotesize
+				\item[$L_1 \circ L_2$:] Die folgende Turingmaschine $\Smach M_{\circ}$ entscheidet $L_1 \circ L_2$:
+				
+				\begin{slshape}
+					Eingabe $w = a_1 \dots a_n$ \\
+					Für alle $1 \le k \le n$: \\
+					\hspace{2em} Simuliere $\Smach M_1$ auf $a_1 \dots a_k$. \\
+					\hspace{4em} falls $\Smach M_1$ verwirft: wähle nächstes $k$ \\
+					\hspace{4em} falls $\Smach M_1$ akzeptiert: \\
+					\hspace{6em} Simuliere $\Smach M_2$ auf $a_{k+1} \dots a_n$. \\
+					\hspace{8em} falls $\Smach M_2$ akzeptiert: akzeptiere \\
+					\hspace{8em} falls $\Smach M_2$ verwirft: wähle nächstes $k$
+				\end{slshape}
+				
+				\justifying
+				Sowohl $\Smach M_1$ als auch $\Smach M_2$ entscheiden ihren Teil in polynomieller Zeit. Die äußere Schleife wird maximal $n$ mal durchlaufen, d.h. der Aufwand lässt sich salopp mit
+				\begin{equation*}
+					 n * (\text{polynomiell} + \text{polynomiell}) = \text{polynomiell}
+				\end{equation*} angeben. Daher ist $L_1 \circ L_2 \in \Slang P$.
+			\end{itemize}
+		\end{enumerate}
+		\solutionmarkB
+	\end{frame}
+
+	\begin{frame}
+		\footnotesize
+		\begin{enumerate}[\bfseries (a)]
+			\setcounter{enumi}{1}
+			\item 
+			\begin{slshape}
+				Eingabe: $w \in \Sigma^\ast$. \\
+				Transformiere $w$ zu $w^R$. \\
+				Simuliere $\Smach M$ auf $w^R$. \\
+				\hspace{2em} falls $\Smach M$ akzeptiert: akzeptiere \\
+				\hspace{2em} falls $\Smach M$ verwirft: verwerfe \\
+			\end{slshape}
+		
+			Die Simulation von $\Smach M$ ist polynomiell nach Voraussetzung und die Transformation von $w$ zu $w^R$ ist offensichtlich auch polynomiell. Somit ist $L^R \in \Slang P$.
+		\end{enumerate}
+		\solutionmarkB
+	\end{frame}
+
+	\section{Aufgabe 5 \\ \itshape Komplexität co-endlicher Sprachen}
+	
+	\begin{frame} \frametitle{Aufgabe 5}
+		Eine Sprache $L \subseteq \Sigma^\ast$ ist \textit{co-endlich} genau dann, wenn $\bar{L}$ (also $\Sigma^\ast \setminus L$) endlich ist.
+		
+		Beweisen oder widerlegen Sie:
+		\begin{enumerate}[a)]
+			\item Jede co-endliche Sprache ist in $\operatorname{DTIME}(n)$.
+			\item Jede co-endliche Sprache ist in $\operatorname{DTIME}(1)$.
+		\end{enumerate}
+	\end{frame}
+
+	\begin{frame}
+		\footnotesize
+		\begin{enumerate}[\bfseries (a)]
+			\item Die Aussage gilt. Jede endliche Sprache ist regulär und reguläre Sprachen sind unter Komplement abgeschlossen. Daher ist jede co-endliche Sprache regulär.
+			
+			Da das Wortproblem für reguläre Sprachen in linearer Zeit entscheidbar ist, ist jede co-endliche Sprache in $\operatorname{DTIME}(n)$.
+			
+			\item Auch diese Aussage gilt. Sei $L \subseteq \Sigma^\ast$ co-endlich. Dann ist per Definition $\quer{L}$ endlich.
+			\begin{itemize} \footnotesize
+				\item Ist $\quer{L} = \emptyset$, so ist $L = \Sigma^\ast$ und damit offensichtlich in konstanter Zeit entscheidbar (akzeptiere alle Eingaben). 
+				\item Ist $\quer{L} \neq \emptyset$, so existiert (da $\quer{L}$ endlich ist) ein längstes Wort $w_{\max}$ mit $\abs{w_{\max}} = m$. Somit muss jede Turingmaschine $\Smach{M}$ höchstens $m$ Zeichen der Eingabe lesen (unabhängig von der Eingabe) und kann dann sofort $w \in \quer{L}$ und damit $w \in L$ entscheiden.
+				Damit gilt nun: die Anzahl der Schritte von $\Smach{M}$ bei Eingabe $w \in \Sigma^\ast$ sind durch $f : \N \to \R$ mit $f(n) = c_m$ charakterisiert, wobei $c_m \in \R$ eine positive Konstante ist, die nur von $m$ abhängt. Für dieses $f$ gilt $f \in \mathcal{O}(1)$, da $f(n) \le c_m * 1$ für alle $n \ge 0$ gilt. Damit folgt $L \in \operatorname{DTIME}(1)$.
+			\end{itemize}
+		\end{enumerate}
+	\solutionmarkB
+	\end{frame}
+\end{document}
