@@ -160,77 +160,7 @@
 		\medskip
 		
 		Erfüllbarkeit kann dagegen erst erkannt werden, wenn alle Resolventen erschöpfend gebildet worden sind
-		
 	\end{frame}
-	
-	\begin{frame} \frametitle{Aufgabe 4}
-		\small
-		Prüfen Sie die folgende Formel mittels Resolutionsverfahren auf Erfüllbarkeit:
-		\begin{enumerate}[a)]
-			\item $b \land (a \lor b) \land (\lnot b \lor c) \land (\lnot b \lor \lnot c) \land (\lnot a \lor c)$
-			\item $\lnot \Big( c \to \big( (\lnot a \land b \land c) \lor (a \land \lnot b) \big) \Big)$
-		\end{enumerate}
-	\end{frame}
-
-	\begin{frame} 
-		\footnotesize
-		\textbf{(a)} Die Formel ist bereits in konjunktiver Normalform. Die zugehörige Klauselform lautet
-		\begin{equation*}
-			\menge{\menge{b}, \menge{a, b}, \menge{\lnot b, c}, \menge{\lnot b, \lnot c}, {\lnot a, c}}.
-		\end{equation*}
-		Durchnummerieren liefert:
-		
-		\begin{enumerate}[(1)]
-			\item $\menge{b}$
-			\item $\menge{a,b}$
-			\item $\menge{\lnot b, c}$
-			\item $\menge{\lnot b, \lnot c}$
-			\item $\menge{\lnot a, c}$
-		\end{enumerate}
-		
-		Als Resolutionsschritte kann man beispielsweise folgende wählen:
-		
-		\begin{enumerate}[(1)]			
-			\setcounter{enumi}{5}%
-			\item \makebox[4cm][l]{$\menge{c}$} (1) + (3)
-			\item \makebox[4cm][l]{$\menge{\lnot b}$} (4) + (6)
-			\item \makebox[4cm][l]{$\bot$} (1) + (7)
-		\end{enumerate}
-	
-		Da die leere Klausel ableitbar ist, ist die Formel nicht erfüllbar.
-		\solutionmarkB
-	\end{frame}
-	
-	\begin{frame} 
-		\footnotesize
-		\textbf{(b)} Transformation in konjunktive Normalform liefert
-		\begin{equation*}
-			\big( c \land (a \lor \lnot b \lor \lnot c) \land (\lnot a \lor b) \big)
-		\end{equation*}
-		Klauselform: $\menge{\menge{c}, \menge{a, \lnot b, \lnot c}, \menge{\lnot a, b}}$
-		
-		\begin{enumerate}[(1)]
-			\item $\menge{c}$
-			\item $\menge{a, \lnot b, \lnot c}$
-			\item $\menge{\lnot a, b}$
-		\end{enumerate}
-	
-		Als Resolutionsschritte kann man beispielsweise folgende wählen:
-	
-		\begin{enumerate}[(1)]
-			\setcounter{enumi}{5}%
-			\item \makebox[4cm][l]{$\menge{a, \lnot b}$} (1) + (2)
-			\item \makebox[4cm][l]{$\menge{b, \lnot b, \lnot c}$} (2) + (3)
-			\item \makebox[4cm][l]{$\menge{a, \lnot a, \lnot c}$} (2) + (3)
-			\item \makebox[4cm][l]{$\menge{b, \lnot b}$} (1) + (5)
-			\item \makebox[4cm][l]{$\menge{a, \lnot a}$} (1) + (6)
-			\item \makebox[4cm][l]{$\menge{\lnot a, b, \lnot c}$} (3) + (5)						
-		\end{enumerate}
-		\justifying Man kann diesen Prozess nun noch weiter durchführen, allerdings wird man nie die leere Klausel ableiten können. Die Formel ist daher erfüllbar.
-		\solutionmarkB
-	\end{frame}
-
-	\section{Aufgabe 1 \\ \itshape Resolution}
 	
 	\begin{frame} \frametitle{Aufgabe 1}
 		Prüfen Sie mittels Resolution die folgenden Formeln jeweils auf Erfüllbarkeit:
