@@ -1,0 +1,213 @@
+\documentclass{beamer}
+\usepackage{../tut-slides}
+\usepackage{../mathoperators}
+\usepackage{../fs}
+
+\usepackage{csquotes}
+
+\usepackage{amsmath,amssymb}
+%\usepackage{enumerate}
+\usepackage[normalem]{ulem}
+\newcommand{\labelitemi}{\raisebox{1pt}{\scalebox{.9}{$\blacktriangleright$}}}
+\newcommand{\labelitemii}{$\vartriangleright$}
+\newcommand{\labelitemiii}{--}
+
+\usepackage{booktabs}
+\usepackage{tabularx}
+
+\newcommand{\tuple}[1]{\langle{#1}\rangle}
+\newcommand{\simquot}[1]{#1/_{\!\!{\sim}}}
+
+\usepackage{pifont}
+
+\newcommand{\cmark}{\textcolor{cddarkgreen}{\ding{51}}}%
+\newcommand{\xmark}{\textcolor{darkred}{\ding{55}}}%
+
+\newcommand{\solutionmarkB}{%
+	\begin{tikzpicture}[remember picture, overlay]
+		\node [
+			fill=none,  % Farbe des Randstreifens
+			text=cdorange,  % Textfarbe
+			font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+			inner xsep=0,       % Abstand des Textes von unten
+			% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+			%			text width={\dimexpr\paperheight-2\footskip\relax},
+			align=center,
+			%			minimum height=8mm,% Breite des Randstreifens
+			anchor=south west,
+			rotate=90
+		] at ($(current page.north west)+(+8mm,-20mm)$)
+		{Lösung};
+		\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+	\end{tikzpicture}%
+}
+\newcommand{\solutionmarkFT}{\begin{tikzpicture}[remember picture, overlay]
+	\node [
+	fill=none,  % Farbe des Randstreifens
+	text=cdorange,  % Textfarbe
+	font=\fosfamily\bfseries\large,  % Einstellungen für die Schrift
+	inner xsep=0,       % Abstand des Textes von unten
+	% maximale Textbreite = Papierhöhe - 2*Abstand des Textes von unten:
+	%			text width={\dimexpr\paperheight-2\footskip\relax},
+	align=center,
+	%			minimum height=8mm,% Breite des Randstreifens
+	anchor=south west,
+	rotate=90
+	] at ($(current page.north west)+(+8mm,-27mm)$)
+	{Lösung};
+	\draw[draw, line width=2pt, color=cdorange] ($(current page.north west)+(+1mm,0)$) -- ($(current page.south west)+(+1mm,0)$);
+	\end{tikzpicture}%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ghost}[1]{\raisebox{0pt}[0pt][0pt]{\makebox[0pt][l]{#1}}}
+\newcommand{\blue}[1]{\textcolor{darkblue}{#1}}
+\newcommand{\purple}[1]{\textcolor{cdpurple}{#1}}
+\newcommand{\green}[1]{\textcolor{cddarkgreen}{#1}}
+\newcommand{\orange}[1]{\textcolor{cdorange}{#1}}
+\newcommand{\indigo}[1]{\textcolor{cdindigo}{#1}}
+
+\usepackage{ragged2e}
+
+\newcommand{\cellblue}{\cellcolor{cdblue!20}}
+\newcommand{\cellred}{\cellcolor{cdpurple!20}}
+
+\undef\Var
+\DeclareMathOperator{\Var}{Var}
+
+
+\begin{document}	
+	\title{Formale Systeme}
+	\subtitle{Übung 14}
+	\author{Eric Kunze}
+	\email{eric.kunze@tu-dresden.de}
+	\city{TU Dresden}
+	\date{\formatdate{4}{2}{2022}}
+%	\institute{Lehrstuhl für Grundlagen der Programmierung}
+	\titlegraphic{\includegraphics[width=2cm]{../TUD-white.pdf}}
+
+	\maketitle
+
+
+	\begin{frame} \frametitle{Übungsblatt 14}
+		\tableofcontents
+	\end{frame}
+
+	
+	\section{Aufgabe 1 \\ \itshape Wiederholung}
+	
+	
+	\begin{frame} \frametitle{Aufgabe 1}
+		Stimmen die folgenden Aussagen? Begründen Sie.
+		\begin{enumerate}[a)]
+			\item Wenn $\Gamma \models \psi$ und $\psi$ eine Tautologie ist, dann ist $\Gamma$ auch allgemeingültig.
+			\item Eine Formel $\phi$ ist eine Hornformel, wenn sie in NNF ist und aus Konjunktionen innerhalb von Disjunktionen von Literalen besteht, von denen jede höchstens ein positives Literal enthält.
+			\item Für $K_1 = \menge{a, b, c}$ und $K_2 = \menge{\lnot a, \lnot b}$ ist $\menge{c}$ keine Resolvente.
+			\item Aus $\models \phi$ folgt, dass $\phi$ allgemeingültig ist.
+		\end{enumerate}
+	\end{frame}
+
+	\section{Aufgabe 2 \\ \itshape Logisches Schließen}
+
+	\begin{frame} \frametitle{Aufgabe 2}
+		\justifying \footnotesize
+		Welche der folgenden Formeln sind erfüllbar? 
+		Welche der Formeln gehören zu dem Formeltyp, für den Erfüllbarkeit in polynomieller Zeit lösbar ist?
+		\begin{gather}
+			\bigg( \Big( \big( (p_1 \land p_2) \lor p_3 \big) \land \big( \lnot p_1 \lor \lnot p_3 \big) \Big) \lor \Big( \lnot p_2 \land \lnot p_4 \Big) \bigg)			
+			\\
+			\bigg( \lnot \Big( \lnot p_1 \land \lnot \big(p_2 \land (\lnot p_1 \to p_2 ) \big) \Big) \land \lnot p_2 \bigg)
+			\\
+			\left.\begin{array}{rcl}
+				\Big(  \quad
+				(\lnot p_1 \lor \lnot p_2 \lor \lnot p_3 \lor p_4) & \land & \\
+				(\lnot p_5 \lor \lnot p_6) & \land & \\
+				(\lnot p_7 \lor \lnot p_2 \lor p_6) & \land & \\
+				(\lnot p_6 \lor \lnot p_2) & \land & \\
+				(\lnot p_6 \lor \lnot p_3 \lor p_2) & \land & \\
+				(\lnot p_3 \lor \lnot p_4 \lor p_5) & \land & \\
+				(\lnot p_1 \lor p_7) & \land & \\
+				(\lnot p_1 \lor \lnot p_7 \lor p_4) & \land & \\				
+				p_3 &\land& \\
+				p_1 && \Big)
+			\end{array} \right] \\			
+			\Big( (p_1 \lor \lnot p_2) \land (p_2 \lor \lnot p_3) \land (p_3 \lor \lnot p_1) \land (\lnot p_2 \lor \lnot p_3) \land p_1 \Big)
+		\end{gather}
+	\end{frame}
+	
+
+	\section{Aufgabe 3 \\ \itshape Ziffernfolgen in $\pi$ finden}
+	
+	\begin{frame} \frametitle{Aufgabe 3}
+		\justifying \small
+		Begründen Sie die Semientscheidbarkeit des folgenden Problems:
+		\begin{itemize}
+			\item Gegeben ist eine Zahlenfolge $s = s_1 s_2 \dots s_n \in \menge{0, 1, \dots , 9}^n$ ($n \ge 1$).
+			\item Gefragt: Kommt in dem Nachkommateil der Dezimaldarstellung von $\pi$ die Sequenz $s$ vor?
+		\end{itemize}
+
+		Hinweis: \\ \itshape
+		Sie dürfen als bekannt voraussetzen, dass es beliebig genaue Näherungs\-verfahren für $\pi$ gibt. Skizzieren Sie die Arbeitsweise eines Semientscheidungsverfahrens für das genannte Problem unter Verwendung eines Algorithmus  $\operatorname{Pi-N"aherungsverfahren}(k)$, das als Eingabe eine natürliche Zahl $k \ge 1$ hat und als Ausgabe die $k$ ersten Ziffern des Nachkommateils der Dezimaldarstellung von $\pi$ zurückgibt.
+	\end{frame}
+
+	\section{Aufgabe 4 \\ \itshape Mengen-Constraint-Systeme}
+	
+	\begin{frame} \frametitle{Aufgabe 4}
+		\footnotesize \justifying
+		Gegeben sei eine endliche Menge $E$ von Elementen und eine Menge $V$ von Variablen. Ein
+		Mengen-Constraintsystem $C$ über $E$ und $V$ ist eine endliche Menge von Constraints der Form:
+		\begin{equation*}
+			a \in X, a \notin X, a \in X \cup Y, \text{ oder } X \subseteq Y \cup Z
+		\end{equation*}
+		für $a \in E$ und $X, Y, Z \in V$. Eine Lösung $L$ eines Mengen-Constraintsystems $C$ über $E$ und $V$
+		ist eine Abbildung $L : V \to 2^E$, so dass
+		\begin{align*}
+			\text{für alle Ausdrücke der Form } (a \in X) \in C \text{ gilt}: \quad &a \in L(X), \\
+			\text{für alle Ausdrücke der Form } (a \notin X) \in C \text{ gilt}: \quad &a \notin L(X), \\
+			\text{für alle Ausdrücke der Form } (a \in X \cup Y ) \in C \text{ gilt}: \quad &a \in L(X) \cup L(Y ), \\
+			\text{für alle Ausdrücke der Form } (X \subseteq Y \cup Z) \in C \text{ gilt}: \quad &L(X) \subseteq L(Y ) \cup L(Z).
+		\end{align*}
+		
+		\begin{enumerate}[\bfseries a)]
+			\item Hat das folgende Mengen-Constraintsystem eine Lösung?
+			\begin{align*}
+				V &= \menge{M_1, M_2, M_3, M_4} \qquad \und \qquad
+				E = \menge{a, b, c, d} \\
+				C &= \menge{
+					\begin{array}{l}
+						M_2 \subseteq M_1 \cup M_3, M4 \subseteq M_3 \cup M_2, \\
+						a \in M_1, a \notin M_3, b \in M_4, b \in M_1, b \notin M_3, \\
+						c \in M_4, c \notin M_1, c \notin M_3, d \in M_4, d \notin M_1, d \notin M_2
+					\end{array} }
+			\end{align*}
+		\end{enumerate}
+	\end{frame}
+
+	\begin{frame} \frametitle{Aufgabe 4}
+		\footnotesize \justifying
+		Gegeben sei eine endliche Menge $E$ von Elementen und eine Menge $V$ von Variablen. Ein
+		Mengen-Constraintsystem $C$ über $E$ und $V$ ist eine endliche Menge von Constraints der Form:
+		\begin{equation*}
+			a \in X, a \notin X, a \in X \cup Y, \text{ oder } X \subseteq Y \cup Z
+		\end{equation*}
+		für $a \in E$ und $X, Y, Z \in V$. Eine Lösung $L$ eines Mengen-Constraintsystems $C$ über $E$ und $V$
+		ist eine Abbildung $L : V \to 2^E$, so dass
+		\begin{align*}
+			\text{für alle Ausdrücke der Form } (a \in X) \in C \text{ gilt}: \quad &a \in L(X), \\
+			\text{für alle Ausdrücke der Form } (a \notin X) \in C \text{ gilt}: \quad &a \notin L(X), \\
+			\text{für alle Ausdrücke der Form } (a \in X \cup Y ) \in C \text{ gilt}: \quad &a \in L(X) \cup L(Y ), \\
+			\text{für alle Ausdrücke der Form } (X \subseteq Y \cup Z) \in C \text{ gilt}: \quad &L(X) \subseteq L(Y ) \cup L(Z).
+		\end{align*}
+		
+		\begin{enumerate}[\bfseries a)]
+			\setcounter{enumi}{1}
+			\item Geben Sie ein allgemeines Verfahren an, das Lösungen eines Mengen-Constraintsystems
+			in polynomieller Zeit entscheidet.
+			
+			\itshape Hinweis: Übersetzen Sie $C$ in eine endliche Menge von Hornformeln – entscheidend ist die
+			Kodierung der Mengenzugehörigkeit von Elementen.
+		\end{enumerate}
+	\end{frame}
+
+\end{document}
