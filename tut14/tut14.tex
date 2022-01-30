@@ -99,12 +99,38 @@
 	
 	
 	\begin{frame} \frametitle{Aufgabe 1}
+		\footnotesize
 		Stimmen die folgenden Aussagen? Begründen Sie.
 		\begin{enumerate}[a)]
 			\item Wenn $\Gamma \models \psi$ und $\psi$ eine Tautologie ist, dann ist $\Gamma$ auch allgemeingültig.
+			
+			\only<2->{%
+				\begin{itshape}
+					\textbf{Falsch} --- Gegenbeispiel: Aus Falschem folgt Beliebiges. 
+					\begin{equation*}
+						\psi = (p \lor \lnot p) \text{ ist tautologisch.} \qquad \qquad 
+						\Gamma = (p \land \lnot p) \text{ ist unerfüllbar.} 
+					\end{equation*}
+					Dennoch gilt $\Gamma \models \psi$.
+				\end{itshape}}
 			\item Eine Formel $\phi$ ist eine Hornformel, wenn sie in NNF ist und aus Konjunktionen innerhalb von Disjunktionen von Literalen besteht, von denen jede höchstens ein positives Literal enthält.
+			
+			\only<3->{%
+				\begin{itshape}
+					\textbf{Falsch} --- Konjunktionen innerhalb von Disjunktionen $\leadsto$ disjunktive Normalform
+				\end{itshape}}
 			\item Für $K_1 = \menge{a, b, c}$ und $K_2 = \menge{\lnot a, \lnot b}$ ist $\menge{c}$ keine Resolvente.
+			
+			\only<4->{%
+				\begin{itshape}
+					\textbf{Richtig} --- es können nur die Klauseln $\menge{b, c, \lnot b}$ und $\menge{a, c, \lnot a}$ entstehen.
+				\end{itshape}}
 			\item Aus $\models \phi$ folgt, dass $\phi$ allgemeingültig ist.
+			
+			\only<5>{%
+				\begin{itshape}
+					\textbf{Richtig} --- per Definition (siehe VL 22, Folie 17)
+			\end{itshape}}
 		\end{enumerate}
 	\end{frame}
 
@@ -136,6 +162,74 @@
 		\end{gather}
 	\end{frame}
 	
+	\begin{frame}
+		\footnotesize
+		\begin{enumerate}[\bfseries (a)]
+			\item erfüllbar, z.B. via Transformation in DNF und Entscheidung, ob Monome gegensätzliche Literale enthalten \\
+			erfüllende Wertzuweisung: $w(p_2) = 0$ und $w(p_4) = 0$ reicht
+			\item erfüllbar mit $w(p_1) = 1$ und $w(p_2) = 0$
+		\end{enumerate}
+		Sowohl (a) als auch (b) sind keine Horn-Formel und daher ist ihre Erfüllbarkeit nicht in $\Slang P$ entscheidbar.
+		\begin{enumerate}[\bfseries (a)]
+			\setcounter{enumi}{2}
+			\item 
+			\begin{minipage}[t]{\dimexpr0.4\linewidth-\fboxrule-\fboxsep}
+				Horn-Regelmenge:
+				\begin{align*}
+					p_1 \land p_2 \land p_3 &\to p_4 \\
+					p_5 \land p_6 &\to \bot \\
+					p_7 \land p_2 &\to p_6 \\
+					p_6 \land p_2 &\to \bot \\
+					p_6 \land p_3 &\to p_2& \\
+					p_3 \land p_4 &\to p_5 \\
+					p_1 &\to p_7 \\
+					p_1 \land p_7 &\to p_4 \\				
+					\top &\to p_3 \\
+					\top &\to p_1
+				\end{align*}
+			\end{minipage}
+			\begin{minipage}[t]{\dimexpr0.6\linewidth-\fboxrule-\fboxsep}
+				Hyperresolution:
+				\begin{align*}
+					V_0 &= \menge{p_3, p_1} \\
+					V_1 &= V_0 \cup \menge{p_7} \\
+					V_2 &= V_1 \cup \menge{p_4} \\
+					V_3 &= V_2 \cup \menge{p_5} = V_4 = V
+				\end{align*}
+				Es gibt keine Regel $q_0 \land \dots \land q_m \to \bot$ mit $q_0, \dots, q_m \in V$. Daher ist die Formel erfüllbar.
+			\end{minipage}
+		\end{enumerate}
+	\solutionmarkB
+	\end{frame}
+
+	\begin{frame}
+		\footnotesize
+		\begin{enumerate}[\bfseries (a)]
+			\setcounter{enumi}{3}
+			\item 
+			\begin{minipage}[t]{\dimexpr0.4\linewidth-\fboxrule-\fboxsep}
+				Horn-Regelmenge:
+				\begin{align*}
+				p_2 &\to p_1 \\
+				p_3 &\to p_2 \\
+				p_1 &\to p_3 \\
+				p_2 \land p_3 &\to \bot \\
+				\top &\to p_1
+				\end{align*}
+			\end{minipage}
+			\begin{minipage}[t]{\dimexpr0.6\linewidth-\fboxrule-\fboxsep}
+				Hyperresolution:
+				\begin{align*}
+				V_0 &= \menge{p_1} \\
+				V_1 &= V_0 \cup \menge{p_3} \\
+				V_2 &= V_1 \cup \menge{p_2} = V_3 = V
+				\end{align*}
+				Da $(p_2 \land p_3 \to \bot)$ eine Horn-Regel mit $p_2, p_3 \in V$ ist, ist die Formel unerfüllbar.
+			\end{minipage}
+		\end{enumerate}
+		Da (c) und (d) jeweils Horn-Formeln sind, kann deren Erfüllbarkeit in polynomieller Zeit entschieden werden.
+	\solutionmarkB
+	\end{frame}
 
 	\section{Aufgabe 3 \\ \itshape Ziffernfolgen in $\pi$ finden}
 	
@@ -149,6 +243,17 @@
 
 		Hinweis: \\ \itshape
 		Sie dürfen als bekannt voraussetzen, dass es beliebig genaue Näherungs\-verfahren für $\pi$ gibt. Skizzieren Sie die Arbeitsweise eines Semientscheidungsverfahrens für das genannte Problem unter Verwendung eines Algorithmus  $\operatorname{Pi-N"aherungsverfahren}(k)$, das als Eingabe eine natürliche Zahl $k \ge 1$ hat und als Ausgabe die $k$ ersten Ziffern des Nachkommateils der Dezimaldarstellung von $\pi$ zurückgibt.
+	\end{frame}
+
+	\begin{frame}
+		Eingabe: $s = s_1 s_2 \dots s_n \in \menge{0, 1, \dots, 9}^n$ mit $n \ge 1$
+		
+		FOR $k = n, n+1, \dots$: \\
+		\hspace{2em} Berechne $a_1 \dots a_k = \operatorname{Pi-N"aherungsverfahren}(k)$ \\
+		\hspace{2em} Falls $a_{k-n+1} \dots a_k = s_1 \dots s_n$: \hspace{1em} akzeptiere \\
+		\hspace{2em} Sonst: wähle nächstes $k$ \\
+		
+		\solutionmarkB
 	\end{frame}
 
 	\section{Aufgabe 4 \\ \itshape Mengen-Constraint-Systeme}
@@ -184,6 +289,18 @@
 		\end{enumerate}
 	\end{frame}
 
+	\begin{frame}
+		\justifying
+		\textbf{Teil (a)}
+		\begin{itemize}
+			\item Aus $M_4 \subseteq M_3 \cup M_2$ wissen wir, dass $c \in L(M_2)$, da $c \in L(M_4)$ und $c \notin L(M_3)$ gelten muss.
+			\item Daraus folgernd muss wegen $M_2 \subseteq M_1 \cup M_3$ auch $c \in L(M_1)$ oder $c \in L(M_3)$ gelten (da $c \in L(M_4)$ gilt).
+		\end{itemize}
+	
+		Die Forderung $c \in L(M_1)$ kann aber wegen des Constraints $c \notin M_1$ nicht erfüllt werden. Analog kann $c \in L(M_3)$ durch $c \notin M_3$ nicht erfüllt werden. Damit ist $M_2 \subseteq M_1 \cup M_3$ nicht haltbar und das System kann keine Lösung besitzen.
+		\solutionmarkB
+	\end{frame}
+
 	\begin{frame} \frametitle{Aufgabe 4}
 		\footnotesize \justifying
 		Gegeben sei eine endliche Menge $E$ von Elementen und eine Menge $V$ von Variablen. Ein
@@ -206,8 +323,27 @@
 			in polynomieller Zeit entscheidet.
 			
 			\itshape Hinweis: Übersetzen Sie $C$ in eine endliche Menge von Hornformeln – entscheidend ist die
-			Kodierung der Mengenzugehörigkeit von Elementen.
+			Kodierung der Mengenzugehörigkeit von Elementen.
 		\end{enumerate}
+	\end{frame}
+
+	\begin{frame}
+		\footnotesize \justifying
+		\textbf{Teil (b):} Wir wollen das Problem auf $\Slang{Horn-SAT} \in \Slang P$ reduzieren, d.h. eine Horn-Formel (bzw. eine Horn-Regelmenge) finden, deren Erfüllbarkeit die Lösbarkeit eines Mengen-Constraint-Systems zeigt.
+		
+		Gegeben sei also eine Mengen-Constraint-System $C$ über Elementen $E$ und Variablen $V$.
+		
+		Wir verwenden die aussagenlogischen Variablen
+		\begin{align*}
+			\mathcal{P} &= \menge{p_{a, X} : (a \notin X) \in C}
+		 \intertext{sowie die Regelmenge}
+			\Gamma &= \menge{(\top \to p_{a,X}) : (a \notin X) \in C} \\
+			&\quad\cup \menge{(p_{a,X} \to \bot) : (a \in X) \in C} \\
+			&\quad\cup \menge{(p_{a,X} \land p_{a, Y} \to \bot) : (a \in X \cup Y) \in C} \\
+			&\quad\cup \bigcup_{a \in E} \menge{((p_{a,Y} \land p_{a, Z}) \to p_{a, X}) : (X \subseteq Y \cup Z) \in C}. 
+		\end{align*}
+		Dann ist das Mengen-Constraint-System $C$ genau dann erfüllbar, wenn $\Gamma$ erfüllbar ist. Die Erfüllbarkeit der Horn-Regelmenge kann gemäß Vorlesung in polynomieller Zeit entschieden werden.
+		\solutionmarkB
 	\end{frame}
 
 \end{document}
