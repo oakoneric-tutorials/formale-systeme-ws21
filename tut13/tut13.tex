@@ -76,7 +76,6 @@
 \undef\Var
 \DeclareMathOperator{\Var}{Var}
 
-
 \begin{document}	
 	\title{Formale Systeme}
 	\subtitle{Übung 13}
@@ -204,11 +203,11 @@
 			\end{equation*}
 			\item Jeder Knoten hat höchstens eine Farbe:
 			\begin{equation*}
-			\phi_{\le 1} \defeq \bigwedge_{v \in V} \bigvee_{\substack{c_1, c_2 \in C_k \\ c_1 \neq c_2}} \lnot \Big( p_{v, c_1} \land p_{v, c_2} \Big)
+			\phi_{\le 1} \defeq \bigwedge_{v \in V} \mathop{\alert{\bigwedge}}_{\substack{c_1, c_2 \in C_k \\ c_1 \neq c_2}} \lnot \Big( p_{v, c_1} \land p_{v, c_2} \Big)
 			\end{equation*}
 			\item Benachbarte Knoten haben unterschiedliche Farben
 			\begin{equation*}
-			\phi_{\neq} \defeq \bigwedge_{\substack{v_1, v_2 \in V \\ (v_1, v_2) \in E}} \bigvee_{c \in C_k} \lnot \Big( p_{v_1, c} \land p_{v_2, c} \Big)
+			\phi_{\neq} \defeq \bigwedge_{\substack{v_1, v_2 \in V \\ (v_1, v_2) \in E}} \mathop{\alert{\bigwedge}}_{c \in C_k} \lnot \Big( p_{v_1, c} \land p_{v_2, c} \Big)
 			\end{equation*}
 		\end{itemize} 
 		
